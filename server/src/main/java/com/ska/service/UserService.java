@@ -9,10 +9,7 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
-import com.ska.dto.UserCreateRequest;
-import com.ska.dto.UserDeleteRequest;
-import com.ska.dto.UserUpdateEmailRequest;
-import com.ska.dto.UserUpdatePasswordRequest;
+import com.ska.dto.user.*;
 import com.ska.model.User;
 import com.ska.repository.UserRepository;
 
