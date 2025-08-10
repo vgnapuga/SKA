@@ -1,10 +1,14 @@
-package com.ska.model;
+package com.ska.model.user;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+import com.ska.vo.user.*;
 
 
 @Entity
@@ -15,32 +19,38 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String email;
-    private String password;
+    @Convert(converter = com.ska.model.user.converter.EmailConverter.class)
+    private Email email;
+
+    @Convert(converter = com.ska.model.user.converter.PasswordConverter.class)
+    private Password password;
 
 
     public User() {}
 
-    public User(final String email, final String password) {
+    public User(final Email email, final Password password) {
         this.email = email;
         this.password = password;
     }
 
 
-    public final void setEmail(final String email) {
-        this.email = email;
+    public final void changeEmail(final Email newEmail, final boolean isUnique) {
+        if (!isUnique)
+            throw new EntityExistsException("Email=" + newEmail.toString() + " already exists");
+
+        this.email = newEmail;
     }
-    public final void setPassword(final String password) {
-        this.password = password;
+    public final void changePassword(final Password newPassword) {
+        this.password = newPassword;
     }
 
     public final Long getId() {
         return this.id;
     }
-    public final String getEmail() {
+    public final Email getEmail() {
         return this.email;
     }
-    public final String getPassword() {
+    public final Password getPassword() {
         return this.password;
     }
 
@@ -65,7 +75,8 @@ public class User {
     public final String toString() {
         return "User{" +
             "id=" + this.id +
-            ", email=" + this.email +
+            ", email=" + this.email.toString() +
+            ", password=" + this.password.toString() +
             "}";
     }
 

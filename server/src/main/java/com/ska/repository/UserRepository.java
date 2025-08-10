@@ -5,13 +5,14 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ska.model.User;
+import com.ska.model.user.User;
+import com.ska.vo.user.Email;
 
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    public Optional<User> findByEmail(String email);
-    public boolean existsByEmail(String email);
+    Optional<User> findByEmail(Email email);
+    boolean existsByEmail(Email email);
 
 }

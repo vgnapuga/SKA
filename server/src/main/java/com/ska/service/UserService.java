@@ -10,8 +10,9 @@ import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 
 import com.ska.dto.user.*;
-import com.ska.model.User;
+import com.ska.model.user.User;
 import com.ska.repository.UserRepository;
+import com.ska.vo.user.*;
 
 
 @Service
@@ -34,11 +35,11 @@ public class UserService {
         if(request == null)
             throw new IllegalArgumentException("Request is <null>");
 
-        String email = request.email();
+        Email email = new Email(request.email());
         if (userRepository.existsByEmail(email))
-            throw new EntityExistsException("User with email=" + email + " already exists");
+            throw new EntityExistsException("User with email=" + email.toString() + " already exists");
 
-        String password = encodePassword(request.password());
+        Password password = new Password(encodePassword(request.password()));
 
         User user = new User(email, password);
         return userRepository.save(user);
@@ -49,8 +50,7 @@ public class UserService {
     }
 
     public final Optional<User> getUserById(final Long id) {
-        if (id == null)
-            throw new IllegalArgumentException("User id is <null>");
+        validateId(id);
 
         return userRepository.findById(id);
     }
@@ -64,16 +64,17 @@ public class UserService {
             throw new IllegalArgumentException("Request is <null>");
 
         Long id = request.id();
+        validateId(id);
+
         User user = userRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException("User id=" + id + " not found to update email")
         );
 
-        String newEmail = request.newEmail();
-        if (userRepository.existsByEmail(newEmail))
-            throw new EntityExistsException("Email=" + newEmail + " already exists");
+        Email newEmail = new Email(request.newEmail());
 
+        boolean isUnique = !userRepository.existsByEmail(newEmail);
+        user.changeEmail(newEmail, isUnique);
 
-        user.setEmail(newEmail);
         return userRepository.save(user);
     }
 
@@ -82,13 +83,15 @@ public class UserService {
             throw new IllegalArgumentException("Request is <null>");
 
         Long id = request.id();
+        validateId(id);
+
         User user = userRepository.findById(id).orElseThrow(
             () -> new EntityNotFoundException("User id=" + id + " not found to update password")
         );
 
-        String newPassword = encodePassword(request.newPassword());
+        Password newPassword = new Password(encodePassword(request.newPassword()));
 
-        user.setPassword(newPassword);
+        user.changePassword(newPassword);
         return userRepository.save(user);
     }
 
@@ -97,10 +100,19 @@ public class UserService {
             throw new IllegalArgumentException("Request is <null>");
             
         Long id = request.id();
+        validateId(id);
+
         if (!userRepository.existsById(id))
             throw new EntityNotFoundException("User id=" + id + " not found to delete");
 
         userRepository.deleteById(id);
+    }
+
+    private static void validateId(final Long id) {
+        if (id == null)
+            throw new IllegalArgumentException("User id is <null>");
+        if (id < 0)
+            throw new IllegalArgumentException("User id is negative");
     }
 
 }
