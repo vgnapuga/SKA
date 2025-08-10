@@ -49,7 +49,7 @@ public class User {
         if (obj == this)
             return true;
 
-        if (obj == null || obj.getClass() != this.getClass())
+        if (!(obj instanceof User))
             return false;
 
         User user = (User) obj;

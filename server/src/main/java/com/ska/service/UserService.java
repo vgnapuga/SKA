@@ -50,7 +50,7 @@ public class UserService {
 
     public final Optional<User> getUserById(final Long id) {
         if (id == null)
-            throw new IllegalArgumentException("User id must not be <null>");
+            throw new IllegalArgumentException("User id is <null>");
 
         return userRepository.findById(id);
     }
