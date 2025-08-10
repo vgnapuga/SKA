@@ -5,9 +5,6 @@ import com.ska.vo.ValueObject;
 
 public final class Password extends ValueObject<String> {
 
-    private static final int minLength = 6;
-
-
     public Password(final String value) {
         super(value);
     }
@@ -17,8 +14,8 @@ public final class Password extends ValueObject<String> {
     public final void checkValidation(final String value) {
         validateNotBlank(value);
 
-        if (value.length() < minLength)
-            throw new IllegalArgumentException("Password must be at least " + minLength + " characters long");
+        if (!value.startsWith("$2a$") && !value.startsWith("$2b$"))
+            throw new IllegalArgumentException("Password value is not a valid BCrypt hash");
     }
 
     

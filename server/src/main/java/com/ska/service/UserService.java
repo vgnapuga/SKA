@@ -21,6 +21,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private static final int minLength = 6;
+
 
     public UserService(
                 final UserRepository userRepository,
@@ -39,14 +41,19 @@ public class UserService {
         if (userRepository.existsByEmail(email))
             throw new EntityExistsException("User with email=" + email.toString() + " already exists");
 
-        Password password = new Password(encodePassword(request.password()));
+        Password password = encodePassword(request.password());
 
         User user = new User(email, password);
         return userRepository.save(user);
     }
 
-    private final String encodePassword(final String password) {
-        return passwordEncoder.encode(password);
+    private final Password encodePassword(final String rawPassword) {
+        if (rawPassword.length() < minLength)
+            throw new IllegalArgumentException("Password shorter than " + minLength + " characters");
+
+        String hashed = passwordEncoder.encode(rawPassword);
+
+        return new Password(hashed);
     }
 
     public final Optional<User> getUserById(final Long id) {
@@ -89,7 +96,7 @@ public class UserService {
             () -> new EntityNotFoundException("User id=" + id + " not found to update password")
         );
 
-        Password newPassword = new Password(encodePassword(request.newPassword()));
+        Password newPassword = encodePassword(request.newPassword());
 
         user.changePassword(newPassword);
         return userRepository.save(user);
