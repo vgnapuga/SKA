@@ -3,9 +3,9 @@ package com.ska.model.user;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.Table;
 
+import com.ska.exceptions.ResourceAlreadyExistsException;
 import com.ska.model.BaseModel;
 import com.ska.vo.user.*;
 
@@ -33,7 +33,7 @@ public class User extends BaseModel {
 
     public final void changeEmail(final Email newEmail, final boolean isUnique) {
         if (!isUnique)
-            throw new EntityExistsException("Email=" + newEmail.toString() + " already exists");
+            throw new ResourceAlreadyExistsException("Email=" + newEmail.toString() + " already exists");
 
         this.email = newEmail;
     }

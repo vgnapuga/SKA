@@ -1,5 +1,7 @@
 package com.ska.vo;
 
+import com.ska.exceptions.DomainValidationException;
+
 
 public abstract class ValueObject<T> {
     
@@ -17,12 +19,12 @@ public abstract class ValueObject<T> {
 
     private final void validateNotNull(final T value) {
         if (value == null)
-            throw new IllegalArgumentException(this.getClass().getSimpleName() + " value is <null>");
+            throw new DomainValidationException(this.getClass().getSimpleName() + " value is <null>");
     }
 
     protected final void validateNotBlank(final String value) {
         if (value.isBlank())
-            throw new IllegalArgumentException(this.getClass().getSimpleName() + " value is <blank>");
+            throw new DomainValidationException(this.getClass().getSimpleName() + " value is <blank>");
     }
 
     public final T getValue() {

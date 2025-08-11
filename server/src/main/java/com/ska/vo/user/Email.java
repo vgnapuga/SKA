@@ -1,5 +1,6 @@
 package com.ska.vo.user;
 
+import com.ska.exceptions.DomainValidationException;
 import com.ska.vo.ValueObject;
 
 
@@ -19,10 +20,10 @@ public final class Email extends ValueObject<String> {
         validateNotBlank(value);
 
         if (value.length() > MAX_EMAIL_LENGTH)
-            throw new IllegalArgumentException("Email longer than 254 characters");
+            throw new DomainValidationException("Email longer than 254 characters");
 
         if (!value.matches(EMAIL_REGEX))
-            throw new IllegalArgumentException("Invalid email format");
+            throw new DomainValidationException("Invalid email format");
     }
     
     @Override
