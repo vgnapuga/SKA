@@ -4,24 +4,21 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityExistsException;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+import com.ska.model.BaseModel;
 import com.ska.vo.user.*;
 
 
 @Entity
-public class User {
+@Table(name = "users")
+public class User extends BaseModel {
 
-    @Id
-    @Column(name = "user_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+    @Column(name = "email", unique = true, nullable = false, length = 255)
     @Convert(converter = com.ska.model.user.converter.EmailConverter.class)
     private Email email;
 
+    @Column(name = "password", nullable = false, length = 60)
     @Convert(converter = com.ska.model.user.converter.PasswordConverter.class)
     private Password password;
 
@@ -44,9 +41,6 @@ public class User {
         this.password = newPassword;
     }
 
-    public final Long getId() {
-        return this.id;
-    }
     public final Email getEmail() {
         return this.email;
     }

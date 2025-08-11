@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 
 public record UserCreateRequest(
     @NotBlank(message = "Email is required to create new user")
+    @Size(max = 254, message = "Email is longer than 254 characters")
     @Email(message = "Invalid email")
     String email,
 

@@ -5,6 +5,9 @@ import com.ska.vo.ValueObject;
 
 public final class Password extends ValueObject<String> {
 
+    private static final int BCRYPT_HASHED_SIZE = 60;
+
+
     public Password(final String value) {
         super(value);
     }
@@ -14,7 +17,10 @@ public final class Password extends ValueObject<String> {
     public final void checkValidation(final String value) {
         validateNotBlank(value);
 
-        if (!value.startsWith("$2a$") && !value.startsWith("$2b$"))
+        if (!value.startsWith("$2a$") &&
+            !value.startsWith("$2b$") ||
+            value.length() != BCRYPT_HASHED_SIZE
+        )
             throw new IllegalArgumentException("Password value is not a valid BCrypt hash");
     }
 
