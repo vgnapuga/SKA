@@ -38,7 +38,9 @@ public class UserService {
     public final User createUser(final UserCreateRequest request) {
         Email email = new Email(request.email());
         if (userRepository.existsByEmail(email))
-            throw new ResourceAlreadyExistsException("User with email=" + email.toString() + " already exists");
+            throw new ResourceAlreadyExistsException(
+                String.format("User with email=%s already exists", email.toString())
+            );
 
         Password password = encodePassword(request.password());
 
@@ -48,7 +50,9 @@ public class UserService {
 
     private final Password encodePassword(final String rawPassword) {
         if (rawPassword.length() < PASSWORD_MIN_LENGTH)
-            throw new BusinessRuleViolationException("Password shorter than " + PASSWORD_MIN_LENGTH + " characters");
+            throw new BusinessRuleViolationException(
+                String.format("Password shorter than %d characters", PASSWORD_MIN_LENGTH)
+            );
 
         String hashed = passwordEncoder.encode(rawPassword);
 
@@ -73,7 +77,9 @@ public class UserService {
         validateId(id);
 
         User user = userRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException("User id=" + id + " not found to update email")
+            () -> new ResourceNotFoundException(
+                String.format("User id=%d not found to update email", id)
+            )
         );
 
         Email newEmail = new Email(request.newEmail());
@@ -90,7 +96,9 @@ public class UserService {
         validateId(id);
 
         User user = userRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException("User id=" + id + " not found to update password")
+            () -> new ResourceNotFoundException(
+                String.format("User id=%d not found to update password", id)
+            )
         );
 
         Password newPassword = encodePassword(request.newPassword());
@@ -105,7 +113,9 @@ public class UserService {
         validateId(id);
 
         if (!userRepository.existsById(id))
-            throw new ResourceNotFoundException("User id=" + id + " not found to delete");
+            throw new ResourceNotFoundException(
+                String.format("User id=%d not found to delete", id)
+            );
 
         userRepository.deleteById(id);
     }
@@ -113,7 +123,7 @@ public class UserService {
     private static void validateId(final Long id) {
         if (id == null)
             throw new BusinessRuleViolationException("User id is <null>");
-        if (id < 0)
+        if (id <= 0)
             throw new BusinessRuleViolationException("User id is negative");
     }
 

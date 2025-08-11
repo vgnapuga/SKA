@@ -7,7 +7,7 @@ import com.ska.vo.ValueObject;
 public final class Email extends ValueObject<String> {
 
     private static final int MAX_EMAIL_LENGTH = 254;
-        private static final String EMAIL_REGEX = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
+    private static final String EMAIL_REGEX = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
 
 
     public Email(String value) {
@@ -20,7 +20,9 @@ public final class Email extends ValueObject<String> {
         validateNotBlank(value);
 
         if (value.length() > MAX_EMAIL_LENGTH)
-            throw new DomainValidationException("Email longer than 254 characters");
+            throw new DomainValidationException(
+                String.format("Email longer than %d characters", MAX_EMAIL_LENGTH)
+            );
 
         if (!value.matches(EMAIL_REGEX))
             throw new DomainValidationException("Invalid email format");

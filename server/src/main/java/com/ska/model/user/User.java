@@ -33,7 +33,9 @@ public class User extends BaseModel {
 
     public final void changeEmail(final Email newEmail, final boolean isUnique) {
         if (!isUnique)
-            throw new ResourceAlreadyExistsException("Email=" + newEmail.toString() + " already exists");
+            throw new ResourceAlreadyExistsException(
+                String.format("Email=%s already exists", newEmail.toString())
+            );
 
         this.email = newEmail;
     }
@@ -67,11 +69,10 @@ public class User extends BaseModel {
 
     @Override
     public final String toString() {
-        return "User{" +
-            "id=" + this.id +
-            ", email=" + this.email.toString() +
-            ", password=" + this.password.toString() +
-            "}";
+        return String.format(
+            "User{id=%d, email=%s, password=%s}",
+            this.id, this.email.toString(), this.password.toString()
+        );
     }
 
 }

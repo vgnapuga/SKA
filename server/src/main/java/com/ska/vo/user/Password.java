@@ -18,10 +18,19 @@ public final class Password extends ValueObject<String> {
     public final void checkValidation(final String value) {
         validateNotBlank(value);
 
-        if ((!value.startsWith("$2a$") && !value.startsWith("$2b$")) ||
-            value.length() != BCRYPT_HASHED_SIZE
-        )
-            throw new DomainValidationException("Password value is not a valid BCrypt hash");
+        if (value.length() != BCRYPT_HASHED_SIZE) {
+            throw new DomainValidationException(
+                String.format("Password must be exactly %d characters (BCrypt hash), got %d",
+                    BCRYPT_HASHED_SIZE, value.length()
+                )
+            );
+        }
+        
+        if (!value.startsWith("$2a$") && !value.startsWith("$2b$") && !value.startsWith("$2y$")) {
+            throw new DomainValidationException(
+                "Password must start with $2a$, $2b$ or $2y$ (BCrypt format)"
+            );
+        }
     }
 
     
