@@ -1,5 +1,6 @@
 package com.ska.constants.user;
 
+
 public final class EmailConstants {
 
     public static final int MAX_LENGTH = 254;

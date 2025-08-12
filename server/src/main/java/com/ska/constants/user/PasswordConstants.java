@@ -1,5 +1,6 @@
 package com.ska.constants.user;
 
+
 public final class PasswordConstants {
 
     public static final int MIN_LENGTH = 6;

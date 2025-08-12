@@ -25,9 +25,9 @@ public class UserService {
 
 
     public UserService(
-                final UserRepository userRepository,
-                final BCryptPasswordEncoder passwordEncoder
-                ) {
+            final UserRepository userRepository,
+            final BCryptPasswordEncoder passwordEncoder
+    ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }

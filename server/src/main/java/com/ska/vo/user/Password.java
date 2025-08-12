@@ -26,7 +26,6 @@ public final class Password extends ValueObject<String> {
         }
         throw new DomainValidationException(PasswordConstants.INVALID_BCRYPT_FORMAT_MESSAGE);
     }
-
     
     @Override
     public final String toString() {
