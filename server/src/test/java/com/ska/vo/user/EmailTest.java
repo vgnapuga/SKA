@@ -8,13 +8,25 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.ska.constants.user.EmailConstants;
 import com.ska.exceptions.DomainValidationException;
+import com.ska.vo.BaseTest;
 
 
+class EmailTest implements BaseTest<String> {
 
-class EmailTest {
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "test@example.com",
+        "user.name+tag@example-domain.co.ru", 
+    })
+    @Override
+    public void testCreateValid(String validEmail) {
+        Email email = assertDoesNotThrow(() -> new Email(validEmail));
+        assertEquals(validEmail, email.getValue());
+    }
 
     @Test
-    void testCreateNullEmail() {
+    @Override
+    public void testCreateNull() {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Email(null)
         );
@@ -22,7 +34,8 @@ class EmailTest {
     }
 
     @Test
-    void testCreateBlankEmail() {
+    @Override
+    public void testCreateBlank() {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Email("")  
         );
@@ -30,7 +43,7 @@ class EmailTest {
     }
 
     @Test
-    void testCreateTooLongEmail() {
+    void testCreateTooLong() {
         String tooLongEmail = "a".repeat(255) + "test@example.com";
 
         DomainValidationException exception = assertThrows(
@@ -47,21 +60,13 @@ class EmailTest {
         "spaces @example.com",
         "double..dot@example.com"
     })
-    void testCreateInvalidEmail(String invalidEmail) {
+    void testCreateInvalid(String invalidEmail) {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Email(invalidEmail)
         );
         assertEquals(EmailConstants.INVALID_FORMAT_MESSAGE, exception.getMessage());
     }
     
-    @ParameterizedTest
-    @ValueSource(strings = {
-        "test@example.com",
-        "user.name+tag@example-domain.co.ru", 
-    })
-    void testCreateValidEmail(String validEmail) {
-        Email email = assertDoesNotThrow(() -> new Email(validEmail));
-        assertEquals(validEmail, email.getValue());
-    }
+
 
 }
