@@ -4,14 +4,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
+import com.ska.constants.user.*;;
+
 
 public record UserCreateRequest(
-    @NotBlank(message = "Email is required to create new user")
-    @Size(max = 254, message = "Email is longer than 254 characters")
-    @Email(message = "Invalid email")
+    @NotBlank(message = EmailConstants.REQUIRED_MESSAGE)
+    @Size(max = EmailConstants.MAX_LENGTH, message = EmailConstants.INVALID_LENGTH_MESSAGE)
+    @Email(message = EmailConstants.INVALID_FORMAT_MESSAGE)
     String email,
 
-    @NotBlank(message = "Password is required to create new user")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @NotBlank(message = PasswordConstants.REQUIRED_MESSAGE)
+    @Size(min = PasswordConstants.MIN_LENGTH, message = PasswordConstants.INVALID_LENGTH_MESSAGE)
     String password
 ) {}

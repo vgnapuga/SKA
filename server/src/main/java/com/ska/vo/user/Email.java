@@ -2,13 +2,10 @@ package com.ska.vo.user;
 
 import com.ska.exceptions.DomainValidationException;
 import com.ska.vo.ValueObject;
+import com.ska.constants.user.EmailConstants;
 
 
 public final class Email extends ValueObject<String> {
-
-    private static final int MAX_EMAIL_LENGTH = 254;
-    private static final String EMAIL_REGEX = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
-
 
     public Email(String value) {
         super(value);
@@ -19,13 +16,11 @@ public final class Email extends ValueObject<String> {
     public final void checkValidation(String value) {
         validateNotBlank(value);
 
-        if (value.length() > MAX_EMAIL_LENGTH)
-            throw new DomainValidationException(
-                String.format("Email longer than %d characters", MAX_EMAIL_LENGTH)
-            );
+        if (value.length() > EmailConstants.MAX_LENGTH)
+            throw new DomainValidationException(EmailConstants.INVALID_LENGTH_MESSAGE);
 
-        if (!value.matches(EMAIL_REGEX))
-            throw new DomainValidationException("Invalid email format");
+        if (!value.matches(EmailConstants.REGEX))
+            throw new DomainValidationException(EmailConstants.INVALID_FORMAT_MESSAGE);
     }
     
     @Override

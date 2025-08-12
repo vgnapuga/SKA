@@ -8,12 +8,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ska.dto.user.*;
+import com.ska.vo.user.*;
+import com.ska.constants.user.*;
 import com.ska.exceptions.BusinessRuleViolationException;
 import com.ska.exceptions.ResourceAlreadyExistsException;
 import com.ska.exceptions.ResourceNotFoundException;
 import com.ska.model.user.User;
 import com.ska.repository.UserRepository;
-import com.ska.vo.user.*;
 
 
 @Service
@@ -21,8 +22,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    private static final int PASSWORD_MIN_LENGTH = 6;
 
 
     public UserService(
@@ -49,10 +48,8 @@ public class UserService {
     }
 
     private final Password encodePassword(final String rawPassword) {
-        if (rawPassword.length() < PASSWORD_MIN_LENGTH)
-            throw new BusinessRuleViolationException(
-                String.format("Password shorter than %d characters", PASSWORD_MIN_LENGTH)
-            );
+        if (rawPassword.length() < PasswordConstants.MIN_LENGTH)
+            throw new BusinessRuleViolationException(PasswordConstants.INVALID_LENGTH_MESSAGE);
 
         String hashed = passwordEncoder.encode(rawPassword);
 

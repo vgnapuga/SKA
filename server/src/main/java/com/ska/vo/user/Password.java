@@ -2,12 +2,10 @@ package com.ska.vo.user;
 
 import com.ska.exceptions.DomainValidationException;
 import com.ska.vo.ValueObject;
+import com.ska.constants.user.PasswordConstants;
 
 
 public final class Password extends ValueObject<String> {
-
-    private static final int BCRYPT_HASHED_SIZE = 60;
-
 
     public Password(final String value) {
         super(value);
@@ -18,19 +16,15 @@ public final class Password extends ValueObject<String> {
     public final void checkValidation(final String value) {
         validateNotBlank(value);
 
-        if (value.length() != BCRYPT_HASHED_SIZE) {
-            throw new DomainValidationException(
-                String.format("Password must be exactly %d characters (BCrypt hash), got %d",
-                    BCRYPT_HASHED_SIZE, value.length()
-                )
-            );
+        if (value.length() != PasswordConstants.BCRYPT_HASHED_SIZE) {
+            throw new DomainValidationException(PasswordConstants.INVALID_BCRYPT_FORMAT_MESSAGE);
         }
         
-        if (!value.startsWith("$2a$") && !value.startsWith("$2b$") && !value.startsWith("$2y$")) {
-            throw new DomainValidationException(
-                "Password must start with $2a$, $2b$ or $2y$ (BCrypt format)"
-            );
+        for (String str : PasswordConstants.BCRYPT_PREFIXES) {
+            if (value.startsWith(str))
+                return;
         }
+        throw new DomainValidationException(PasswordConstants.INVALID_BCRYPT_FORMAT_MESSAGE);
     }
 
     

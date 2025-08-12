@@ -8,17 +8,18 @@ import jakarta.persistence.Table;
 import com.ska.exceptions.ResourceAlreadyExistsException;
 import com.ska.model.BaseModel;
 import com.ska.vo.user.*;
+import com.ska.constants.user.*;
 
 
 @Entity
 @Table(name = "users")
 public class User extends BaseModel {
 
-    @Column(name = "email", unique = true, nullable = false, length = 255)
+    @Column(name = "email", unique = true, nullable = false, length = EmailConstants.MAX_LENGTH)
     @Convert(converter = com.ska.model.user.converter.EmailConverter.class)
     private Email email;
 
-    @Column(name = "password", nullable = false, length = 60)
+    @Column(name = "password", nullable = false, length = PasswordConstants.BCRYPT_HASHED_SIZE)
     @Convert(converter = com.ska.model.user.converter.PasswordConverter.class)
     private Password password;
 
@@ -70,8 +71,8 @@ public class User extends BaseModel {
     @Override
     public final String toString() {
         return String.format(
-            "User{id=%d, email=%s, password=%s}",
-            this.id, this.email.toString(), this.password.toString()
+            "User{id=%d, email=%s, password=***}",
+            this.id, this.email.toString()
         );
     }
 

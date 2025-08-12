@@ -1,0 +1,16 @@
+package com.ska.constants.user;
+
+public final class PasswordConstants {
+
+    public static final int MIN_LENGTH = 6;
+    public static final int BCRYPT_HASHED_SIZE = 60;
+    public static final String[] BCRYPT_PREFIXES = { "$2a$", "$2b$", "$2y$" };
+
+    public static final String REQUIRED_MESSAGE = "Password is required";
+    public static final String INVALID_LENGTH_MESSAGE = "Password must be at least " + MIN_LENGTH + " characters long";
+    public static final String INVALID_BCRYPT_FORMAT_MESSAGE = "Password must be a valid BCrypt hash";
+
+
+    private PasswordConstants() {}
+    
+}
