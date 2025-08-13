@@ -40,19 +40,22 @@ public class UserService {
             throw new ResourceAlreadyExistsException(
                 String.format("User with email=%s already exists", email.toString())
             );
-
-        Password password = encodePassword(request.password());
+            
+        String rawPassword = request.password();
+        validateRawPassword(rawPassword);
+        Password password = encodePassword(rawPassword);
 
         User user = new User(email, password);
         return userRepository.save(user);
     }
 
-    private final Password encodePassword(final String rawPassword) {
+    private static void validateRawPassword(final String rawPassword) {
         if (rawPassword.length() < PasswordConstants.MIN_LENGTH)
             throw new BusinessRuleViolationException(PasswordConstants.INVALID_LENGTH_MESSAGE);
+    }
 
+    private final Password encodePassword(final String rawPassword) {
         String hashed = passwordEncoder.encode(rawPassword);
-
         return new Password(hashed);
     }
 
@@ -98,7 +101,9 @@ public class UserService {
             )
         );
 
-        Password newPassword = encodePassword(request.newPassword());
+        String rawPassword = request.newPassword();
+        validateRawPassword(rawPassword);
+        Password newPassword = encodePassword(rawPassword);
 
         user.changePassword(newPassword);
         return userRepository.save(user);
