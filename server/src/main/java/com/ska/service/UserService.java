@@ -66,6 +66,13 @@ public class UserService {
         return userRepository.findById(id);
     }
 
+    private static void validateId(final Long id) {
+        if (id == null)
+            throw new BusinessRuleViolationException("User id is <null>");
+        if (id <= 0)
+            throw new BusinessRuleViolationException("User id < 1");
+    }
+
     @Transactional(readOnly = true)
     public final List<User> getAllUsers() {
         return userRepository.findAll();
@@ -110,8 +117,7 @@ public class UserService {
     }
 
     @Transactional
-    public final void deleteUser(final UserDeleteRequest request) {
-        Long id = request.id();
+    public final void deleteUserById(final Long id) {
         validateId(id);
 
         if (!userRepository.existsById(id))
@@ -120,13 +126,6 @@ public class UserService {
             );
 
         userRepository.deleteById(id);
-    }
-
-    private static void validateId(final Long id) {
-        if (id == null)
-            throw new BusinessRuleViolationException("User id is <null>");
-        if (id <= 0)
-            throw new BusinessRuleViolationException("User id is negative");
     }
 
 }
