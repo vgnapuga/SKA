@@ -1,4 +1,4 @@
-package com.ska.constants.user;
+package com.ska.constant.user;
 
 
 public final class EmailConstants {

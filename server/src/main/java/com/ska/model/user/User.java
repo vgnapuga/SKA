@@ -5,10 +5,10 @@ import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
-import com.ska.exceptions.ResourceAlreadyExistsException;
+import com.ska.constant.user.*;
+import com.ska.exception.ResourceAlreadyExistsException;
 import com.ska.model.BaseModel;
 import com.ska.vo.user.*;
-import com.ska.constants.user.*;
 
 
 @Entity

@@ -1,8 +1,8 @@
 package com.ska.vo.user;
 
-import com.ska.exceptions.DomainValidationException;
+import com.ska.constant.user.EmailConstants;
+import com.ska.exception.DomainValidationException;
 import com.ska.vo.ValueObject;
-import com.ska.constants.user.EmailConstants;
 
 
 public final class Email extends ValueObject<String> {

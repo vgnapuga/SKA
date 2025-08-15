@@ -7,46 +7,57 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ska.constant.user.*;
 import com.ska.dto.user.*;
+import com.ska.exception.BusinessRuleViolationException;
+import com.ska.exception.ResourceAlreadyExistsException;
+import com.ska.exception.ResourceNotFoundException;
 import com.ska.vo.user.*;
-import com.ska.constants.user.*;
-import com.ska.exceptions.BusinessRuleViolationException;
-import com.ska.exceptions.ResourceAlreadyExistsException;
-import com.ska.exceptions.ResourceNotFoundException;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import com.ska.model.user.User;
 import com.ska.repository.UserRepository;
 
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
 
-    public UserService(
-            final UserRepository userRepository,
-            final BCryptPasswordEncoder passwordEncoder
-    ) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
-
-
     @Transactional()
     public final User createUser(final UserCreateRequest request) {
+        log.info("Creating user with email: {}", request.email());
+
+        log.debug("Email validation - start");
         Email email = new Email(request.email());
+
+        log.debug("Email uniqueness validation - start");
         if (userRepository.existsByEmail(email))
             throw new ResourceAlreadyExistsException(
-                String.format("User with email=%s already exists", email.toString())
+                    String.format("User with email=%s already exists", email.toString())
             );
-            
+
+        log.debug("Raw password validation - start");
         String rawPassword = request.password();
         validateRawPassword(rawPassword);
+
+        log.debug("Password encoding - start");
         Password password = encodePassword(rawPassword);
 
         User user = new User(email, password);
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        log.info(
+                "User created successfully with ID: {}, email: {}",
+                savedUser.getId(), savedUser.getEmail().getValue()
+        );
+
+        return savedUser;
     }
 
     private static void validateRawPassword(final String rawPassword) {
@@ -61,9 +72,23 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public final Optional<User> getUserById(final Long id) {
+        log.info("Getting user with ID: {}", id);
+
+        log.debug("ID validation - start");
         validateId(id);
 
-        return userRepository.findById(id);
+        log.debug("Database query - start");
+        Optional<User> retrievedUser = userRepository.findById(id);
+
+        if (retrievedUser.isPresent())
+            log.info(
+                    "User with ID: {} retrieved successfully, email: {}",
+                    id, retrievedUser.get().getEmail().getValue()
+            );
+        else
+            log.info("User with ID: {} not found", id);
+
+        return retrievedUser;
     }
 
     private static void validateId(final Long id) {
@@ -75,57 +100,89 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public final List<User> getAllUsers() {
-        return userRepository.findAll();
+    log.info("Getting all users");
+
+    List<User> users = userRepository.findAll();
+    log.info("Retrieved {} users", users.size());
+
+    return users;
     }
 
     @Transactional
     public final User updateUserEmail(final UserUpdateEmailRequest request) {
         Long id = request.id();
+        log.info("Updating user email for ID: {}", id);
+        
+        log.debug("ID validation - start");
         validateId(id);
 
+        log.debug("ID existing check - start");
         User user = userRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException(
-                String.format("User id=%d not found to update email", id)
+                () -> new ResourceNotFoundException(
+                        String.format("User id=%d not found to update email", id)
             )
         );
 
+        log.debug("Email validation - start");
         Email newEmail = new Email(request.newEmail());
 
+        log.debug("Email uniqueness validation - start");
         boolean isUnique = !userRepository.existsByEmail(newEmail);
         user.changeEmail(newEmail, isUnique);
 
-        return userRepository.save(user);
+        User updatedUser = userRepository.save(user);
+        log.info(
+                "User email updated successfully for ID: {}, new email: {}",
+                id, newEmail
+        );
+
+        return updatedUser;
     }
 
     @Transactional
     public final User updateUserPassword(final UserUpdatePasswordRequest request) {
         Long id = request.id();
+        log.info("Updating user password for ID: {}", id);
+
+        log.debug("ID validation - start");
         validateId(id);
 
+        log.debug("ID existing check - start");
         User user = userRepository.findById(id).orElseThrow(
-            () -> new ResourceNotFoundException(
-                String.format("User id=%d not found to update password", id)
+                () -> new ResourceNotFoundException(
+                        String.format("User id=%d not found to update password", id)
             )
         );
 
+        log.debug("Raw password validation - start");
         String rawPassword = request.newPassword();
         validateRawPassword(rawPassword);
+
+        log.debug("Password encoding - start");
         Password newPassword = encodePassword(rawPassword);
 
         user.changePassword(newPassword);
-        return userRepository.save(user);
+        User updatedUser = userRepository.save(user);
+        log.info("User password for ID: {} updated successfully", id);
+
+        return updatedUser;
     }
 
     @Transactional
     public final void deleteUserById(final Long id) {
+        log.info("Deleting user with ID: {}", id);
+
+        log.debug("User ID validation - start");
         validateId(id);
 
+        log.debug("ID existing check - start");
         if (!userRepository.existsById(id))
             throw new ResourceNotFoundException(
-                String.format("User id=%d not found to delete", id)
+                    String.format("User id=%d not found to delete", id)
             );
 
         userRepository.deleteById(id);
+        log.info("User with ID: {} deleted successfully", id);
     }
 
 }

@@ -1,4 +1,4 @@
-package com.ska.exceptions;
+package com.ska.exception;
 
 
 public final class DomainValidationException extends RuntimeException {

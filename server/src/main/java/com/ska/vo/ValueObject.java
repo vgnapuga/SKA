@@ -1,6 +1,6 @@
 package com.ska.vo;
 
-import com.ska.exceptions.DomainValidationException;
+import com.ska.exception.DomainValidationException;
 
 
 public abstract class ValueObject<T> {

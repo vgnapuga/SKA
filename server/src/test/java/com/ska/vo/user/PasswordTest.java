@@ -6,8 +6,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.ska.constants.user.PasswordConstants;
-import com.ska.exceptions.DomainValidationException;
+import com.ska.constant.user.PasswordConstants;
+import com.ska.exception.DomainValidationException;
 import com.ska.vo.BaseTest;
 
 

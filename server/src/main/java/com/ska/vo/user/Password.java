@@ -1,8 +1,8 @@
 package com.ska.vo.user;
 
-import com.ska.exceptions.DomainValidationException;
+import com.ska.constant.user.PasswordConstants;
+import com.ska.exception.DomainValidationException;
 import com.ska.vo.ValueObject;
-import com.ska.constants.user.PasswordConstants;
 
 
 public final class Password extends ValueObject<String> {

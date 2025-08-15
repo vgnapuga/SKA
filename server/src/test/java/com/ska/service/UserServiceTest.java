@@ -21,11 +21,11 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Optional;
 
-import com.ska.constants.user.PasswordConstants;
+import com.ska.constant.user.PasswordConstants;
 import com.ska.dto.user.*;
-import com.ska.exceptions.BusinessRuleViolationException;
-import com.ska.exceptions.ResourceAlreadyExistsException;
-import com.ska.exceptions.ResourceNotFoundException;
+import com.ska.exception.BusinessRuleViolationException;
+import com.ska.exception.ResourceAlreadyExistsException;
+import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.user.User;
 import com.ska.repository.UserRepository;
 import com.ska.vo.user.*;

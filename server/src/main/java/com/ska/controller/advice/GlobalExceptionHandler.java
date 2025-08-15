@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
 import com.ska.dto.error.*;
-import com.ska.exceptions.*;
+import com.ska.exception.*;
 
 
 @RestControllerAdvice
