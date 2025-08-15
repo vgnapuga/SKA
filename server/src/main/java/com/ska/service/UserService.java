@@ -21,6 +21,12 @@ import com.ska.vo.user.*;
 import com.ska.util.LogTemplates;
 
 
+/**
+ * Service for managing system users.
+ * 
+ * Provides operations for creating, updating, retrieving and deleting users
+ * with business rule validation.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,7 +35,17 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-
+    
+    /**
+     * Creates a new system user.
+     * 
+     * @param request data containing email and password
+     * @return created user with assigned ID
+     * @throws ResourceAlreadyExistsException if user with this email already exists
+     * @throws BusinessRuleViolationException if password does not meet the requirements
+     * @throws DomainValidationException if email invalid or too long
+     * @throws DomainValidationException if password BCrypt hash incorrect
+     */
     @Transactional()
     public final User createUser(final UserCreateRequest request) {
         log.info("Creating user with email: {}", request.email());
@@ -70,6 +86,13 @@ public class UserService {
         return new Password(hashed);
     }
 
+    /**
+     * Retrieves user by ID.
+     * 
+     * @param id the user identifier
+     * @return Optional containing user if found, empty otherwise
+     * @throws BusinessRuleViolationException if ID is null or invalid
+     */
     @Transactional(readOnly = true)
     public final Optional<User> getUserById(final Long id) {
         log.info("Getting user with ID: {}", id);
@@ -98,6 +121,11 @@ public class UserService {
             throw new BusinessRuleViolationException("User id < 1");
     }
 
+    /**
+     * Retrieves all database users.
+     * 
+     * @return List of database users
+     */
     @Transactional(readOnly = true)
     public final List<User> getAllUsers() {
     log.info("Getting all users");
@@ -108,6 +136,16 @@ public class UserService {
     return users;
     }
 
+    /**
+     * Updates user email by ID.
+     * 
+     * @param request data containing user ID and new email
+     * @return User with updated email
+     * @throws BusinessRuleViolationException if ID is null or invalid
+     * @throws ResourceNotFoundException if ID does not exists in database
+     * @throws DomainValidationException if email incorrect
+     * @throws ResourceAlreadyExistsException if email already exists in database
+     */
     @Transactional
     public final User updateUserEmail(final UserUpdateEmailRequest request) {
         Long id = request.id();
@@ -139,6 +177,16 @@ public class UserService {
         return updatedUser;
     }
 
+    /**
+     * Updates user password by ID.
+     * 
+     * @param request data containing user ID and new password
+     * @return User with updated password
+     * @throws BusinessRuleViolationException if ID is null or invalid
+     * @throws ResourceNotFoundException if ID does not exists in database
+     * @throws BusinessRuleViolationException if password does not meet the requirements
+     * @throws DomainValidationException if password BCrypt hash incorrect
+     */
     @Transactional
     public final User updateUserPassword(final UserUpdatePasswordRequest request) {
         Long id = request.id();
@@ -168,6 +216,13 @@ public class UserService {
         return updatedUser;
     }
 
+    /**
+     * Deletes user by ID.
+     * 
+     * @param id the user identifier
+     * @throws BusinessRuleViolationException if ID is null or invalid
+     * @throws ResourceNotFoundException if ID does not exists in database
+     */
     @Transactional
     public final void deleteUserById(final Long id) {
         log.info("Deleting user with ID: {}", id);
