@@ -14,32 +14,36 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import com.ska.dto.user.*;
 import com.ska.model.user.User;
 import com.ska.service.UserService;
 
 
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("api/users")
 public final class UserController {
     
     private final UserService userService;
-
-
-    public UserController(final UserService userService) {
-        this.userService = userService;
-    }
+    private static final String MAIN_PATH = "api/users";
 
 
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody final UserCreateRequest request) {
+        log.info("POST {} - email: {}", MAIN_PATH, request.email());
+
         User createdUser = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     @GetMapping({"/{id}"})
     public ResponseEntity<User> getUserById(@PathVariable final Long id) {
+        log.info("GET {}/{}", MAIN_PATH, id);
+
         Optional<User> user = userService.getUserById(id);
         return user.map(u -> ResponseEntity.ok(u)).orElse(ResponseEntity.notFound().build());
     }
@@ -49,6 +53,8 @@ public final class UserController {
             @PathVariable final Long id,
             @Valid @RequestBody UserUpdateEmailRequest request
     ) {
+        log.info("PUT {}/{}/email - new email: {}", MAIN_PATH, id, request.newEmail());
+
         if (!id.equals(request.id()))
             return ResponseEntity.badRequest().build();
 
@@ -61,6 +67,8 @@ public final class UserController {
             @PathVariable final Long id,
             @Valid @RequestBody UserUpdatePasswordRequest request
     ) {
+        log.info("PUT {}/{}/password - new password: ***", MAIN_PATH, id);
+
         if (!id.equals(request.id()))
             return ResponseEntity.badRequest().build();
 
@@ -69,11 +77,10 @@ public final class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserById(
-            @PathVariable final Long id
-    ) {
-        userService.deleteUserById(id);
+    public ResponseEntity<Void> deleteUserById(@PathVariable final Long id) {
+        log.info("DELETE {}/{}", MAIN_PATH, id);
 
+        userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
     }
 
