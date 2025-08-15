@@ -15,107 +15,122 @@ import org.springframework.web.context.request.WebRequest;
 import com.ska.dto.error.*;
 import com.ska.exception.*;
 
+import lombok.extern.slf4j.Slf4j;
 
+
+@Slf4j
 @RestControllerAdvice
 public final class GlobalExceptionHandler {
     
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ValidationErrorResponse> handleValidationErrorsExceptions(
-            final MethodArgumentNotValidException ex,
+            final MethodArgumentNotValidException exception,
             final WebRequest request
     ) {
         Map<String, List<String>> errorFields = new HashMap<>();
 
-        ex.getBindingResult().getFieldErrors().forEach(error -> {
+        exception.getBindingResult().getFieldErrors().forEach(error -> {
             String fieldName = error.getField();
             String errorMessage = error.getDefaultMessage();
 
             errorFields.computeIfAbsent(fieldName, k -> new ArrayList<>()).add(errorMessage);
         });
 
-        ValidationErrorResponse response = ValidationErrorResponse.of(
+        ValidationErrorResponse errorResponse = ValidationErrorResponse.of(
                 "Validation failed at DTO level",
                 getPath(request),
                 HttpStatus.BAD_REQUEST.value(),
                 errorFields
         );
 
-        return ResponseEntity.badRequest().body(response);
+        log.warn("Validation error at {}: {}", getPath(request), exception.getMessage());
+
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(BusinessRuleViolationException.class)
     public ResponseEntity<ErrorResponse> handleBusinessRuleViolationExceptions(
-            final BusinessRuleViolationException ex,
+            final BusinessRuleViolationException exception,
             final WebRequest request
     ) {
-        ErrorResponse response = ErrorResponse.of(
+        ErrorResponse errorResponse = ErrorResponse.of(
                 "BUSINESS_RULE_VIOLATION",
-                ex.getMessage(),
+                exception.getMessage(),
                 getPath(request),
                 HttpStatus.BAD_REQUEST.value()
         );
 
-        return ResponseEntity.badRequest().body(response);
+        log.warn("Business rule violation at {}: {}", getPath(request), exception.getMessage());
+
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundExceptions(
-            final ResourceNotFoundException ex,
+            final ResourceNotFoundException exception,
             final WebRequest request
     ) {
-        ErrorResponse response = ErrorResponse.of(
+        ErrorResponse errorResponse = ErrorResponse.of(
                 "RESOURCE_NOT_FOUND",
-                ex.getMessage(),
+                exception.getMessage(),
                 getPath(request),
                 HttpStatus.NOT_FOUND.value()
         );
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        log.info("Resource not found at {}: {}", getPath(request), exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleResourceAlreadyExistsExceptions(
-            final ResourceAlreadyExistsException ex,
+            final ResourceAlreadyExistsException exception,
             final WebRequest request
     ) {
-        ErrorResponse response = ErrorResponse.of(
+        ErrorResponse errorResponse = ErrorResponse.of(
                 "RESOURCE_ALREADY_EXISTS",
-                ex.getMessage(),
+                exception.getMessage(),
                 getPath(request),
                 HttpStatus.CONFLICT.value()
         );
 
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        log.warn("Resource already exists error at {}: {}", getPath(request), exception.getMessage());
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorResponse);
     }
 
     @ExceptionHandler(DomainValidationException.class)
     public ResponseEntity<ErrorResponse> handleDomainValidationExceptions(
-            final DomainValidationException ex,
+            final DomainValidationException exception,
             final WebRequest request
     ) {
-        ErrorResponse response = ErrorResponse.of(
+        ErrorResponse errorResponse = ErrorResponse.of(
                 "DOMAIN_VALIDATION_ERROR",
-                ex.getMessage(),
+                exception.getMessage(),
                 getPath(request),
                 HttpStatus.BAD_REQUEST.value()
         );
+        
+        log.warn("Domain validation error at {}: {}", getPath(request), exception.getMessage());
 
-        return ResponseEntity.badRequest().body(response);
+        return ResponseEntity.badRequest().body(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGenericExceptions(
-            final Exception ex,
+            final Exception exception,
             final WebRequest request
     ) {
-        ErrorResponse response = ErrorResponse.of(
+        ErrorResponse errorResponse = ErrorResponse.of(
                 "INTERNAL_SERVER_ERROR",
                 "An unexpected error occurred",
                 getPath(request),
                 HttpStatus.INTERNAL_SERVER_ERROR.value()
         );
 
-        return ResponseEntity.internalServerError().body(response);
+        log.error("Unexpected error at {}: {}", getPath(request), exception.getMessage(), exception);
+
+        return ResponseEntity.internalServerError().body(errorResponse);
     }
 
 
