@@ -7,18 +7,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ska.constant.user.*;
-import com.ska.dto.user.*;
-import com.ska.exception.BusinessRuleViolationException;
-import com.ska.exception.ResourceAlreadyExistsException;
-import com.ska.exception.ResourceNotFoundException;
-import com.ska.vo.user.*;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+
+import com.ska.exception.BusinessRuleViolationException;
+import com.ska.exception.ResourceAlreadyExistsException;
+import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.user.User;
 import com.ska.repository.UserRepository;
+import com.ska.constant.user.*;
+import com.ska.dto.user.*;
+import com.ska.vo.user.*;
+import com.ska.util.LogTemplates;
 
 
 @Slf4j
@@ -34,20 +35,20 @@ public class UserService {
     public final User createUser(final UserCreateRequest request) {
         log.info("Creating user with email: {}", request.email());
 
-        log.debug("Email validation - start");
+        log.debug(LogTemplates.validationStartLog("Email"));
         Email email = new Email(request.email());
 
-        log.debug("Email uniqueness validation - start");
+        log.debug(LogTemplates.checkStartLog("Email uniqueness"));
         if (userRepository.existsByEmail(email))
             throw new ResourceAlreadyExistsException(
                     String.format("User with email=%s already exists", email.toString())
             );
 
-        log.debug("Raw password validation - start");
+        log.debug(LogTemplates.validationStartLog("Raw password"));
         String rawPassword = request.password();
         validateRawPassword(rawPassword);
 
-        log.debug("Password encoding - start");
+        log.debug(LogTemplates.startLog("Password encoding"));
         Password password = encodePassword(rawPassword);
 
         User user = new User(email, password);
@@ -74,10 +75,10 @@ public class UserService {
     public final Optional<User> getUserById(final Long id) {
         log.info("Getting user with ID: {}", id);
 
-        log.debug("ID validation - start");
+        log.debug(LogTemplates.validationStartLog("ID"));
         validateId(id);
 
-        log.debug("Database query - start");
+        log.debug(LogTemplates.startLog("Database query"));
         Optional<User> retrievedUser = userRepository.findById(id);
 
         if (retrievedUser.isPresent())
@@ -113,20 +114,20 @@ public class UserService {
         Long id = request.id();
         log.info("Updating user email for ID: {}", id);
         
-        log.debug("ID validation - start");
+        log.debug(LogTemplates.validationStartLog("ID"));
         validateId(id);
 
-        log.debug("ID existing check - start");
+        log.debug(LogTemplates.checkStartLog("ID existing"));
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(
                         String.format("User id=%d not found to update email", id)
             )
         );
 
-        log.debug("Email validation - start");
+        log.debug(LogTemplates.validationStartLog("Email"));
         Email newEmail = new Email(request.newEmail());
 
-        log.debug("Email uniqueness validation - start");
+        log.debug(LogTemplates.checkStartLog("Email uniqueness"));
         boolean isUnique = !userRepository.existsByEmail(newEmail);
         user.changeEmail(newEmail, isUnique);
 
@@ -144,21 +145,21 @@ public class UserService {
         Long id = request.id();
         log.info("Updating user password for ID: {}", id);
 
-        log.debug("ID validation - start");
+        log.debug(LogTemplates.validationStartLog("ID"));
         validateId(id);
 
-        log.debug("ID existing check - start");
+        log.debug(LogTemplates.checkStartLog("ID existing"));
         User user = userRepository.findById(id).orElseThrow(
                 () -> new ResourceNotFoundException(
                         String.format("User id=%d not found to update password", id)
             )
         );
 
-        log.debug("Raw password validation - start");
+        log.debug(LogTemplates.validationStartLog("Raw password"));
         String rawPassword = request.newPassword();
         validateRawPassword(rawPassword);
 
-        log.debug("Password encoding - start");
+        log.debug(LogTemplates.startLog("Password encoding"));
         Password newPassword = encodePassword(rawPassword);
 
         user.changePassword(newPassword);
@@ -172,10 +173,10 @@ public class UserService {
     public final void deleteUserById(final Long id) {
         log.info("Deleting user with ID: {}", id);
 
-        log.debug("User ID validation - start");
+        log.debug(LogTemplates.validationStartLog("ID"));
         validateId(id);
 
-        log.debug("ID existing check - start");
+        log.debug(LogTemplates.checkStartLog("ID existing"));
         if (!userRepository.existsById(id))
             throw new ResourceNotFoundException(
                     String.format("User id=%d not found to delete", id)
