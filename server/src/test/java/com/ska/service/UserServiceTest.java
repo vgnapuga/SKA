@@ -49,8 +49,8 @@ class UserServiceTest {
     private static final String TEST_RAW_PASSWORD = "qwerty123456";
     private static final String TEST_HASHED_PASSWORD = "$2a$10$validBcryptHashWith60Characters1234567890123456781234";
 
-    private static final String USER_ID_IS_NULL_MESSAGE = "User id is <null>";
-    private static final String USER_ID_IS_LESS_THEN_ONE_MESSAGE = "User id < 1";
+    private static final String USER_ID_IS_NULL_MESSAGE = "ID is <null>";
+    private static final String USER_ID_IS_LESS_THEN_ONE_MESSAGE = "ID < 1";
 
 
     // === Helper-methods === //

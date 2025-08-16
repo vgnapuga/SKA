@@ -24,18 +24,19 @@ import com.ska.util.LogTemplates;
 /**
  * Service for managing system users.
  * 
- * Provides operations for creating, updating, retrieving and deleting users
+ * Provides operations for
+ * creating, updating, retrieving and deleting users
  * with business rule validation.
  */
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService extends BaseService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    
+
     /**
      * Creates a new system user.
      * 
@@ -114,13 +115,6 @@ public class UserService {
         return retrievedUser;
     }
 
-    private static void validateId(final Long id) {
-        if (id == null)
-            throw new BusinessRuleViolationException("User id is <null>");
-        if (id <= 0)
-            throw new BusinessRuleViolationException("User id < 1");
-    }
-
     /**
      * Retrieves all database users.
      * 
@@ -128,12 +122,12 @@ public class UserService {
      */
     @Transactional(readOnly = true)
     public final List<User> getAllUsers() {
-    log.info("Getting all users");
+        log.info("Getting all users");
 
-    List<User> users = userRepository.findAll();
-    log.info("Retrieved {} users", users.size());
+        List<User> users = userRepository.findAll();
+        log.info("Retrieved {} users", users.size());
 
-    return users;
+        return users;
     }
 
     /**
