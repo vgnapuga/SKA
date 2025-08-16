@@ -133,7 +133,7 @@ public class UserService extends BaseService {
     /**
      * Updates user email by ID.
      * 
-     * @param request data containing user ID and new email
+     * @param request data containing new email
      * @return User with updated email
      * @throws BusinessRuleViolationException if ID is null or less than one
      * @throws ResourceNotFoundException if ID does not exists in database
@@ -141,8 +141,7 @@ public class UserService extends BaseService {
      * @throws ResourceAlreadyExistsException if email already exists in database
      */
     @Transactional
-    public final User updateUserEmail(final UserUpdateEmailRequest request) {
-        Long id = request.id();
+    public final User updateUserEmail(final Long id, final UserUpdateEmailRequest request) {
         log.info("Updating user email for ID: {}", id);
         
         log.debug(LogTemplates.validationStartLog("ID"));
@@ -174,7 +173,7 @@ public class UserService extends BaseService {
     /**
      * Updates user password by ID.
      * 
-     * @param request data containing user ID and new password
+     * @param request data containing new password
      * @return User with updated password
      * @throws BusinessRuleViolationException if ID is null or less than one
      * @throws ResourceNotFoundException if ID does not exists in database
@@ -182,8 +181,7 @@ public class UserService extends BaseService {
      * @throws DomainValidationException if password BCrypt hash incorrect
      */
     @Transactional
-    public final User updateUserPassword(final UserUpdatePasswordRequest request) {
-        Long id = request.id();
+    public final User updateUserPassword(final Long id, final UserUpdatePasswordRequest request) {
         log.info("Updating user password for ID: {}", id);
 
         log.debug(LogTemplates.validationStartLog("ID"));

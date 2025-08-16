@@ -212,8 +212,8 @@ class UserServiceTest {
         whenExistsByEmail(false);
         whenSave();
 
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_USER_ID, TEST_EMAIL);
-        User result = userService.updateUserEmail(request);
+        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
+        User result = userService.updateUserEmail(TEST_USER_ID, request);
 
         assertNotNull(result);
         assertNotEquals(oldEmail, result.getEmail().getValue());
@@ -229,10 +229,11 @@ class UserServiceTest {
     void testUpdateUserEmailWithNullId() {
         Long nullId = null;
 
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(nullId, TEST_EMAIL);
+        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
 
         BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class, () -> userService.updateUserEmail(request)
+                BusinessRuleViolationException.class,
+                () -> userService.updateUserEmail(nullId, request)
         );
         assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
 
@@ -244,10 +245,11 @@ class UserServiceTest {
             0L, -1L, -100L, -1000L,
     })
     void testUpdateUserEmailWithIdLessThenOne(Long userId) {
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(userId, TEST_EMAIL);
+        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
 
         BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class, () -> userService.updateUserEmail(request)
+                BusinessRuleViolationException.class,
+                () -> userService.updateUserEmail(userId, request)
         );
         assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
 
@@ -258,10 +260,11 @@ class UserServiceTest {
     void testUpdateUserEmailNotFound() {
         whenFindById(Optional.empty());
 
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_USER_ID, TEST_EMAIL);
+        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
         
         ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class, () -> userService.updateUserEmail(request)
+                ResourceNotFoundException.class,
+                () -> userService.updateUserEmail(TEST_USER_ID, request)
         );
         assertEquals("User id=" + TEST_USER_ID + " not found to update email", exception.getMessage());
 
@@ -277,10 +280,11 @@ class UserServiceTest {
         whenFindById(Optional.of(userSecond));
         whenExistsByEmail(true);
 
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_USER_ID, userFirst.getEmail().getValue());
+        UserUpdateEmailRequest request = new UserUpdateEmailRequest(userFirst.getEmail().getValue());
 
         ResourceAlreadyExistsException exception = assertThrows(
-                ResourceAlreadyExistsException.class, () -> userService.updateUserEmail(request)
+                ResourceAlreadyExistsException.class,
+                () -> userService.updateUserEmail(TEST_USER_ID, request)
         );
         assertEquals("Email=" + userFirst.getEmail().toString() + " already exists", exception.getMessage());
 
@@ -299,8 +303,8 @@ class UserServiceTest {
         whenEncode();
         whenSave();
 
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_USER_ID, TEST_RAW_PASSWORD);
-        User result = userService.updateUserPassword(request);
+        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
+        User result = userService.updateUserPassword(TEST_USER_ID, request);
 
         assertNotNull(result);
 
@@ -314,10 +318,11 @@ class UserServiceTest {
     void testUpdateUserPasswordWithNullId() {
         Long nullId = null;
 
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(nullId, TEST_RAW_PASSWORD);
+        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
 
         BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class,() -> userService.updateUserPassword(request)
+                BusinessRuleViolationException.class,
+                () -> userService.updateUserPassword(nullId, request)
         );
         assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
 
@@ -329,10 +334,11 @@ class UserServiceTest {
             0L, -1L, -100L, -1000L,
     })
     void testUpdateUserPasswordWithIdLessThenOne(Long userId) {
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(userId, TEST_RAW_PASSWORD);
+        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
 
         BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class, () -> userService.updateUserPassword(request)
+                BusinessRuleViolationException.class,
+                () -> userService.updateUserPassword(userId, request)
         );
         assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
 
@@ -343,10 +349,11 @@ class UserServiceTest {
     void testUpdateUserPasswordNotFound() {
         whenFindById(Optional.empty());
 
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_USER_ID, TEST_RAW_PASSWORD);
+        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
 
         ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class, () -> userService.updateUserPassword(request)
+                ResourceNotFoundException.class,
+                () -> userService.updateUserPassword(TEST_USER_ID, request)
         );
         assertEquals("User id=" + TEST_USER_ID + " not found to update password", exception.getMessage());
 
@@ -364,10 +371,11 @@ class UserServiceTest {
 
         whenFindById(Optional.of(user));
 
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_USER_ID, rawPassword);
+        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(rawPassword);
 
         BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class, () -> userService.updateUserPassword(request)
+                BusinessRuleViolationException.class,
+                () -> userService.updateUserPassword(TEST_USER_ID, request)
         );
         assertEquals(PasswordConstants.INVALID_LENGTH_MESSAGE, exception.getMessage());
 
