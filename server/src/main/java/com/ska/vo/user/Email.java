@@ -6,10 +6,9 @@ import com.ska.vo.ValueObject;
 
 
 /**
- * Email value object class with
- * format and length validation.
+ * Immutable email value object with comprehensive validation.
  * 
- * Ensures email format compliance and length constraints.
+ * Validates email format, length constraints. Ensures immutability.
  */
 public final class Email extends ValueObject<String> {
 

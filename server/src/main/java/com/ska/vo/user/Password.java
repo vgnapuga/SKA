@@ -5,10 +5,9 @@ import com.ska.exception.DomainValidationException;
 import com.ska.vo.ValueObject;
 
 /**
- * Password value object class with
- * BCrypt format validation.
+ * Immutable password value object with BCrypt validation.
  * 
- * Ensures hashed password format compliance.
+ * Validates BCrypt hash length and prefixes. Ensures immutability.
  */
 public final class Password extends ValueObject<String> {
 
