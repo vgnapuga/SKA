@@ -11,6 +11,11 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 
 
+/**
+ * Base abstract class for all database entities.
+ * 
+ * Provides common fields and methods.
+ */
 @MappedSuperclass
 public abstract class BaseModel {
 
