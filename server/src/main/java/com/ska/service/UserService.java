@@ -92,7 +92,7 @@ public class UserService extends BaseService {
      * 
      * @param id the user identifier
      * @return Optional containing user if found, empty otherwise
-     * @throws BusinessRuleViolationException if ID is null or invalid
+     * @throws BusinessRuleViolationException if ID is null or less than one
      */
     @Transactional(readOnly = true)
     public final Optional<User> getUserById(final Long id) {
@@ -135,7 +135,7 @@ public class UserService extends BaseService {
      * 
      * @param request data containing user ID and new email
      * @return User with updated email
-     * @throws BusinessRuleViolationException if ID is null or invalid
+     * @throws BusinessRuleViolationException if ID is null or less than one
      * @throws ResourceNotFoundException if ID does not exists in database
      * @throws DomainValidationException if email incorrect
      * @throws ResourceAlreadyExistsException if email already exists in database
@@ -176,7 +176,7 @@ public class UserService extends BaseService {
      * 
      * @param request data containing user ID and new password
      * @return User with updated password
-     * @throws BusinessRuleViolationException if ID is null or invalid
+     * @throws BusinessRuleViolationException if ID is null or less than one
      * @throws ResourceNotFoundException if ID does not exists in database
      * @throws BusinessRuleViolationException if password does not meet the requirements
      * @throws DomainValidationException if password BCrypt hash incorrect
@@ -214,7 +214,7 @@ public class UserService extends BaseService {
      * Deletes user by ID.
      * 
      * @param id the user identifier
-     * @throws BusinessRuleViolationException if ID is null or invalid
+     * @throws BusinessRuleViolationException if ID is null or less than one
      * @throws ResourceNotFoundException if ID does not exists in database
      */
     @Transactional
