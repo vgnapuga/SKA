@@ -11,6 +11,11 @@ import com.ska.model.BaseModel;
 import com.ska.vo.user.*;
 
 
+/**
+ * User domain entity representing system user.
+ * 
+ * Provides email and password management with uniqueness check.
+ */
 @Entity
 @Table(name = "users")
 public class User extends BaseModel {
@@ -32,6 +37,13 @@ public class User extends BaseModel {
     }
 
 
+    /**
+     * Updates user email with database existence checking.
+     * 
+     * @param newEmail the new email to set
+     * @param isUnique true if email is unique in database
+     * @throws ResourceAlreadyExistsException if email already exists
+     */
     public final void changeEmail(final Email newEmail, final boolean isUnique) {
         if (!isUnique)
             throw new ResourceAlreadyExistsException(
@@ -40,6 +52,12 @@ public class User extends BaseModel {
 
         this.email = newEmail;
     }
+
+    /**
+     * Updates user password.
+     * 
+     * @param newPassword the new password to set
+     */
     public final void changePassword(final Password newPassword) {
         this.password = newPassword;
     }
