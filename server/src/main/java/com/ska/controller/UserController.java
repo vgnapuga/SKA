@@ -18,10 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import com.ska.dto.user.*;
-import com.ska.exception.BusinessRuleViolationException;
-import com.ska.exception.DomainValidationException;
-import com.ska.exception.ResourceAlreadyExistsException;
-import com.ska.exception.ResourceNotFoundException;
+import com.ska.exception.*;
 import com.ska.model.user.User;
 import com.ska.service.UserService;
 
@@ -31,6 +28,16 @@ import com.ska.service.UserService;
  * 
  * Provides HTTP endpoints for creating, retrieving, updating, and deleting users.
  * Base path: /api/users
+ * 
+ * @see UserService - service for managing system users
+ * @see User - user entity
+ * @see UserCreateRequest - user creation request
+ * @see UserUpdateEmailRequest - email update request
+ * @see UserUpdatePasswordRequest - password update request
+ * @see BusinessRuleViolationException - thrown on business rules violation
+ * @see ResourceAlreadyExistsException - thrown if resource already exists
+ * @see ResourceNotFoundException - thrown if resource not found
+ * @see DomainValidationException - thrown if email or password validation failure
  */
 @Slf4j
 @RestController
@@ -43,14 +50,17 @@ public final class UserController {
 
 
     /**
-     * Creates a new user in the system.
+     * Creates a new user in the system using {@link UserService#createUser(UserCreateRequest)}.
      * 
      * @param request data containing email and password
      * @return ResponseEntity with created user and HTTP 201 status
      * @throws ResourceAlreadyExistsException if user with this email already exists
      * @throws BusinessRuleViolationException if password does not meet the requirements
      * @throws DomainValidationException if email invalid or too long
-     * @throws DomainValidationException if password BCrypt hash incorrect
+     * @throws DomainValidationException if password BCrypt hash invalid
+     * @see UserCreateRequest - user creation request
+     * @see UserService - service for managing system users
+     * @see User - user entity
      */
     @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody final UserCreateRequest request) {
@@ -61,11 +71,13 @@ public final class UserController {
     }
 
     /**
-     * Retrieves user by ID.
+     * Retrieves user by ID using {@link UserService#getUserById(Long)}.
      * 
      * @param id the user identifier
      * @return ResponseEntity with user if found (HTTP 200) or HTTP 404 if not found
      * @throws BusinessRuleViolationException if ID is null or less than one
+     * @see UserService - service for managing system users
+     * @see User - user entity
      */
     @GetMapping({"/{id}"})
     public ResponseEntity<User> getUserById(@PathVariable final Long id) {
@@ -76,15 +88,18 @@ public final class UserController {
     }
 
     /**
-     * Updates user email.
+     * Updates user email using {@link UserService#updateUserEmail(Long, UserUpdateEmailRequest)}.
      * 
      * @param id the user identifier
      * @param request data containing new email
      * @return ResponseEntity with updated user and HTTP 200 status
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException if ID does not exists in database
-     * @throws DomainValidationException if email incorrect
+     * @throws ResourceNotFoundException if ID does not exist in database
+     * @throws DomainValidationException if email invalid
      * @throws ResourceAlreadyExistsException if email already exists in database
+     * @see UserUpdateEmailRequest - email update request
+     * @see UserService - service for managing system users
+     * @see User - user entity
      */
     @PutMapping("/{id}/email")
     public ResponseEntity<User> updateUserEmail(
@@ -98,15 +113,18 @@ public final class UserController {
     }
 
     /**
-     * Updates user password.
+     * Updates user password using {@link UserService#updateUserPassword(Long, UserUpdatePasswordRequest)}.
      * 
      * @param id the user identifier
      * @param request data containing new password
      * @return ResponseEntity with updated user and HTTP 200 status
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException if ID does not exists in database
+     * @throws ResourceNotFoundException if ID does not exist in database
      * @throws BusinessRuleViolationException if password does not meet the requirements
-     * @throws DomainValidationException if password BCrypt hash incorrect
+     * @throws DomainValidationException if password BCrypt hash invalid
+     * @see UserUpdatePasswordRequest - password update request
+     * @see UserService - service for managing system users
+     * @see User - user entity
      */
     @PutMapping("/{id}/password")
     public ResponseEntity<User> updateUserPassword(
@@ -120,12 +138,13 @@ public final class UserController {
     }
 
     /**
-     * Deletes user from database.
+     * Deletes user from database using {@link UserService#deleteUserById(Long)}.
      * 
      * @param id the user identifier
      * @return ResponseEntity with HTTP 204 status
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException if ID does not exists in database
+     * @throws ResourceNotFoundException if ID does not exist in database
+     * @see UserService - service for managing system users
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable final Long id) {

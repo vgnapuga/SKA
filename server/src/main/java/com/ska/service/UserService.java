@@ -10,9 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import com.ska.exception.BusinessRuleViolationException;
-import com.ska.exception.ResourceAlreadyExistsException;
-import com.ska.exception.ResourceNotFoundException;
+import com.ska.exception.*;
 import com.ska.model.user.User;
 import com.ska.repository.UserRepository;
 import com.ska.constant.user.*;
@@ -24,9 +22,21 @@ import com.ska.util.LogTemplates;
 /**
  * Service for managing system users.
  * 
- * Provides operations for
- * creating, updating, retrieving and deleting users
+ * Extends {@link BaseService}.
+ * Provides operations for creating, updating, retrieving and deleting users
  * with business rule validation.
+ * 
+ * @see User - user entity
+ * @see Email - email value object
+ * @see Password - password value object
+ * @see UserRepository - JPA repository
+ * @see UserCreateRequest - user creation request
+ * @see UserUpdateEmailRequest - email update request
+ * @see UserUpdatePasswordRequest - password update request
+ * @see BusinessRuleViolationException - thrown on business rules violation
+ * @see ResourceAlreadyExistsException - thrown if resource already exists
+ * @see ResourceNotFoundException - thrown if resource not found
+ * @see DomainValidationException - thrown if email or password validation failure
  */
 @Slf4j
 @Service
@@ -45,7 +55,11 @@ public class UserService extends BaseService {
      * @throws ResourceAlreadyExistsException if user with this email already exists
      * @throws BusinessRuleViolationException if password does not meet the requirements
      * @throws DomainValidationException if email invalid or too long
-     * @throws DomainValidationException if password BCrypt hash incorrect
+     * @throws DomainValidationException if password BCrypt hash invalid
+     * @see UserCreateRequest - user creation request
+     * @see User - user entity
+     * @see Email - email value object
+     * @see Password - password value object
      */
     @Transactional()
     public final User createUser(final UserCreateRequest request) {
@@ -88,11 +102,12 @@ public class UserService extends BaseService {
     }
 
     /**
-     * Retrieves user by ID.
+     * (Read only) retrieves user by ID.
      * 
      * @param id the user identifier
      * @return Optional containing user if found, empty otherwise
      * @throws BusinessRuleViolationException if ID is null or less than one
+     * @see User - user entity
      */
     @Transactional(readOnly = true)
     public final Optional<User> getUserById(final Long id) {
@@ -116,9 +131,10 @@ public class UserService extends BaseService {
     }
 
     /**
-     * Retrieves all database users.
+     * (Read only) retrieves all database users.
      * 
      * @return List of database users
+     * @see User - user entity
      */
     @Transactional(readOnly = true)
     public final List<User> getAllUsers() {
@@ -131,14 +147,17 @@ public class UserService extends BaseService {
     }
 
     /**
-     * Updates user email by ID.
+     * Updates user email by ID using {@link User#changeEmail(Email, boolean)}.
      * 
      * @param request data containing new email
      * @return User with updated email
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException if ID does not exists in database
-     * @throws DomainValidationException if email incorrect
+     * @throws ResourceNotFoundException if ID does not exist in database
+     * @throws DomainValidationException if email invalid
      * @throws ResourceAlreadyExistsException if email already exists in database
+     * @see UserUpdateEmailRequest - email update request
+     * @see User - user entity
+     * @see Email - email value object
      */
     @Transactional
     public final User updateUserEmail(final Long id, final UserUpdateEmailRequest request) {
@@ -171,14 +190,17 @@ public class UserService extends BaseService {
     }
 
     /**
-     * Updates user password by ID.
+     * Updates user password by ID using {@link User#changePassword(Password)}.
      * 
      * @param request data containing new password
      * @return User with updated password
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException if ID does not exists in database
+     * @throws ResourceNotFoundException if ID does not exist in database
      * @throws BusinessRuleViolationException if password does not meet the requirements
-     * @throws DomainValidationException if password BCrypt hash incorrect
+     * @throws DomainValidationException if password BCrypt hash invalid
+     * @see UserUpdatePasswordRequest - password update request
+     * @see User - user entity
+     * @see Password - password value object
      */
     @Transactional
     public final User updateUserPassword(final Long id, final UserUpdatePasswordRequest request) {
@@ -213,7 +235,7 @@ public class UserService extends BaseService {
      * 
      * @param id the user identifier
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException if ID does not exists in database
+     * @throws ResourceNotFoundException if ID does not exist in database
      */
     @Transactional
     public final void deleteUserById(final Long id) {

@@ -1,15 +1,23 @@
 package com.ska.vo.user;
 
 import com.ska.constant.user.PasswordConstants;
+import com.ska.model.user.converter.PasswordConverter;
 import com.ska.exception.DomainValidationException;
-import com.ska.vo.ValueObject;
+import com.ska.vo.BaseValueObject;
+
 
 /**
  * Immutable password value object with BCrypt validation.
  * 
- * Validates BCrypt hash length and prefixes. Ensures immutability.
+ * Extends {@link BaseValueObject}.
+ * Uses {@link PasswordConstants#BCRYPT_HASHED_SIZE} for length validation
+ * and {@link PasswordConstants#BCRYPT_PREFIXES} for format checking.
+ * 
+ * @see PasswordConstants - validation and exception messages constants
+ * @see PasswordConverter - JPA persistence converter
+ * @see DomainValidationException - thrown on validation failure
  */
-public final class Password extends ValueObject<String> {
+public final class Password extends BaseValueObject<String> {
 
     public Password(final String value) {
         super(value);

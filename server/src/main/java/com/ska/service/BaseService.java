@@ -6,8 +6,7 @@ import com.ska.exception.BusinessRuleViolationException;
 /**
  * Base abstract class for all services.
  * 
- * Provides common methods to
- * avoid code duplication (DRY principle).
+ * @see BusinessRuleViolationException - thrown if business rules violation
  */
 public abstract class BaseService {
 

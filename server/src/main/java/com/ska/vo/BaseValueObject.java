@@ -6,11 +6,12 @@ import com.ska.exception.DomainValidationException;
 /**
  * Base abstract class for all value objects.
  * 
- * Provides common methods to
- * avoid code duplication (DRY principle)
- * and self-validation (not null and child validation).
+ * Provides automatic null validation in constructor.
+ * 
+ * @param T the type of value wrapped by this value object
+ * @see DomainValidationException - thrown on validation failure
  */
-public abstract class ValueObject<T> {
+public abstract class BaseValueObject<T> {
     
     protected final T value;
 
@@ -21,7 +22,7 @@ public abstract class ValueObject<T> {
      * @param value the value to wrap
      * @throws DomainValidationException if value is null or invalid
      */
-    protected ValueObject(final T value) {
+    protected BaseValueObject(final T value) {
         validateNotNull(value);
         checkValidation(value);
         this.value = value;
@@ -61,7 +62,7 @@ public abstract class ValueObject<T> {
         if (obj == null || obj.getClass() != this.getClass())
             return false;
 
-        return java.util.Objects.equals(this.value, ((ValueObject<?>) obj).value);
+        return java.util.Objects.equals(this.value, ((BaseValueObject<?>) obj).value);
     }
 
     @Override

@@ -1,16 +1,23 @@
 package com.ska.vo.user;
 
 import com.ska.constant.user.EmailConstants;
+import com.ska.model.user.converter.EmailConverter;
 import com.ska.exception.DomainValidationException;
-import com.ska.vo.ValueObject;
+import com.ska.vo.BaseValueObject;
 
 
 /**
  * Immutable email value object with comprehensive validation.
  * 
- * Validates email format, length constraints. Ensures immutability.
+ * Extends {@link BaseValueObject}.
+ * Uses {@link EmailConstants#MAX_LENGTH} for length validation
+ * and {@link EmailConstants#REGEX} for format checking.
+ * 
+ * @see EmailConstants - validation and exception messages constants
+ * @see EmailConverter - JPA persistence converter
+ * @see DomainValidationException - thrown on validation failure
  */
-public final class Email extends ValueObject<String> {
+public final class Email extends BaseValueObject<String> {
 
     public Email(String value) {
         super(value);

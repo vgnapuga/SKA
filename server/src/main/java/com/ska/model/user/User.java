@@ -7,6 +7,7 @@ import jakarta.persistence.Table;
 
 import com.ska.constant.user.*;
 import com.ska.exception.ResourceAlreadyExistsException;
+import com.ska.exception.DomainValidationException;
 import com.ska.model.BaseModel;
 import com.ska.vo.user.*;
 
@@ -14,7 +15,13 @@ import com.ska.vo.user.*;
 /**
  * User domain entity representing system user.
  * 
+ * Extends {@link BaseModel}.
  * Provides email and password management with uniqueness check.
+ * 
+ * @see Email - email value object
+ * @see Password - password value object
+ * @see ResourceAlreadyExistsException - thrown if resource already exists
+ * @see DomainValidationException - thrown if email or password validation failure
  */
 @Entity
 @Table(name = "users")
@@ -31,6 +38,16 @@ public class User extends BaseModel {
 
     public User() {}
 
+
+    /**
+     * Creates a new user with validated email and password.
+     * 
+     * @param email the email to set
+     * @param password the password to set
+     * @throws DomainValidationException if email or password validation failure
+     * @see Email - email value object
+     * @see Password - password value object
+     */
     public User(final Email email, final Password password) {
         this.email = email;
         this.password = password;
@@ -38,11 +55,12 @@ public class User extends BaseModel {
 
 
     /**
-     * Updates user email with database existence checking.
+     * Updates user email with database uniqueness valiadtion .
      * 
      * @param newEmail the new email to set
      * @param isUnique true if email is unique in database
      * @throws ResourceAlreadyExistsException if email already exists
+     * @see Email - email value object
      */
     public final void changeEmail(final Email newEmail, final boolean isUnique) {
         if (!isUnique)
@@ -57,6 +75,7 @@ public class User extends BaseModel {
      * Updates user password.
      * 
      * @param newPassword the new password to set
+     * @see Password - password value object
      */
     public final void changePassword(final Password newPassword) {
         this.password = newPassword;

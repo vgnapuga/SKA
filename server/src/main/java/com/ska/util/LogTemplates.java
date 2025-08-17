@@ -4,10 +4,8 @@ package com.ska.util;
 /**
  * Util class for logging messages.
  * 
- * Provides methods to avoid
- * duplication (DRY principle).
- * Centralized log message management with
- * private constructor.
+ * Provides methods to avoid duplication (DRY principle).
+ * Centralized log message management with private constructor.
  */
 public final class LogTemplates {
 
