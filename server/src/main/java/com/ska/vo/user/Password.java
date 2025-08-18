@@ -34,15 +34,15 @@ public final class Password extends BaseValueObject<String> {
     protected void checkValidation(final String value) {
         validateNotBlank(value);
 
-        if (value.length() != PasswordConstants.BCRYPT_HASHED_SIZE) {
-            throw new DomainValidationException(PasswordConstants.INVALID_BCRYPT_FORMAT_MESSAGE);
+        if (value.length() != PasswordConstants.Format.BCRYPT_HASHED_SIZE) {
+            throw new DomainValidationException(PasswordConstants.Messages.INVALID_BCRYPT_FORMAT_MESSAGE);
         }
         
-        for (String str : PasswordConstants.BCRYPT_PREFIXES) {
+        for (String str : PasswordConstants.Format.BCRYPT_PREFIXES) {
             if (value.startsWith(str))
                 return;
         }
-        throw new DomainValidationException(PasswordConstants.INVALID_BCRYPT_FORMAT_MESSAGE);
+        throw new DomainValidationException(PasswordConstants.Messages.INVALID_BCRYPT_FORMAT_MESSAGE);
     }
     
     @Override

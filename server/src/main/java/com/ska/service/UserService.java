@@ -92,8 +92,8 @@ public class UserService extends BaseService {
     }
 
     private static void validateRawPassword(final String rawPassword) {
-        if (rawPassword.length() < PasswordConstants.MIN_LENGTH)
-            throw new BusinessRuleViolationException(PasswordConstants.INVALID_LENGTH_MESSAGE);
+        if (rawPassword.length() < PasswordConstants.Format.MIN_LENGTH)
+            throw new BusinessRuleViolationException(PasswordConstants.Messages.INVALID_LENGTH_MESSAGE);
     }
 
     private final Password encodePassword(final String rawPassword) {

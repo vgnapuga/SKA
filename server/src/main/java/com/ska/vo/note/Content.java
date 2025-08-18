@@ -14,7 +14,7 @@ public final class Content extends BaseValueObject<String> {
     
     @Override
     protected void checkValidation(final String value) {
-        if (value.length() > ContentConstants.Numeric.MAX_LENGTH)
+        if (value.length() > ContentConstants.Format.MAX_LENGTH)
             throw new DomainValidationException(ContentConstants.Messages.INVALID_LENGTH_MESSAGE);
     }
 

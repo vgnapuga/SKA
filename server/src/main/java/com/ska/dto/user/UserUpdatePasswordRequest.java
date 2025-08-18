@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Size;
 
 
 public record UserUpdatePasswordRequest(
-        @NotBlank(message = PasswordConstants.REQUIRED_MESSAGE)
-        @Size(min = PasswordConstants.MIN_LENGTH, message = PasswordConstants.INVALID_LENGTH_MESSAGE)
+        @NotBlank(message = PasswordConstants.Messages.REQUIRED_MESSAGE)
+        @Size(min = PasswordConstants.Format.MIN_LENGTH, message = PasswordConstants.Messages.INVALID_LENGTH_MESSAGE)
         String newPassword
 ) {}

@@ -16,7 +16,7 @@ public final class Title extends BaseValueObject<String> {
     protected void checkValidation(final String value) {
         validateNotBlank(value);
 
-        if (value.length() > TitleConstants.Numeric.MAX_LENGTH)
+        if (value.length() > TitleConstants.Format.MAX_LENGTH)
             throw new DomainValidationException(TitleConstants.Messages.INVALID_LENGTH_MESSAGE);
     }
 

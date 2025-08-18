@@ -34,11 +34,11 @@ public final class Email extends BaseValueObject<String> {
     protected void checkValidation(final String value) {
         validateNotBlank(value);
 
-        if (value.length() > EmailConstants.MAX_LENGTH)
-            throw new DomainValidationException(EmailConstants.INVALID_LENGTH_MESSAGE);
+        if (value.length() > EmailConstants.Format.MAX_LENGTH)
+            throw new DomainValidationException(EmailConstants.Messages.INVALID_LENGTH_MESSAGE);
 
-        if (!value.matches(EmailConstants.REGEX))
-            throw new DomainValidationException(EmailConstants.INVALID_FORMAT_MESSAGE);
+        if (!value.matches(EmailConstants.Format.REGEX))
+            throw new DomainValidationException(EmailConstants.Messages.INVALID_FORMAT_MESSAGE);
     }
 
 }

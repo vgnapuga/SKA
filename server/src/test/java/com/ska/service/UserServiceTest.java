@@ -129,7 +129,7 @@ class UserServiceTest {
             BusinessRuleViolationException exception = assertThrows(
                     BusinessRuleViolationException.class, () -> userService.createUser(request)
             );
-            assertEquals(PasswordConstants.INVALID_LENGTH_MESSAGE, exception.getMessage());
+            assertEquals(PasswordConstants.Messages.INVALID_LENGTH_MESSAGE, exception.getMessage());
 
             verify(userRepository, times(1)).existsByEmail(any(Email.class));
             verifyNoMoreInteractions(userRepository);
@@ -398,7 +398,7 @@ class UserServiceTest {
                     BusinessRuleViolationException.class,
                     () -> userService.updateUserPassword(TEST_USER_ID, request)
             );
-            assertEquals(PasswordConstants.INVALID_LENGTH_MESSAGE, exception.getMessage());
+            assertEquals(PasswordConstants.Messages.INVALID_LENGTH_MESSAGE, exception.getMessage());
 
             verify(userRepository, times(1)).findById(TEST_USER_ID);
             verifyNoMoreInteractions(userRepository);

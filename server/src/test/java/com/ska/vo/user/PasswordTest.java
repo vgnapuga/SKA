@@ -57,7 +57,7 @@ class PasswordTest implements ValueObjectBehaviorTest<String> {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Password(invalidHash)    
         );
-        assertEquals(PasswordConstants.INVALID_BCRYPT_FORMAT_MESSAGE, exception.getMessage());
+        assertEquals(PasswordConstants.Messages.INVALID_BCRYPT_FORMAT_MESSAGE, exception.getMessage());
     }
 
 }

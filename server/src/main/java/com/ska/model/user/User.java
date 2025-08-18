@@ -27,11 +27,11 @@ import com.ska.vo.user.*;
 @Table(name = "users")
 public class User extends BaseModel {
 
-    @Column(name = "email", unique = true, nullable = false, length = EmailConstants.MAX_LENGTH)
+    @Column(name = "email", unique = true, nullable = false, length = EmailConstants.Format.MAX_LENGTH)
     @Convert(converter = com.ska.model.user.converter.EmailConverter.class)
     private Email email;
 
-    @Column(name = "password", nullable = false, length = PasswordConstants.BCRYPT_HASHED_SIZE)
+    @Column(name = "password", nullable = false, length = PasswordConstants.Format.BCRYPT_HASHED_SIZE)
     @Convert(converter = com.ska.model.user.converter.PasswordConverter.class)
     private Password password;
 

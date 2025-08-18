@@ -25,11 +25,11 @@ public class Note extends BaseModel {
     @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "fk_note_author"))
     private User user;
 
-    @Column(name = "title", nullable = false, length = TitleConstants.Numeric.MAX_LENGTH)
+    @Column(name = "title", nullable = false, length = TitleConstants.Format.MAX_LENGTH)
     @Convert(converter = TitleConverter.class)
     private Title title;
 
-    @Column(name = "content", nullable = false, length = ContentConstants.Numeric.MAX_LENGTH)
+    @Column(name = "content", nullable = false, length = ContentConstants.Format.MAX_LENGTH)
     @Convert(converter = ContentConverter.class)
     private Content content;
 

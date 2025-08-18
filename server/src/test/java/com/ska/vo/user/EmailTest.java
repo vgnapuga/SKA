@@ -49,7 +49,7 @@ class EmailTest implements ValueObjectBehaviorTest<String> {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Email(tooLongEmail)    
         );
-        assertEquals(EmailConstants.INVALID_LENGTH_MESSAGE, exception.getMessage());
+        assertEquals(EmailConstants.Messages.INVALID_LENGTH_MESSAGE, exception.getMessage());
     }
 
     @ParameterizedTest
@@ -64,7 +64,7 @@ class EmailTest implements ValueObjectBehaviorTest<String> {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Email(invalidEmail)
         );
-        assertEquals(EmailConstants.INVALID_FORMAT_MESSAGE, exception.getMessage());
+        assertEquals(EmailConstants.Messages.INVALID_FORMAT_MESSAGE, exception.getMessage());
     }
     
 

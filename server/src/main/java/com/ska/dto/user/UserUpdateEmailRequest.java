@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Size;
 
 
 public record UserUpdateEmailRequest(
-      @NotBlank(message = EmailConstants.REQUIRED_MESSAGE)
-      @Size(max = EmailConstants.MAX_LENGTH, message = EmailConstants.INVALID_LENGTH_MESSAGE)
-      @Email(message = EmailConstants.INVALID_FORMAT_MESSAGE)
+      @NotBlank(message = EmailConstants.Messages.REQUIRED_MESSAGE)
+      @Size(max = EmailConstants.Format.MAX_LENGTH, message = EmailConstants.Messages.INVALID_LENGTH_MESSAGE)
+      @Email(message = EmailConstants.Messages.INVALID_FORMAT_MESSAGE)
       String newEmail 
 ) {}

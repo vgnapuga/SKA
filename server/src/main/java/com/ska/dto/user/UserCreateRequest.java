@@ -8,12 +8,12 @@ import jakarta.validation.constraints.Size;;
 
 
 public record UserCreateRequest(
-        @NotBlank(message = EmailConstants.REQUIRED_MESSAGE)
-        @Size(max = EmailConstants.MAX_LENGTH, message = EmailConstants.INVALID_LENGTH_MESSAGE)
-        @Email(message = EmailConstants.INVALID_FORMAT_MESSAGE)
+        @NotBlank(message = EmailConstants.Messages.REQUIRED_MESSAGE)
+        @Size(max = EmailConstants.Format.MAX_LENGTH, message = EmailConstants.Messages.INVALID_LENGTH_MESSAGE)
+        @Email(message = EmailConstants.Messages.INVALID_FORMAT_MESSAGE)
         String email,
 
-        @NotBlank(message = PasswordConstants.REQUIRED_MESSAGE)
-        @Size(min = PasswordConstants.MIN_LENGTH, message = PasswordConstants.INVALID_LENGTH_MESSAGE)
+        @NotBlank(message = PasswordConstants.Messages.REQUIRED_MESSAGE)
+        @Size(min = PasswordConstants.Format.MIN_LENGTH, message = PasswordConstants.Messages.INVALID_LENGTH_MESSAGE)
         String password
 ) {}
