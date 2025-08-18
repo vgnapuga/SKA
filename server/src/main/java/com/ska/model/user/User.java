@@ -55,7 +55,7 @@ public class User extends BaseModel {
 
 
     /**
-     * Updates user email with database uniqueness valiadtion .
+     * Updates user email with database uniqueness validation .
      * 
      * @param newEmail the new email to set
      * @param isUnique true if email is unique in database
@@ -65,7 +65,7 @@ public class User extends BaseModel {
     public final void changeEmail(final Email newEmail, final boolean isUnique) {
         if (!isUnique)
             throw new ResourceAlreadyExistsException(
-                String.format("Email=%s already exists", newEmail.toString())
+                    String.format("Email=%s already exists", newEmail.toString())
             );
 
         this.email = newEmail;
@@ -86,23 +86,6 @@ public class User extends BaseModel {
     }
     public final Password getPassword() {
         return this.password;
-    }
-
-    @Override
-    public final boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-
-        if (!(obj instanceof User))
-            return false;
-
-        User user = (User) obj;
-        return java.util.Objects.equals(user.id, this.id);
-    }
-
-    @Override
-    public final int hashCode() {
-        return java.util.Objects.hash(this.id);
     }
 
     @Override

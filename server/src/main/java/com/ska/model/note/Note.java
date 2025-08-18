@@ -13,6 +13,7 @@ import com.ska.model.BaseModel;
 import com.ska.model.user.User;
 import com.ska.vo.note.*;
 import com.ska.constant.note.*;
+import com.ska.exception.ResourceAlreadyExistsException;
 import com.ska.model.note.converter.*;
 
 
@@ -35,11 +36,24 @@ public class Note extends BaseModel {
 
     public Note() {}
 
-    public Note(final Title title, final Content content) {
+    public Note(final User user, final Title title, final Content content) {
+        this.user = user;
         this.title = title;
         this.content = content;
     }
 
+    public final void changeTitle(final Title newTitle, final boolean isUnique) {
+        if (!isUnique)
+            throw new ResourceAlreadyExistsException(
+                    String.format("Note title=%s already exists", newTitle.toString())
+            );
+            
+        this.title = newTitle;
+    }
+
+    public final void changeContent(final Content newContent) {
+        this.content = newContent;
+    }
 
     public final User getUser() {
         return this.user;
@@ -51,23 +65,6 @@ public class Note extends BaseModel {
 
     public final Content getContent() {
         return this.content;
-    }
-
-    @Override
-    public final boolean equals(Object obj) {
-        if (obj == this)
-            return true;
-
-        if (!(obj instanceof Note))
-            return false;
-
-        Note note = (Note) obj;
-        return java.util.Objects.equals(note.id, this.id);
-    }
-
-    @Override
-    public final int hashCode() {
-        return java.util.Objects.hash(this.id);
     }
 
     @Override

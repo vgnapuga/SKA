@@ -54,5 +54,24 @@ public abstract class BaseModel {
     public final LocalDateTime getUpdateTime() {
         return this.updatedAt;
     }
+
+    @Override
+    public final boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null || obj.getClass() != this.getClass())
+            return false;
+
+        return java.util.Objects.equals(this.id, ((BaseModel) obj).id);
+
+    }
+
+    @Override
+    public final int hashCode() {
+        return java.util.Objects.hash(this.id);
+    }
+
+    @Override
+    public abstract String toString();
     
 }
