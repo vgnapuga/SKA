@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.ska.constant.user.PasswordConstants;
 import com.ska.exception.DomainValidationException;
-import com.ska.vo.BaseTest;
+import com.ska.vo.ValueObjectBehaviorTest;
 
 
-class PasswordTest implements BaseTest<String> {
+class PasswordTest implements ValueObjectBehaviorTest<String> {
     
     @ParameterizedTest
     @ValueSource(strings = {
@@ -20,14 +20,14 @@ class PasswordTest implements BaseTest<String> {
         "$2y$14$anotherValidBcryptHashExample123452750123156789112134"
     })
     @Override
-    public void testCreateValid(String validHash) {
+    public void shouldCreate_whenValidValue(String validHash) {
         Password password = assertDoesNotThrow(() -> new Password(validHash));
         assertEquals(validHash, password.getValue());
     }
 
     @Test
     @Override
-    public void testCreateNull() {
+    public void shouldThrowDomainValidationException_whenNullValue() {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Password(null)    
         );
@@ -36,7 +36,7 @@ class PasswordTest implements BaseTest<String> {
 
     @Test
     @Override
-    public void testCreateBlank() {
+    public void shouldThrowDomainValidationException_whenBlankValue() {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Password("")    
         );
@@ -53,7 +53,7 @@ class PasswordTest implements BaseTest<String> {
         "$2y$10$validBcryptHashWith60Characters12345678901234567812341232134213",
         "$2y$10$validBcryptHashWith60Characters12345678901234567812"
     })
-    void testCreateInvalid(String invalidHash) {
+    public void shouldThrowDomainValidationException_whenValueInvalid(String invalidHash) {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Password(invalidHash)    
         );

@@ -1,5 +1,6 @@
 package com.ska.service;
 
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import com.ska.service.contract.crud.*;
 import com.ska.constant.user.PasswordConstants;
 import com.ska.dto.user.*;
 import com.ska.exception.BusinessRuleViolationException;
@@ -76,122 +78,130 @@ class UserServiceTest {
     }
 
 
-    // === userService.createUser(UserCreateRequest) --- tests === //
+    @Nested
+    class CreateUserTests implements CreateCrudBehaviorTest  {
+
+        @Test
+        @Override
+        public void shouldReturnEntity_whenValidRequestData() {
+            whenEncode();
+            whenSave();
+            whenExistsByEmail(false);
+
+            UserCreateRequest request = new UserCreateRequest(TEST_EMAIL, TEST_RAW_PASSWORD);
+            User result = userService.createUser(request);
+
+            assertNotNull(result);
+            assertEquals(TEST_EMAIL, result.getEmail().getValue());
+
+            verify(userRepository, times(1)).existsByEmail(any(Email.class));
+            verify(passwordEncoder, times(1)).encode(TEST_RAW_PASSWORD);
+            verify(userRepository, times(1)).save(any(User.class));
+            verifyNoMoreInteractions(userRepository, passwordEncoder);
+        }
+
+        @Test
+        void shouldThrowException_whenAlreadyExistsEmail() {
+            whenExistsByEmail(true);
+            UserCreateRequest request = new UserCreateRequest(TEST_EMAIL, TEST_RAW_PASSWORD);
+
+            ResourceAlreadyExistsException exception = assertThrows(
+                    ResourceAlreadyExistsException.class, () -> userService.createUser(request)
+            );
+            assertEquals(
+                    String.format("User with email=%s already exists", new Email(request.email()).toString()),
+                    exception.getMessage()
+            );
+
+            verify(userRepository, times(1)).existsByEmail(any(Email.class));
+            verifyNoMoreInteractions(userRepository, passwordEncoder);
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "1", "1a", "1a2", "1a2b", "1a2b3",
+        })
+        void shouldThrowException_whenPasswordTooShort(String rawPassword) {
+            whenExistsByEmail(false);
+
+            UserCreateRequest request = new UserCreateRequest(TEST_EMAIL, rawPassword);
+
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class, () -> userService.createUser(request)
+            );
+            assertEquals(PasswordConstants.INVALID_LENGTH_MESSAGE, exception.getMessage());
+
+            verify(userRepository, times(1)).existsByEmail(any(Email.class));
+            verifyNoMoreInteractions(userRepository);
+            verifyNoInteractions(passwordEncoder);
+        }
+
+    }
+    
+
+    @Nested
+    class GetUserByIdTests implements GetCrudBehaviorTest {
+
+        @Test
+        @Override
+        public void shouldReturnEntity_whenValidRequestData() {
+            User expectedUser = new User(new Email(TEST_EMAIL), new Password(TEST_HASHED_PASSWORD));
+
+            whenFindById(Optional.of(expectedUser));
+
+            Optional<User> result = userService.getUserById(TEST_USER_ID);
+
+            assertTrue(result.isPresent());
+            assertEquals(TEST_EMAIL, result.get().getEmail().getValue());
+
+            verify(userRepository, times(1)).findById(TEST_USER_ID);
+            verifyNoMoreInteractions(userRepository);
+        }
+
+        @Test
+        void shouldReturnEmpty_whenNotFoundId() {
+            whenFindById(Optional.empty());
+
+            Optional<User> result = userService.getUserById(TEST_USER_ID);
+
+            assertTrue(result.isEmpty());
+
+            verify(userRepository,times(1)).findById(TEST_USER_ID);
+            verifyNoMoreInteractions(userRepository);
+        }
+
+        @Test
+        @Override
+        public void shouldThrowException_whenNullId() {
+            Long nullId = null;
+
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class, () -> userService.getUserById(nullId)
+            );
+            assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
+
+            verifyNoInteractions(userRepository);
+        }
+
+        @ParameterizedTest
+        @ValueSource(longs = {
+                0L, -1L, -100L, -1000L,
+        })
+        @Override
+        public void shouldThrowException_whenLessThanOneId(Long userId) {
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class, () -> userService.getUserById(userId)
+            );
+            assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
+
+            verifyNoInteractions(userRepository);
+        }
+
+    }
+
 
     @Test
-    void testCreateUserSuccessfully() {
-        whenEncode();
-        whenSave();
-        whenExistsByEmail(false);
-
-        UserCreateRequest request = new UserCreateRequest(TEST_EMAIL, TEST_RAW_PASSWORD);
-        User result = userService.createUser(request);
-
-        assertNotNull(result);
-        assertEquals(TEST_EMAIL, result.getEmail().getValue());
-
-        verify(userRepository, times(1)).existsByEmail(any(Email.class));
-        verify(passwordEncoder, times(1)).encode(TEST_RAW_PASSWORD);
-        verify(userRepository, times(1)).save(any(User.class));
-        verifyNoMoreInteractions(userRepository, passwordEncoder);
-    }
-
-    @Test
-    void testCreateUserWithExistingEmail() {
-        whenExistsByEmail(true);
-        UserCreateRequest request = new UserCreateRequest(TEST_EMAIL, TEST_RAW_PASSWORD);
-
-        ResourceAlreadyExistsException exception = assertThrows(
-                ResourceAlreadyExistsException.class, () -> userService.createUser(request)
-        );
-        assertEquals(
-                String.format("User with email=%s already exists", new Email(request.email()).toString()),
-                exception.getMessage()
-        );
-
-        verify(userRepository, times(1)).existsByEmail(any(Email.class));
-        verifyNoMoreInteractions(userRepository, passwordEncoder);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "1", "1a", "1a2", "1a2b", "1a2b3",
-    })
-    void testCreateUserWithTooShortPassword(String rawPassword) {
-        whenExistsByEmail(false);
-
-        UserCreateRequest request = new UserCreateRequest(TEST_EMAIL, rawPassword);
-
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class, () -> userService.createUser(request)
-        );
-        assertEquals(PasswordConstants.INVALID_LENGTH_MESSAGE, exception.getMessage());
-
-        verify(userRepository, times(1)).existsByEmail(any(Email.class));
-        verifyNoMoreInteractions(userRepository);
-        verifyNoInteractions(passwordEncoder);
-    }
-
-
-    // === userService.getUserById(Long) --- tests === //
-
-    @Test
-    void testGetUserByIdSuccessfully() {
-        User expectedUser = new User(new Email(TEST_EMAIL), new Password(TEST_HASHED_PASSWORD));
-
-        whenFindById(Optional.of(expectedUser));
-
-        Optional<User> result = userService.getUserById(TEST_USER_ID);
-
-        assertTrue(result.isPresent());
-        assertEquals(TEST_EMAIL, result.get().getEmail().getValue());
-
-        verify(userRepository, times(1)).findById(TEST_USER_ID);
-        verifyNoMoreInteractions(userRepository);
-    }
-
-    @Test
-    void testGetUserByIdNotFound() {
-        whenFindById(Optional.empty());
-
-        Optional<User> result = userService.getUserById(TEST_USER_ID);
-
-        assertTrue(result.isEmpty());
-
-        verify(userRepository,times(1)).findById(TEST_USER_ID);
-        verifyNoMoreInteractions(userRepository);
-    }
-
-    @Test
-    void testGetUserByIdWithNullId() {
-        Long nullId = null;
-
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class, () -> userService.getUserById(nullId)
-        );
-        assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
-
-        verifyNoInteractions(userRepository);
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = {
-            0L, -1L, -100L, -1000L,
-    })
-    void testGetUserByIdWithIdLessThenOne(Long userId) {
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class, () -> userService.getUserById(userId)
-        );
-        assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
-
-        verifyNoInteractions(userRepository);
-    }
-
-
-    // === userService.getAllUsers --- test === //
-
-    @Test
-    void testGetAllUsers() {
+    void shouldReturnListOfEntities() {
         when(userRepository.findAll()).thenReturn(new ArrayList<User>());
 
         assertNotNull(userService.getAllUsers());
@@ -201,239 +211,258 @@ class UserServiceTest {
     }
 
 
-    // === userService.updateUserEmail(UserUpdateEmailRequest) --- tests === //
+    @Nested
+    class UpdateUserEmailTests implements UpdateCrudBehaviorTest {
 
-    @Test
-    void testUpdateUserEmailSuccessfully() {
-        String oldEmail = "old@example.com";
-        User user = new User(new Email(oldEmail), new Password(TEST_HASHED_PASSWORD));
+        @Test
+        @Override
+        public void shouldReturnEntity_whenValidRequestData() {
+            String oldEmail = "old@example.com";
+            User user = new User(new Email(oldEmail), new Password(TEST_HASHED_PASSWORD));
 
-        whenFindById(Optional.of(user));
-        whenExistsByEmail(false);
-        whenSave();
+            whenFindById(Optional.of(user));
+            whenExistsByEmail(false);
+            whenSave();
 
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
-        User result = userService.updateUserEmail(TEST_USER_ID, request);
+            UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
+            User result = userService.updateUserEmail(TEST_USER_ID, request);
 
-        assertNotNull(result);
-        assertNotEquals(oldEmail, result.getEmail().getValue());
-        assertEquals(TEST_EMAIL, result.getEmail().getValue());
+            assertNotNull(result);
+            assertNotEquals(oldEmail, result.getEmail().getValue());
+            assertEquals(TEST_EMAIL, result.getEmail().getValue());
 
-        verify(userRepository, times(1)).findById(TEST_USER_ID);
-        verify(userRepository, times(1)).existsByEmail(any(Email.class));
-        verify(userRepository, times(1)).save(any(User.class));
-        verifyNoMoreInteractions(userRepository);
+            verify(userRepository, times(1)).findById(TEST_USER_ID);
+            verify(userRepository, times(1)).existsByEmail(any(Email.class));
+            verify(userRepository, times(1)).save(any(User.class));
+            verifyNoMoreInteractions(userRepository);
+        }
+
+        @Test
+        @Override
+        public void shouldThrowException_whenNullId() {
+            Long nullId = null;
+
+            UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
+
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class,
+                    () -> userService.updateUserEmail(nullId, request)
+            );
+            assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
+
+            verifyNoInteractions(userRepository);
+        }
+
+        @ParameterizedTest
+        @ValueSource(longs = {
+                0L, -1L, -100L, -1000L,
+        })
+        @Override
+        public void shouldThrowException_whenLessThanOneId(Long userId) {
+            UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
+
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class,
+                    () -> userService.updateUserEmail(userId, request)
+            );
+            assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
+
+            verifyNoInteractions(userRepository);
+        }
+
+        @Test
+        @Override
+        public void shouldThrowException_whenNotFoundId() {
+            whenFindById(Optional.empty());
+
+            UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
+            
+            ResourceNotFoundException exception = assertThrows(
+                    ResourceNotFoundException.class,
+                    () -> userService.updateUserEmail(TEST_USER_ID, request)
+            );
+            assertEquals("User id=" + TEST_USER_ID + " not found to update email", exception.getMessage());
+
+            verify(userRepository, times(1)).findById(TEST_USER_ID);
+            verifyNoMoreInteractions(userRepository);
+        }
+
+        @Test
+        void shouldThrowException_whenAlreadyExistsEmail() {
+            User userFirst = new User(new Email(TEST_EMAIL), new Password(TEST_HASHED_PASSWORD));
+            User userSecond = new User(new Email(TEST_EMAIL + "a"), new Password(TEST_HASHED_PASSWORD));
+
+            whenFindById(Optional.of(userSecond));
+            whenExistsByEmail(true);
+
+            UserUpdateEmailRequest request = new UserUpdateEmailRequest(userFirst.getEmail().getValue());
+
+            ResourceAlreadyExistsException exception = assertThrows(
+                    ResourceAlreadyExistsException.class,
+                    () -> userService.updateUserEmail(TEST_USER_ID, request)
+            );
+            assertEquals("Email=" + userFirst.getEmail().toString() + " already exists", exception.getMessage());
+
+            verify(userRepository, times(1)).findById(TEST_USER_ID);
+            verify(userRepository, times(1)).existsByEmail(any(Email.class));
+        }
+
     }
 
-    @Test
-    void testUpdateUserEmailWithNullId() {
-        Long nullId = null;
+    @Nested
+    class UpdateUserPasswordTests implements UpdateCrudBehaviorTest {
 
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
+        @Test
+        @Override
+        public void shouldReturnEntity_whenValidRequestData() {
+            User user = new User(new Email(TEST_EMAIL), new Password(TEST_HASHED_PASSWORD));
 
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class,
-                () -> userService.updateUserEmail(nullId, request)
-        );
-        assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
+            whenFindById(Optional.of(user));
+            whenEncode();
+            whenSave();
 
-        verifyNoInteractions(userRepository);
-    }
+            UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
+            User result = userService.updateUserPassword(TEST_USER_ID, request);
 
-    @ParameterizedTest
-    @ValueSource(longs = {
-            0L, -1L, -100L, -1000L,
-    })
-    void testUpdateUserEmailWithIdLessThenOne(Long userId) {
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
+            assertNotNull(result);
 
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class,
-                () -> userService.updateUserEmail(userId, request)
-        );
-        assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
+            verify(userRepository, times(1)).findById(TEST_USER_ID);
+            verify(passwordEncoder, times(1)).encode(request.newPassword());
+            verify(userRepository, times(1)).save(any(User.class));
+            verifyNoMoreInteractions(userRepository, passwordEncoder);
+        }
 
-        verifyNoInteractions(userRepository);
-    }
+        @Test
+        @Override
+        public void shouldThrowException_whenNullId() {
+            Long nullId = null;
 
-    @Test
-    void testUpdateUserEmailNotFound() {
-        whenFindById(Optional.empty());
+            UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
 
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(TEST_EMAIL);
-        
-        ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
-                () -> userService.updateUserEmail(TEST_USER_ID, request)
-        );
-        assertEquals("User id=" + TEST_USER_ID + " not found to update email", exception.getMessage());
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class,
+                    () -> userService.updateUserPassword(nullId, request)
+            );
+            assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
 
-        verify(userRepository, times(1)).findById(TEST_USER_ID);
-        verifyNoMoreInteractions(userRepository);
-    }
+            verifyNoInteractions(userRepository, passwordEncoder);
+        }
 
-    @Test
-    void testUpdateUserEmailAlreadyExists() {
-        User userFirst = new User(new Email(TEST_EMAIL), new Password(TEST_HASHED_PASSWORD));
-        User userSecond = new User(new Email(TEST_EMAIL + "a"), new Password(TEST_HASHED_PASSWORD));
+        @ParameterizedTest
+        @ValueSource(longs = {
+                0L, -1L, -100L, -1000L,
+        })
+        @Override
+        public void shouldThrowException_whenLessThanOneId(Long userId) {
+            UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
 
-        whenFindById(Optional.of(userSecond));
-        whenExistsByEmail(true);
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class,
+                    () -> userService.updateUserPassword(userId, request)
+            );
+            assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
 
-        UserUpdateEmailRequest request = new UserUpdateEmailRequest(userFirst.getEmail().getValue());
+            verifyNoInteractions(userRepository, passwordEncoder);
+        }
 
-        ResourceAlreadyExistsException exception = assertThrows(
-                ResourceAlreadyExistsException.class,
-                () -> userService.updateUserEmail(TEST_USER_ID, request)
-        );
-        assertEquals("Email=" + userFirst.getEmail().toString() + " already exists", exception.getMessage());
+        @Test
+        @Override
+        public void shouldThrowException_whenNotFoundId() {
+            whenFindById(Optional.empty());
 
-        verify(userRepository, times(1)).findById(TEST_USER_ID);
-        verify(userRepository, times(1)).existsByEmail(any(Email.class));
-    }
+            UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
 
+            ResourceNotFoundException exception = assertThrows(
+                    ResourceNotFoundException.class,
+                    () -> userService.updateUserPassword(TEST_USER_ID, request)
+            );
+            assertEquals("User id=" + TEST_USER_ID + " not found to update password", exception.getMessage());
 
-    // === userService.updateUserPassword(UserUpdatePasswordRequest) --- tests === //
+            verify(userRepository, times(1)).findById(TEST_USER_ID);
+            verifyNoMoreInteractions(userRepository);
+            verifyNoInteractions(passwordEncoder);
+        }
 
-    @Test
-    void testUpdateUserPasswordSuccessfully() {
-        User user = new User(new Email(TEST_EMAIL), new Password(TEST_HASHED_PASSWORD));
+        @ParameterizedTest
+        @ValueSource(strings = {
+                "1", "1a", "1a2", "1a2b", "1a2b3",
+        })
+        void shouldThrowException_whenPasswordTooShort(String rawPassword) {
+            User user = new User(new Email(TEST_EMAIL), new Password(TEST_HASHED_PASSWORD));
 
-        whenFindById(Optional.of(user));
-        whenEncode();
-        whenSave();
+            whenFindById(Optional.of(user));
 
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
-        User result = userService.updateUserPassword(TEST_USER_ID, request);
+            UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(rawPassword);
 
-        assertNotNull(result);
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class,
+                    () -> userService.updateUserPassword(TEST_USER_ID, request)
+            );
+            assertEquals(PasswordConstants.INVALID_LENGTH_MESSAGE, exception.getMessage());
 
-        verify(userRepository, times(1)).findById(TEST_USER_ID);
-        verify(passwordEncoder, times(1)).encode(request.newPassword());
-        verify(userRepository, times(1)).save(any(User.class));
-        verifyNoMoreInteractions(userRepository, passwordEncoder);
-    }
+            verify(userRepository, times(1)).findById(TEST_USER_ID);
+            verifyNoMoreInteractions(userRepository);
+            verifyNoInteractions(passwordEncoder);
+        }
 
-    @Test
-    void testUpdateUserPasswordWithNullId() {
-        Long nullId = null;
-
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
-
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class,
-                () -> userService.updateUserPassword(nullId, request)
-        );
-        assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
-
-        verifyNoInteractions(userRepository, passwordEncoder);
-    }
-
-    @ParameterizedTest
-    @ValueSource(longs = {
-            0L, -1L, -100L, -1000L,
-    })
-    void testUpdateUserPasswordWithIdLessThenOne(Long userId) {
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
-
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class,
-                () -> userService.updateUserPassword(userId, request)
-        );
-        assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
-
-        verifyNoInteractions(userRepository, passwordEncoder);
-    }
-
-    @Test
-    void testUpdateUserPasswordNotFound() {
-        whenFindById(Optional.empty());
-
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(TEST_RAW_PASSWORD);
-
-        ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class,
-                () -> userService.updateUserPassword(TEST_USER_ID, request)
-        );
-        assertEquals("User id=" + TEST_USER_ID + " not found to update password", exception.getMessage());
-
-        verify(userRepository, times(1)).findById(TEST_USER_ID);
-        verifyNoMoreInteractions(userRepository);
-        verifyNoInteractions(passwordEncoder);
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = {
-            "1", "1a", "1a2", "1a2b", "1a2b3",
-    })
-    void testUpdateUserPasswordTooShort(String rawPassword) {
-        User user = new User(new Email(TEST_EMAIL), new Password(TEST_HASHED_PASSWORD));
-
-        whenFindById(Optional.of(user));
-
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(rawPassword);
-
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class,
-                () -> userService.updateUserPassword(TEST_USER_ID, request)
-        );
-        assertEquals(PasswordConstants.INVALID_LENGTH_MESSAGE, exception.getMessage());
-
-        verify(userRepository, times(1)).findById(TEST_USER_ID);
-        verifyNoMoreInteractions(userRepository);
-        verifyNoInteractions(passwordEncoder);
     }
 
 
-    // === userService.deleteUser(Long) --- tests === //
+    @Nested
+    class DeleteUserByIdTests implements DeleteCrudBehavior {
 
-    @Test
-    void testDeleteUserByIdSuccessfully() {
-        whenExistsById(true);
+        @Test
+        @Override
+        public void shouldDeleteEntity_whenValidRequestData() {
+            whenExistsById(true);
 
-        assertDoesNotThrow(() -> userService.deleteUserById(TEST_USER_ID));
+            assertDoesNotThrow(() -> userService.deleteUserById(TEST_USER_ID));
 
-        verify(userRepository, times(1)).existsById(TEST_USER_ID);
-        verify(userRepository, times(1)).deleteById(TEST_USER_ID);
-        verifyNoMoreInteractions(userRepository);
-    }
+            verify(userRepository, times(1)).existsById(TEST_USER_ID);
+            verify(userRepository, times(1)).deleteById(TEST_USER_ID);
+            verifyNoMoreInteractions(userRepository);
+        }
 
-    @Test
-    void testDeleteUserByIdNotFound() {
-        whenExistsById(false);
-        
-        ResourceNotFoundException exception = assertThrows(
-                ResourceNotFoundException.class, () -> userService.deleteUserById(TEST_USER_ID)
-        );
-        assertEquals("User id=" + TEST_USER_ID + " not found to delete", exception.getMessage());
+        @Test
+        @Override
+        public void shouldThrowException_whenNullId() {
+            Long nullId = null;
 
-        verify(userRepository, times(1)).existsById(TEST_USER_ID);
-        verifyNoMoreInteractions(userRepository);
-    }
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class, () -> userService.deleteUserById(nullId)
+            );
+            assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
 
-    @Test
-    void testDeleteUserByIdWithNullId() {
-        Long nullId = null;
+            verifyNoInteractions(userRepository);
+        }
 
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class, () -> userService.deleteUserById(nullId)
-        );
-        assertEquals(USER_ID_IS_NULL_MESSAGE, exception.getMessage());
+        @Test
+        @Override
+        public void shouldThrowException_whenNotFoundId() {
+            whenExistsById(false);
+            
+            ResourceNotFoundException exception = assertThrows(
+                    ResourceNotFoundException.class, () -> userService.deleteUserById(TEST_USER_ID)
+            );
+            assertEquals("User id=" + TEST_USER_ID + " not found to delete", exception.getMessage());
 
-        verifyNoInteractions(userRepository);
-    }
+            verify(userRepository, times(1)).existsById(TEST_USER_ID);
+            verifyNoMoreInteractions(userRepository);
+        }
 
-    @ParameterizedTest
-    @ValueSource(longs = {
-            0L, -1L, -100L, -1000L,
-    })
-    void testDeleteUserByIdWithIdLessThenOne(Long userId) {
-        BusinessRuleViolationException exception = assertThrows(
-                BusinessRuleViolationException.class, () -> userService.deleteUserById(userId)
-        );
-        assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
+        @ParameterizedTest
+        @ValueSource(longs = {
+                0L, -1L, -100L, -1000L,
+        })
+        @Override
+        public void shouldThrowException_whenLessThanOneId(Long userId) {
+            BusinessRuleViolationException exception = assertThrows(
+                    BusinessRuleViolationException.class, () -> userService.deleteUserById(userId)
+            );
+            assertEquals(USER_ID_IS_LESS_THEN_ONE_MESSAGE, exception.getMessage());
 
-        verifyNoInteractions(userRepository);
+            verifyNoInteractions(userRepository);
+        }
     }
 
 }

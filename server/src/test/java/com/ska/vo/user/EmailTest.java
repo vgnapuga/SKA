@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.ska.constant.user.EmailConstants;
 import com.ska.exception.DomainValidationException;
-import com.ska.vo.BaseTest;
+import com.ska.vo.ValueObjectBehaviorTest;
 
 
-class EmailTest implements BaseTest<String> {
+class EmailTest implements ValueObjectBehaviorTest<String> {
 
     @ParameterizedTest
     @ValueSource(strings = {
@@ -19,14 +19,14 @@ class EmailTest implements BaseTest<String> {
         "user.name+tag@example-domain.co.ru", 
     })
     @Override
-    public void testCreateValid(String validEmail) {
+    public void shouldCreate_whenValidValue(String validEmail) {
         Email email = assertDoesNotThrow(() -> new Email(validEmail));
         assertEquals(validEmail, email.getValue());
     }
 
     @Test
     @Override
-    public void testCreateNull() {
+    public void shouldThrowDomainValidationException_whenNullValue() {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Email(null)
         );
@@ -35,7 +35,7 @@ class EmailTest implements BaseTest<String> {
 
     @Test
     @Override
-    public void testCreateBlank() {
+    public void shouldThrowDomainValidationException_whenBlankValue() {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Email("")  
         );
@@ -43,7 +43,7 @@ class EmailTest implements BaseTest<String> {
     }
 
     @Test
-    void testCreateTooLong() {
+    public void shouldThrowDomainValidationException_whenValueLengthInvalid() {
         String tooLongEmail = "a".repeat(255) + "test@example.com";
 
         DomainValidationException exception = assertThrows(
@@ -60,7 +60,7 @@ class EmailTest implements BaseTest<String> {
         "spaces @example.com",
         "double..dot@example.com"
     })
-    void testCreateInvalid(String invalidEmail) {
+    public void shouldThrowDomainValidationException_whenValueFormatInvalid(String invalidEmail) {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class, () -> new Email(invalidEmail)
         );
