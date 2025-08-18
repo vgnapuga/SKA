@@ -19,7 +19,7 @@ import com.ska.vo.BaseValueObject;
  */
 public final class Email extends BaseValueObject<String> {
 
-    public Email(String value) {
+    public Email(final String value) {
         super(value);
     }
 
@@ -31,7 +31,7 @@ public final class Email extends BaseValueObject<String> {
      * @throws DomainValidationException if value is blank, exceeds 254 characters, or has invalid format
      */
     @Override
-    public final void checkValidation(String value) {
+    protected void checkValidation(final String value) {
         validateNotBlank(value);
 
         if (value.length() > EmailConstants.MAX_LENGTH)
@@ -39,13 +39,6 @@ public final class Email extends BaseValueObject<String> {
 
         if (!value.matches(EmailConstants.REGEX))
             throw new DomainValidationException(EmailConstants.INVALID_FORMAT_MESSAGE);
-    }
-    
-    @Override
-    public final String toString() {
-        return "Email{" +
-            "value=" + this.value +
-            "}";
     }
 
 }

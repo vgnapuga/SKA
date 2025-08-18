@@ -31,7 +31,7 @@ public final class Password extends BaseValueObject<String> {
      * @throws DomainValidationException if value is blank, not exactly 60 characters, or has invalid BCrypt prefixes
      */
     @Override
-    public final void checkValidation(final String value) {
+    protected void checkValidation(final String value) {
         validateNotBlank(value);
 
         if (value.length() != PasswordConstants.BCRYPT_HASHED_SIZE) {
@@ -46,7 +46,7 @@ public final class Password extends BaseValueObject<String> {
     }
     
     @Override
-    public final String toString() {
+    public String toString() {
         return "Password{value=***}";
     }
 

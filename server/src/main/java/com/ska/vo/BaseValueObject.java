@@ -70,6 +70,12 @@ public abstract class BaseValueObject<T> {
         return java.util.Objects.hash(this.value);
     }
 
-    public abstract String toString();
+    @Override
+    public String toString() {
+        return String.format(
+                "%s{value=%s}",
+                this.getClass().getSimpleName(), this.value
+        );
+    }
 
 }

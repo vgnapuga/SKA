@@ -13,16 +13,9 @@ public final class Content extends BaseValueObject<String> {
 
     
     @Override
-    protected final void checkValidation(final String value) {
+    protected void checkValidation(final String value) {
         if (value.length() > ContentConstants.Numeric.MAX_LENGTH)
             throw new DomainValidationException(ContentConstants.Messages.INVALID_LENGTH_MESSAGE);
-    }
-
-    @Override
-    public final String toString() {
-        return "Content{" +
-                "value=" + this.value +
-                "}";
     }
 
 }
