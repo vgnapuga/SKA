@@ -5,7 +5,7 @@ public final class ContentConstants {
 
     public class Format {
         
-        public static final int MAX_LENGTH = 1024;
+        public static final int MAX_LENGTH = 8192;
 
     }
 
