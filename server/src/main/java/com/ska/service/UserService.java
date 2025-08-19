@@ -82,7 +82,7 @@ public class UserService extends BaseService {
         User savedUser = userRepository.save(user);
         log.info(
                 "User created successfully with ID: {}, email: {}",
-                savedUser.getId(), savedUser.getEmail().getValue()
+                savedUser.getId(), email.getValue()
         );
 
         return savedUser;
