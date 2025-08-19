@@ -8,6 +8,7 @@ import jakarta.persistence.Table;
 import com.ska.constant.user.*;
 import com.ska.exception.DomainValidationException;
 import com.ska.model.BaseModel;
+import com.ska.model.user.converter.*;
 import com.ska.vo.user.*;
 
 
@@ -26,11 +27,11 @@ import com.ska.vo.user.*;
 public class User extends BaseModel {
 
     @Column(name = "email", nullable = false, unique = true, length = EmailConstants.Format.MAX_LENGTH)
-    @Convert(converter = com.ska.model.user.converter.EmailConverter.class)
+    @Convert(converter = EmailConverter.class)
     private Email email;
 
     @Column(name = "password", nullable = false, length = PasswordConstants.Format.BCRYPT_HASHED_SIZE)
-    @Convert(converter = com.ska.model.user.converter.PasswordConverter.class)
+    @Convert(converter = PasswordConverter.class)
     private Password password;
 
 

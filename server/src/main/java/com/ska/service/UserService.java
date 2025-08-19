@@ -88,7 +88,7 @@ public class UserService extends BaseService {
         return savedUser;
     }
     
-    private final void checkEmailUniqueness(Email email) {
+    private final void checkEmailUniqueness(final Email email) {
         if (userRepository.existsByEmail(email))
             throw new ResourceAlreadyExistsException(
                     String.format("User with email=%s already exists", email.toString())
@@ -166,15 +166,10 @@ public class UserService extends BaseService {
     public final User updateUserEmail(final Long id, final UserUpdateEmailRequest request) {
         log.info("Updating user email for ID: {}", id);
         
-        log.debug(LogTemplates.validationStartLog("ID"));
         validateId(id);
 
         log.debug(LogTemplates.checkStartLog("ID existing"));
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(
-                        String.format("User id=%d not found to update email", id)
-            )
-        );
+        User user = checkIdExistence(id);
 
         log.debug(LogTemplates.validationStartLog("Email"));
         Email newEmail = new Email(request.newEmail());
@@ -191,6 +186,16 @@ public class UserService extends BaseService {
         );
 
         return updatedUser;
+    }
+
+    private final User checkIdExistence(final Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException(
+                        String.format("User id=%d not found to update email", userId)
+            )
+        );
+
+        return user;
     }
 
     /**
@@ -210,15 +215,10 @@ public class UserService extends BaseService {
     public final User updateUserPassword(final Long id, final UserUpdatePasswordRequest request) {
         log.info("Updating user password for ID: {}", id);
 
-        log.debug(LogTemplates.validationStartLog("ID"));
         validateId(id);
 
         log.debug(LogTemplates.checkStartLog("ID existing"));
-        User user = userRepository.findById(id).orElseThrow(
-                () -> new ResourceNotFoundException(
-                        String.format("User id=%d not found to update password", id)
-            )
-        );
+        User user = checkIdExistence(id);
 
         log.debug(LogTemplates.validationStartLog("Raw password"));
         String rawPassword = request.newPassword();
@@ -245,14 +245,10 @@ public class UserService extends BaseService {
     public final void deleteUserById(final Long id) {
         log.info("Deleting user with ID: {}", id);
 
-        log.debug(LogTemplates.validationStartLog("ID"));
         validateId(id);
 
         log.debug(LogTemplates.checkStartLog("ID existing"));
-        if (!userRepository.existsById(id))
-            throw new ResourceNotFoundException(
-                    String.format("User id=%d not found to delete", id)
-            );
+        checkIdExistence(id);
 
         userRepository.deleteById(id);
         log.info("User with ID: {} deleted successfully", id);
