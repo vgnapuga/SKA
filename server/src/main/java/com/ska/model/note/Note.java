@@ -13,7 +13,6 @@ import com.ska.model.BaseModel;
 import com.ska.model.user.User;
 import com.ska.vo.note.*;
 import com.ska.constant.note.*;
-import com.ska.exception.ResourceAlreadyExistsException;
 import com.ska.model.note.converter.*;
 
 
@@ -42,12 +41,7 @@ public class Note extends BaseModel {
         this.content = content;
     }
 
-    public final void changeTitle(final Title newTitle, final boolean isUnique) {
-        if (!isUnique)
-            throw new ResourceAlreadyExistsException(
-                    String.format("Note title=%s already exists", newTitle.toString())
-            );
-            
+    public final void changeTitle(final Title newTitle, final boolean isUniqueForUser) {
         this.title = newTitle;
     }
 

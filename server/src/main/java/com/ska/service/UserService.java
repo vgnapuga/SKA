@@ -69,10 +69,7 @@ public class UserService extends BaseService {
         Email email = new Email(request.email());
 
         log.debug(LogTemplates.checkStartLog("Email uniqueness"));
-        if (userRepository.existsByEmail(email))
-            throw new ResourceAlreadyExistsException(
-                    String.format("User with email=%s already exists", email.toString())
-            );
+        checkEmailUniqueness(email);
 
         log.debug(LogTemplates.validationStartLog("Raw password"));
         String rawPassword = request.password();
@@ -89,6 +86,13 @@ public class UserService extends BaseService {
         );
 
         return savedUser;
+    }
+    
+    private final void checkEmailUniqueness(Email email) {
+        if (userRepository.existsByEmail(email))
+            throw new ResourceAlreadyExistsException(
+                    String.format("User with email=%s already exists", email.toString())
+            );
     }
 
     private static void validateRawPassword(final String rawPassword) {
@@ -113,7 +117,6 @@ public class UserService extends BaseService {
     public final Optional<User> getUserById(final Long id) {
         log.info("Getting user with ID: {}", id);
 
-        log.debug(LogTemplates.validationStartLog("ID"));
         validateId(id);
 
         log.debug(LogTemplates.startLog("Database query"));
@@ -177,8 +180,9 @@ public class UserService extends BaseService {
         Email newEmail = new Email(request.newEmail());
 
         log.debug(LogTemplates.checkStartLog("Email uniqueness"));
-        boolean isUnique = !userRepository.existsByEmail(newEmail);
-        user.changeEmail(newEmail, isUnique);
+        checkEmailUniqueness(newEmail);
+
+        user.changeEmail(newEmail);
 
         User updatedUser = userRepository.save(user);
         log.info(

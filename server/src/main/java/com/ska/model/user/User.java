@@ -6,7 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
 import com.ska.constant.user.*;
-import com.ska.exception.ResourceAlreadyExistsException;
 import com.ska.exception.DomainValidationException;
 import com.ska.model.BaseModel;
 import com.ska.vo.user.*;
@@ -16,18 +15,17 @@ import com.ska.vo.user.*;
  * User domain entity representing system user.
  * 
  * Extends {@link BaseModel}.
- * Provides email and password management with uniqueness check.
+ * Provides email and password management.
  * 
  * @see Email - email value object
  * @see Password - password value object
- * @see ResourceAlreadyExistsException - thrown if resource already exists
  * @see DomainValidationException - thrown if email or password validation failure
  */
 @Entity
 @Table(name = "users")
 public class User extends BaseModel {
 
-    @Column(name = "email", unique = true, nullable = false, length = EmailConstants.Format.MAX_LENGTH)
+    @Column(name = "email", nullable = false, unique = true, length = EmailConstants.Format.MAX_LENGTH)
     @Convert(converter = com.ska.model.user.converter.EmailConverter.class)
     private Email email;
 
@@ -55,19 +53,12 @@ public class User extends BaseModel {
 
 
     /**
-     * Updates user email with database uniqueness validation .
+     * Updates user email.
      * 
      * @param newEmail the new email to set
-     * @param isUnique true if email is unique in database
-     * @throws ResourceAlreadyExistsException if email already exists
      * @see Email - email value object
      */
-    public final void changeEmail(final Email newEmail, final boolean isUnique) {
-        if (!isUnique)
-            throw new ResourceAlreadyExistsException(
-                    String.format("Email=%s already exists", newEmail.toString())
-            );
-
+    public final void changeEmail(final Email newEmail) {
         this.email = newEmail;
     }
 

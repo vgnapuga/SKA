@@ -301,7 +301,7 @@ class UserServiceTest {
                     ResourceAlreadyExistsException.class,
                     () -> userService.updateUserEmail(TEST_USER_ID, request)
             );
-            assertEquals("Email=" + userFirst.getEmail().toString() + " already exists", exception.getMessage());
+            assertEquals("User with email=" + userFirst.getEmail().toString() + " already exists", exception.getMessage());
 
             verify(userRepository, times(1)).findById(TEST_USER_ID);
             verify(userRepository, times(1)).existsByEmail(any(Email.class));
