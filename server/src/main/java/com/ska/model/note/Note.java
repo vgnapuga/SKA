@@ -24,7 +24,7 @@ public class Note extends BaseModel {
     @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "fk_note_author"))
     private User user;
 
-    @Column(name = "title", nullable = false, length = TitleConstants.Format.MAX_LENGTH)
+    @Column(name = "title", nullable = false, unique = true, length = TitleConstants.Format.MAX_LENGTH)
     @Convert(converter = TitleConverter.class)
     private Title title;
 
