@@ -1,10 +1,10 @@
 package com.ska.dto.user;
 
-import com.ska.constant.user.EmailConstants;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import com.ska.constant.user.EmailConstants;
 
 
 public record UserUpdateEmailRequest(

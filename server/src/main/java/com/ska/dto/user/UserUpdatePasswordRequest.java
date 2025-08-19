@@ -1,9 +1,9 @@
 package com.ska.dto.user;
 
-import com.ska.constant.user.PasswordConstants;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
+import com.ska.constant.user.PasswordConstants;
 
 
 public record UserUpdatePasswordRequest(
