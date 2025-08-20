@@ -1,4 +1,4 @@
-package com.ska.vo.note;
+package com.ska.vo.encryptable.note;
 
 import com.ska.constant.note.TitleConstants;
 import com.ska.exception.DomainValidationException;

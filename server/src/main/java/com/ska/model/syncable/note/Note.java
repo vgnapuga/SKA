@@ -12,7 +12,7 @@ import jakarta.persistence.Table;
 import com.ska.model.BaseModel;
 import com.ska.model.syncable.note.converter.*;
 import com.ska.model.user.User;
-import com.ska.vo.note.*;
+import com.ska.vo.encryptable.note.*;
 import com.ska.constant.note.*;
 
 

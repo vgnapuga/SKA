@@ -10,7 +10,7 @@ import com.ska.model.BaseModel;
 
 
 @MappedSuperclass
-public abstract class BaseSyncableModel extends BaseModel {
+public abstract class SyncableModel extends BaseModel {
 
     @Column(name = "uuid", columnDefinition = "BINARY(16)", nullable = false, unique = true)
     protected UUID uuid;
