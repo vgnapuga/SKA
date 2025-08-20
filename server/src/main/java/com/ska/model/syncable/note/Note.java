@@ -1,4 +1,4 @@
-package com.ska.model.note;
+package com.ska.model.syncable.note;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -10,10 +10,10 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import com.ska.model.BaseModel;
+import com.ska.model.syncable.note.converter.*;
 import com.ska.model.user.User;
 import com.ska.vo.note.*;
 import com.ska.constant.note.*;
-import com.ska.model.note.converter.*;
 
 
 @Entity

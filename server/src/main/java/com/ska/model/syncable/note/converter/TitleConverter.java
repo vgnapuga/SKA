@@ -1,4 +1,4 @@
-package com.ska.model.note.converter;
+package com.ska.model.syncable.note.converter;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
