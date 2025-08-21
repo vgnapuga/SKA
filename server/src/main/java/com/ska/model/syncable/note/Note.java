@@ -24,48 +24,48 @@ public class Note extends BaseModel {
     @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "fk_note_author"))
     private User user;
 
-    @Column(name = "title", nullable = false, unique = true, length = TitleConstants.Format.MAX_LENGTH)
-    @Convert(converter = TitleConverter.class)
-    private Title title;
+    @Column(name = "title", nullable = false, length = NoteTitleConstants.Format.MAX_ENCRYPTED_DATA_SIZE)
+    @Convert(converter = NoteTitleConverter.class)
+    private EncryptedNoteTitle title;
 
-    @Column(name = "content", nullable = false, length = ContentConstants.Format.MAX_LENGTH)
-    @Convert(converter = ContentConverter.class)
-    private Content content;
+    @Column(name = "encrypted_content", nullable = false, length = NoteContentConstants.Format.MAX_ENCRYPTED_DATA_SIZE)
+    @Convert(converter = NoteContentConverter.class)
+    private EncryptedNoteContent encryptedContent;
 
 
     public Note() {}
 
-    public Note(final User user, final Title title, final Content content) {
+    public Note(final User user, final EncryptedNoteTitle title, final EncryptedNoteContent encryptedContent) {
         this.user = user;
         this.title = title;
-        this.content = content;
+        this.encryptedContent = encryptedContent;
     }
 
-    public final void changeTitle(final Title newTitle, final boolean isUniqueForUser) {
+    public final void changeTitle(final EncryptedNoteTitle newTitle, final boolean isUniqueForUser) {
         this.title = newTitle;
     }
 
-    public final void changeContent(final Content newContent) {
-        this.content = newContent;
+    public final void changeContent(final EncryptedNoteContent newEncryptedContent) {
+        this.encryptedContent = newEncryptedContent;
     }
 
     public final User getUser() {
         return this.user;
     }
 
-    public final Title getTitle() {
+    public final EncryptedNoteTitle getTitle() {
         return this.title;
     }
 
-    public final Content getContent() {
-        return this.content;
+    public final EncryptedNoteContent getContent() {
+        return this.encryptedContent;
     }
 
     @Override
     public final String toString() {
         return String.format(
-                "Note{id=%d, authorId=%d, title=%s, content=%s}",
-                this.id, this.user.getId(), this.title.toString(), this.content.toString()
+                "Note{id=%d, authorId=%d, title=%s, content=***}",
+                this.id, this.user.getId(), this.title.toString()
         );
     }
     

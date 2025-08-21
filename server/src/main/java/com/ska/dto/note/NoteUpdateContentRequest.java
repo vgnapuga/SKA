@@ -1,11 +1,11 @@
 package com.ska.dto.note;
 
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotBlank;
 
-import com.ska.constant.note.ContentConstants;
+import com.ska.constant.note.NoteContentConstants;
 
 
 public record NoteUpdateContentRequest(
-        @Size(max = ContentConstants.Format.MAX_LENGTH, message = ContentConstants.Messages.INVALID_LENGTH_MESSAGE)
-        String newContent
+        @NotBlank(message = NoteContentConstants.Messages.REQUIRED_MESSAGE)
+        String encryptedNewContent
 ) {}
