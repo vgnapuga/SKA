@@ -5,7 +5,7 @@ public final class NoteContentConstants {
 
     public class Format {
         
-        public static final int MAX_ENCRYPTED_DATA_SIZE = 4096;
+        public static final int MAX_ENCRYPTED_DATA_SIZE = 2048;
 
     }
 

@@ -5,7 +5,7 @@ public final class NoteTitleConstants {
     
     public class Format {
 
-        public static final int MAX_ENCRYPTED_DATA_SIZE = 32;
+        public static final int MAX_ENCRYPTED_DATA_SIZE = 64;
 
     }
 
