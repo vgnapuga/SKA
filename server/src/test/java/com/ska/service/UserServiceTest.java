@@ -73,10 +73,6 @@ class UserServiceTest {
         when(userRepository.findById(anyLong())).thenReturn(optional);
     }
 
-    private void whenExistsById(boolean isExists) {
-        when(userRepository.existsById(anyLong())).thenReturn(isExists);
-    }
-
 
     @Nested
     class CreateUserTests implements CreateCrudBehaviorTest  {
@@ -281,7 +277,7 @@ class UserServiceTest {
                     ResourceNotFoundException.class,
                     () -> userService.updateUserEmail(TEST_USER_ID, request)
             );
-            assertEquals("User id=" + TEST_USER_ID + " not found to update email", exception.getMessage());
+            assertEquals("User id=" + TEST_USER_ID + " not found", exception.getMessage());
 
             verify(userRepository, times(1)).findById(TEST_USER_ID);
             verifyNoMoreInteractions(userRepository);
@@ -376,7 +372,7 @@ class UserServiceTest {
                     ResourceNotFoundException.class,
                     () -> userService.updateUserPassword(TEST_USER_ID, request)
             );
-            assertEquals("User id=" + TEST_USER_ID + " not found to update password", exception.getMessage());
+            assertEquals("User id=" + TEST_USER_ID + " not found", exception.getMessage());
 
             verify(userRepository, times(1)).findById(TEST_USER_ID);
             verifyNoMoreInteractions(userRepository);
@@ -414,11 +410,11 @@ class UserServiceTest {
         @Test
         @Override
         public void shouldDeleteEntity_whenValidRequestData() {
-            whenExistsById(true);
+            whenFindById(Optional.of(new User(new Email(TEST_EMAIL), new Password(TEST_HASHED_PASSWORD))));
 
             assertDoesNotThrow(() -> userService.deleteUserById(TEST_USER_ID));
 
-            verify(userRepository, times(1)).existsById(TEST_USER_ID);
+            verify(userRepository, times(1)).findById(TEST_USER_ID);
             verify(userRepository, times(1)).deleteById(TEST_USER_ID);
             verifyNoMoreInteractions(userRepository);
         }
@@ -439,14 +435,14 @@ class UserServiceTest {
         @Test
         @Override
         public void shouldThrowException_whenNotFoundId() {
-            whenExistsById(false);
+            whenFindById(Optional.empty());
             
             ResourceNotFoundException exception = assertThrows(
                     ResourceNotFoundException.class, () -> userService.deleteUserById(TEST_USER_ID)
             );
-            assertEquals("User id=" + TEST_USER_ID + " not found to delete", exception.getMessage());
+            assertEquals("User id=" + TEST_USER_ID + " not found", exception.getMessage());
 
-            verify(userRepository, times(1)).existsById(TEST_USER_ID);
+            verify(userRepository, times(1)).findById(TEST_USER_ID);
             verifyNoMoreInteractions(userRepository);
         }
 

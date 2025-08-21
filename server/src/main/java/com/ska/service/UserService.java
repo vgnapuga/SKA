@@ -191,7 +191,7 @@ public class UserService extends BaseService {
     private final User checkIdExistence(final Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException(
-                        String.format("User id=%d not found to update email", userId)
+                        String.format("User id=%d not found", userId)
             )
         );
 

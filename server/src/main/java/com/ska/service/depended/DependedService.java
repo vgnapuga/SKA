@@ -44,7 +44,7 @@ public abstract class DependedService extends BaseService {
             byte[] decoded = Base64.getDecoder().decode(coded);
             return decoded;
         } catch (IllegalArgumentException e) {
-            throw new BusinessRuleViolationException("Data is not Base64");
+            throw new BusinessRuleViolationException("Data is not <Base64>");
         }
     }
 
