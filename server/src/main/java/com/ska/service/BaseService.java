@@ -15,7 +15,7 @@ import com.ska.util.LogTemplates;
 public abstract class BaseService {
 
     /**
-     * ID validation method.
+     * ID validation method with validation log.
      * 
      * @param id the entity identifier
      * @throws BusinessRuleViolationException if ID is null or less than 1

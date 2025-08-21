@@ -27,4 +27,12 @@ public final class LogTemplates {
         return operationName + " check" + START_PART;
     }
 
+    public static String checkBase64StartLog(final String encryptedName) {
+        return checkStartLog(encryptedName + " Base64");
+    }
+
+    public static String generateUuidStartLog() {
+        return startLog("UUID generation");
+    }
+
 }
