@@ -2,6 +2,8 @@ package com.ska.service.depended;
 
 import java.util.Base64;
 
+import lombok.extern.slf4j.Slf4j;
+
 import com.ska.exception.BusinessRuleViolationException;
 import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.user.User;
@@ -9,13 +11,17 @@ import com.ska.service.BaseService;
 import com.ska.service.UserService;
 import com.ska.util.LogTemplates;
 
-import lombok.extern.slf4j.Slf4j;
-
 
 @Slf4j
 public abstract class DependedService extends BaseService {
 
-    protected UserService userService;
+    protected final UserService userService;
+
+
+    protected DependedService(UserService userService) {
+        log.debug(this.getClass().getSimpleName() + " initialization");
+        this.userService = userService;
+    }
 
     
     protected final User checkUserExistence(final Long userId) {
@@ -41,8 +47,7 @@ public abstract class DependedService extends BaseService {
             throw new BusinessRuleViolationException("Data is <blank>");
 
         try {
-            byte[] decoded = Base64.getDecoder().decode(coded);
-            return decoded;
+            return Base64.getDecoder().decode(coded);
         } catch (IllegalArgumentException e) {
             throw new BusinessRuleViolationException("Data is not <Base64>");
         }
