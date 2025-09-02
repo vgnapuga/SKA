@@ -1,6 +1,6 @@
 package com.ska.model.syncable.note.converter;
 
-import com.ska.vo.encryptable.note.EncryptedNoteTitle;
+import com.ska.vo.encrypted.note.EncryptedNoteTitle;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

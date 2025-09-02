@@ -1,4 +1,4 @@
-package com.ska.vo.encryptable;
+package com.ska.vo.encrypted;
 
 import com.ska.exception.DomainValidationException;
 import com.ska.vo.BaseValueObject;
