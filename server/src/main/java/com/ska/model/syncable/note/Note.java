@@ -3,13 +3,9 @@ package com.ska.model.syncable.note;
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
-import com.ska.model.BaseModel;
+import com.ska.model.syncable.SyncableModel;
 import com.ska.model.syncable.note.converter.*;
 import com.ska.model.user.User;
 import com.ska.vo.encrypted.note.*;
@@ -18,11 +14,7 @@ import com.ska.constant.note.*;
 
 @Entity
 @Table(name = "notes")
-public class Note extends BaseModel {
-
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id", nullable = false, foreignKey = @ForeignKey(name = "fk_note_author"))
-    private User user;
+public class Note extends SyncableModel {
 
     @Column(name = "title", nullable = false, length = NoteTitleConstants.Format.MAX_ENCRYPTED_DATA_SIZE)
     @Convert(converter = NoteTitleConverter.class)
