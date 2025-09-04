@@ -17,9 +17,15 @@ public abstract class DependedService extends BaseService {
 
     protected final UserService userService;
 
+    private final String INIT_MESSAGE = this.getClass().getSimpleName() + " initialization";
+    
+    private static final String NULL_MESSAGE = "Data is <null>";
+    private static final String BLANK_MESSAGE = "Data is <blank>";
+    private static final String NOT_BASE64_MESSAGE = "Data is not <Base64>";
+
 
     protected DependedService(UserService userService) {
-        log.debug(this.getClass().getSimpleName() + " initialization");
+        log.debug(INIT_MESSAGE);
         this.userService = userService;
     }
 
@@ -42,14 +48,14 @@ public abstract class DependedService extends BaseService {
 
     protected final byte[] decodeBase64(final String coded) {
         if (coded == null)
-            throw new BusinessRuleViolationException("Data is <null>");
+            throw new BusinessRuleViolationException(NULL_MESSAGE);
         else if (coded.isBlank())
-            throw new BusinessRuleViolationException("Data is <blank>");
+            throw new BusinessRuleViolationException(BLANK_MESSAGE);
 
         try {
             return Base64.getDecoder().decode(coded);
         } catch (IllegalArgumentException e) {
-            throw new BusinessRuleViolationException("Data is not <Base64>");
+            throw new BusinessRuleViolationException(NOT_BASE64_MESSAGE);
         }
     }
 

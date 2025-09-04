@@ -14,6 +14,9 @@ import com.ska.util.LogTemplates;
 @Slf4j
 public abstract class BaseService {
 
+    private static final String NULL_MESSAGE = "ID is <null>";
+    private static final String LESS_THAN_ONE_MESSAGE = "ID is less than 1";
+
     /**
      * ID validation method with validation log.
      * 
@@ -24,9 +27,9 @@ public abstract class BaseService {
         log.debug(LogTemplates.validationStartLog("ID"));
 
         if (id == null)
-            throw new BusinessRuleViolationException( "ID is <null>");
+            throw new BusinessRuleViolationException( NULL_MESSAGE);
         if (id <= 0)
-            throw new BusinessRuleViolationException("ID is less than 1");
+            throw new BusinessRuleViolationException(LESS_THAN_ONE_MESSAGE);
     }
 
 }
