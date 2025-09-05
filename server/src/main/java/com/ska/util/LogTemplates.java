@@ -35,4 +35,8 @@ public final class LogTemplates {
         return startLog("UUID generation");
     }
 
+    public static String startDatabaseQuery() {
+        return startLog("Database query");
+    }
+
 }
