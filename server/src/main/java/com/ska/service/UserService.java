@@ -2,11 +2,9 @@ package com.ska.service;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import com.ska.constant.user.PasswordConstants;
 import com.ska.dto.user.UserCreateRequest;
 import com.ska.dto.user.UserUpdateEmailRequest;
@@ -20,9 +18,9 @@ import com.ska.repository.UserRepository;
 import com.ska.util.LogTemplates;
 import com.ska.vo.user.Email;
 import com.ska.vo.user.Password;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
 
 /**
  * Service for managing system users.
@@ -52,6 +50,7 @@ public class UserService extends BaseService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+
     /**
      * Creates a new system user.
      * 
@@ -59,9 +58,9 @@ public class UserService extends BaseService {
      * @return created user with assigned ID
      * @throws ResourceAlreadyExistsException if user with this email already exists
      * @throws BusinessRuleViolationException if password does not meet the
-     *                                        requirements
-     * @throws DomainValidationException      if email invalid or too long
-     * @throws DomainValidationException      if password BCrypt hash invalid
+     *         requirements
+     * @throws DomainValidationException if email invalid or too long
+     * @throws DomainValidationException if password BCrypt hash invalid
      * @see UserCreateRequest - user creation request
      * @see User - user entity
      * @see Email - email value object
@@ -104,7 +103,8 @@ public class UserService extends BaseService {
 
     private static void validateRawPassword(final String rawPassword) {
         if (rawPassword.length() < PasswordConstants.Format.MIN_LENGTH)
-            throw new BusinessRuleViolationException(PasswordConstants.Messages.INVALID_LENGTH_MESSAGE);
+            throw new BusinessRuleViolationException(
+                    PasswordConstants.Messages.INVALID_LENGTH_MESSAGE);
     }
 
     private final Password encodePassword(final String rawPassword) {
@@ -164,8 +164,8 @@ public class UserService extends BaseService {
      * @param request data containing new email
      * @return User with updated email
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException      if ID does not exist in database
-     * @throws DomainValidationException      if email invalid
+     * @throws ResourceNotFoundException if ID does not exist in database
+     * @throws DomainValidationException if email invalid
      * @throws ResourceAlreadyExistsException if email already exists in database
      * @see UserUpdateEmailRequest - email update request
      * @see User - user entity
@@ -211,10 +211,10 @@ public class UserService extends BaseService {
      * @param request data containing new password
      * @return User with updated password
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException      if ID does not exist in database
+     * @throws ResourceNotFoundException if ID does not exist in database
      * @throws BusinessRuleViolationException if password does not meet the
-     *                                        requirements
-     * @throws DomainValidationException      if password BCrypt hash invalid
+     *         requirements
+     * @throws DomainValidationException if password BCrypt hash invalid
      * @see UserUpdatePasswordRequest - password update request
      * @see User - user entity
      * @see Password - password value object
@@ -251,7 +251,7 @@ public class UserService extends BaseService {
      * 
      * @param id the user identifier
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException      if ID does not exist in database
+     * @throws ResourceNotFoundException if ID does not exist in database
      */
     @Transactional
     public final void deleteUserById(final Long id) {
