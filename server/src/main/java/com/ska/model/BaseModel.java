@@ -1,5 +1,6 @@
 package com.ska.model;
 
+
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -30,7 +31,6 @@ public abstract class BaseModel {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
@@ -41,7 +41,6 @@ public abstract class BaseModel {
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
 
     public final Long getId() {
         return this.id;
@@ -73,5 +72,5 @@ public abstract class BaseModel {
 
     @Override
     public abstract String toString();
-    
+
 }

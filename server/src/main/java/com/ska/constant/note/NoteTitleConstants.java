@@ -2,7 +2,7 @@ package com.ska.constant.note;
 
 
 public final class NoteTitleConstants {
-    
+
     public class Format {
 
         public static final int MAX_ENCRYPTED_DATA_SIZE = 64;
@@ -16,7 +16,7 @@ public final class NoteTitleConstants {
 
     }
 
-
-    private NoteTitleConstants() {}
+    private NoteTitleConstants() {
+    }
 
 }

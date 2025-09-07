@@ -1,26 +1,30 @@
 package com.ska.model.user;
 
+
+import com.ska.constant.user.EmailConstants;
+import com.ska.constant.user.PasswordConstants;
+import com.ska.exception.DomainValidationException;
+import com.ska.model.BaseModel;
+import com.ska.model.user.converter.EmailConverter;
+import com.ska.model.user.converter.PasswordConverter;
+import com.ska.vo.user.Email;
+import com.ska.vo.user.Password;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
-import com.ska.constant.user.*;
-import com.ska.exception.DomainValidationException;
-import com.ska.model.BaseModel;
-import com.ska.model.user.converter.*;
-import com.ska.vo.user.*;
-
 
 /**
  * User domain entity representing system user.
  * 
- * Extends {@link BaseModel}.
- * Provides email and password management.
+ * Extends {@link BaseModel}. Provides email and password management.
  * 
  * @see Email - email value object
  * @see Password - password value object
- * @see DomainValidationException - thrown if email or password validation failure
+ * @see DomainValidationException - thrown if email or password validation
+ * failure
  */
 @Entity
 @Table(name = "users")
@@ -34,9 +38,8 @@ public class User extends BaseModel {
     @Convert(converter = PasswordConverter.class)
     private Password password;
 
-
-    public User() {}
-
+    public User() {
+    }
 
     /**
      * Creates a new user with validated email and password.
@@ -51,7 +54,6 @@ public class User extends BaseModel {
         this.email = email;
         this.password = password;
     }
-
 
     /**
      * Updates user email.
@@ -76,16 +78,14 @@ public class User extends BaseModel {
     public final Email getEmail() {
         return this.email;
     }
+
     public final Password getPassword() {
         return this.password;
     }
 
     @Override
     public final String toString() {
-        return String.format(
-            "User{id=%d, email=%s, password=***}",
-            this.id, this.email.toString()
-        );
+        return String.format("User{id=%d, email=%s, password=***}", this.id, this.email.toString());
     }
 
 }

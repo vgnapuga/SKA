@@ -7,7 +7,7 @@ public final class EmailConstants {
 
         public static final int MAX_LENGTH = 254;
         public static final String REGEX = "^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
-    
+
     }
 
     public class Messages {
@@ -18,7 +18,7 @@ public final class EmailConstants {
 
     }
 
-
-    private EmailConstants() {}
+    private EmailConstants() {
+    }
 
 }

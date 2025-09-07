@@ -1,15 +1,19 @@
 package com.ska.model.syncable.note;
 
+
+import com.ska.constant.note.NoteContentConstants;
+import com.ska.constant.note.NoteTitleConstants;
+import com.ska.model.syncable.SyncableModel;
+import com.ska.model.syncable.note.converter.NoteContentConverter;
+import com.ska.model.syncable.note.converter.NoteTitleConverter;
+import com.ska.model.user.User;
+import com.ska.vo.encrypted.note.EncryptedNoteContent;
+import com.ska.vo.encrypted.note.EncryptedNoteTitle;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
-
-import com.ska.model.syncable.SyncableModel;
-import com.ska.model.syncable.note.converter.*;
-import com.ska.model.user.User;
-import com.ska.vo.encrypted.note.*;
-import com.ska.constant.note.*;
 
 
 @Entity
@@ -24,8 +28,8 @@ public class Note extends SyncableModel {
     @Convert(converter = NoteContentConverter.class)
     private EncryptedNoteContent encryptedContent;
 
-
-    public Note() {}
+    public Note() {
+    }
 
     public Note(final User user, final EncryptedNoteTitle title, final EncryptedNoteContent encryptedContent) {
         this.user = user;
@@ -33,7 +37,7 @@ public class Note extends SyncableModel {
         this.encryptedContent = encryptedContent;
     }
 
-    public final void changeTitle(final EncryptedNoteTitle newTitle, final boolean isUniqueForUser) {
+    public final void changeTitle(final EncryptedNoteTitle newTitle) {
         this.title = newTitle;
     }
 
@@ -57,8 +61,9 @@ public class Note extends SyncableModel {
     public final String toString() {
         return String.format(
                 "Note{id=%d, authorId=%d, title=%s, content=***}",
-                this.id, this.user.getId(), this.title.toString()
-        );
+                this.id,
+                this.user.getId(),
+                this.title.toString());
     }
-    
+
 }

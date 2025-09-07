@@ -1,15 +1,15 @@
 package com.ska.service.depended;
 
-import java.util.Base64;
 
-import lombok.extern.slf4j.Slf4j;
+import java.util.Base64;
 
 import com.ska.exception.BusinessRuleViolationException;
 import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.user.User;
 import com.ska.service.BaseService;
 import com.ska.service.UserService;
-import com.ska.util.LogTemplates;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 @Slf4j
@@ -18,33 +18,20 @@ public abstract class DependedService extends BaseService {
     protected final UserService userService;
 
     private final String INIT_MESSAGE = this.getClass().getSimpleName() + " initialization";
-    
+
     private static final String NULL_MESSAGE = "Data is <null>";
     private static final String BLANK_MESSAGE = "Data is <blank>";
     private static final String NOT_BASE64_MESSAGE = "Data is not <Base64>";
 
-
-    protected DependedService(UserService userService) {
+    protected DependedService(final UserService userService) {
         log.debug(INIT_MESSAGE);
         this.userService = userService;
     }
 
-    
     protected final User checkUserExistence(final Long userId) {
-        log.debug(LogTemplates.checkStartLog("User existence"));
-
-        User user = userService.getUserById(userId).orElseThrow(
-                () -> new ResourceNotFoundException(
-                        String.format(
-                                "User id=%d not found to create note",
-                                userId
-                        )
-                )
-        );
-
-        return user;
+        return userService.getUserById(userId).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("User id=%d not found to create note", userId)));
     }
-
 
     protected final byte[] decodeBase64(final String coded) {
         if (coded == null)

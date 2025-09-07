@@ -1,9 +1,10 @@
 package com.ska.model.user.converter;
 
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
 
 import com.ska.vo.user.Email;
+
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
 
 
 @Converter
@@ -18,5 +19,5 @@ public final class EmailConverter implements AttributeConverter<Email, String> {
     public Email convertToEntityAttribute(String dbData) {
         return dbData == null ? null : new Email(dbData);
     }
-    
+
 }

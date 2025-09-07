@@ -1,5 +1,6 @@
 package com.ska.vo;
 
+
 import com.ska.exception.DomainValidationException;
 
 
@@ -12,9 +13,8 @@ import com.ska.exception.DomainValidationException;
  * @see DomainValidationException - thrown on validation failure
  */
 public abstract class BaseValueObject<T> {
-    
-    protected final T value;
 
+    protected final T value;
 
     /**
      * Creates a new value object with validation.
@@ -72,10 +72,7 @@ public abstract class BaseValueObject<T> {
 
     @Override
     public String toString() {
-        return String.format(
-                "%s{value=%s}",
-                this.getClass().getSimpleName(), this.value
-        );
+        return String.format("%s{value=%s}", this.getClass().getSimpleName(), this.value);
     }
 
 }

@@ -1,10 +1,13 @@
 package com.ska.vo.user;
 
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 import com.ska.constant.user.EmailConstants;
 import com.ska.exception.DomainValidationException;
@@ -14,10 +17,7 @@ import com.ska.vo.ValueObjectBehaviorTest;
 class EmailTest implements ValueObjectBehaviorTest<String> {
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "test@example.com",
-        "user.name+tag@example-domain.co.ru", 
-    })
+    @ValueSource(strings = { "test@example.com", "user.name+tag@example-domain.co.ru", })
     @Override
     public void shouldCreate_whenValidValue(String validEmail) {
         Email email = assertDoesNotThrow(() -> new Email(validEmail));
@@ -27,18 +27,14 @@ class EmailTest implements ValueObjectBehaviorTest<String> {
     @Test
     @Override
     public void shouldThrowDomainValidationException_whenNullValue() {
-        DomainValidationException exception = assertThrows(
-                DomainValidationException.class, () -> new Email(null)
-        );
+        DomainValidationException exception = assertThrows(DomainValidationException.class, () -> new Email(null));
         assertEquals("Email value is <null>", exception.getMessage());
     }
 
     @Test
     @Override
     public void shouldThrowDomainValidationException_whenBlankValue() {
-        DomainValidationException exception = assertThrows(
-                DomainValidationException.class, () -> new Email("")  
-        );
+        DomainValidationException exception = assertThrows(DomainValidationException.class, () -> new Email(""));
         assertEquals("Email value is <blank>", exception.getMessage());
     }
 
@@ -47,26 +43,19 @@ class EmailTest implements ValueObjectBehaviorTest<String> {
         String tooLongEmail = "a".repeat(255) + "test@example.com";
 
         DomainValidationException exception = assertThrows(
-                DomainValidationException.class, () -> new Email(tooLongEmail)    
-        );
+                DomainValidationException.class,
+                () -> new Email(tooLongEmail));
         assertEquals(EmailConstants.Messages.INVALID_LENGTH_MESSAGE, exception.getMessage());
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {
-        "not-email",
-        "missing@", 
-        "@missing.com",
-        "spaces @example.com",
-        "double..dot@example.com"
-    })
+    @ValueSource(strings = { "not-email", "missing@", "@missing.com", "spaces @example.com",
+            "double..dot@example.com" })
     public void shouldThrowDomainValidationException_whenValueFormatInvalid(String invalidEmail) {
         DomainValidationException exception = assertThrows(
-                DomainValidationException.class, () -> new Email(invalidEmail)
-        );
+                DomainValidationException.class,
+                () -> new Email(invalidEmail));
         assertEquals(EmailConstants.Messages.INVALID_FORMAT_MESSAGE, exception.getMessage());
     }
-    
-
 
 }

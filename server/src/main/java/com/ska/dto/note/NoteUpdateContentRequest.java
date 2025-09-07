@@ -1,11 +1,11 @@
 package com.ska.dto.note;
 
-import jakarta.validation.constraints.NotBlank;
 
 import com.ska.constant.note.NoteContentConstants;
 
+import jakarta.validation.constraints.NotBlank;
+
 
 public record NoteUpdateContentRequest(
-        @NotBlank(message = NoteContentConstants.Messages.REQUIRED_MESSAGE)
-        String encryptedNewContent
-) {}
+        @NotBlank(message = NoteContentConstants.Messages.REQUIRED_MESSAGE) String encryptedNewContent) {
+}

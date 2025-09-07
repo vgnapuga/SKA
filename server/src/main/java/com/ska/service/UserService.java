@@ -1,10 +1,13 @@
 package com.ska.service;
 
+
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import com.ska.constant.user.PasswordConstants;
 import com.ska.dto.user.UserCreateRequest;
 import com.ska.dto.user.UserUpdateEmailRequest;
@@ -18,6 +21,7 @@ import com.ska.repository.UserRepository;
 import com.ska.util.LogTemplates;
 import com.ska.vo.user.Email;
 import com.ska.vo.user.Password;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,9 +29,8 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Service for managing system users.
  * 
- * Extends {@link BaseService}.
- * Provides operations for creating, updating, retrieving and deleting users
- * with business rule validation.
+ * Extends {@link BaseService}. Provides operations for creating, updating,
+ * retrieving and deleting users with business rule validation.
  * 
  * @see User - user entity
  * @see Email - email value object
@@ -40,7 +43,7 @@ import lombok.extern.slf4j.Slf4j;
  * @see ResourceAlreadyExistsException - thrown if resource already exists
  * @see ResourceNotFoundException - thrown if resource not found
  * @see DomainValidationException - thrown if email or password validation
- *      failure
+ * failure
  */
 @Slf4j
 @Service
@@ -50,7 +53,6 @@ public class UserService extends BaseService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
-
     /**
      * Creates a new system user.
      * 
@@ -58,7 +60,7 @@ public class UserService extends BaseService {
      * @return created user with assigned ID
      * @throws ResourceAlreadyExistsException if user with this email already exists
      * @throws BusinessRuleViolationException if password does not meet the
-     *         requirements
+     * requirements
      * @throws DomainValidationException if email invalid or too long
      * @throws DomainValidationException if password BCrypt hash invalid
      * @see UserCreateRequest - user creation request
@@ -88,9 +90,7 @@ public class UserService extends BaseService {
         log.debug(LogTemplates.startDatabaseQuery());
         User savedUser = userRepository.save(user);
 
-        log.info(
-                "User created successfully with ID: {}, email: {}",
-                savedUser.getId(), email.getValue());
+        log.info("User created successfully with ID: {}, email: {}", savedUser.getId(), email.getValue());
 
         return savedUser;
     }
@@ -103,8 +103,7 @@ public class UserService extends BaseService {
 
     private static void validateRawPassword(final String rawPassword) {
         if (rawPassword.length() < PasswordConstants.Format.MIN_LENGTH)
-            throw new BusinessRuleViolationException(
-                    PasswordConstants.Messages.INVALID_LENGTH_MESSAGE);
+            throw new BusinessRuleViolationException(PasswordConstants.Messages.INVALID_LENGTH_MESSAGE);
     }
 
     private final Password encodePassword(final String rawPassword) {
@@ -133,7 +132,8 @@ public class UserService extends BaseService {
         if (retrievedUser.isPresent())
             log.info(
                     "User with ID: {} retrieved successfully, email: {}",
-                    id, retrievedUser.get().getEmail().getValue());
+                    id,
+                    retrievedUser.get().getEmail().getValue());
         else
             log.info("User with ID: {} not found", id);
 
@@ -192,17 +192,14 @@ public class UserService extends BaseService {
         log.debug(LogTemplates.startDatabaseQuery());
         User updatedUser = userRepository.save(user);
 
-        log.info(
-                "User email updated successfully for ID: {}, new email: {}",
-                id, newEmail);
+        log.info("User email updated successfully for ID: {}, new email: {}", id, newEmail);
 
         return updatedUser;
     }
 
     private final User checkIdExistence(final Long userId) {
         return userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException(
-                        String.format("User id=%d not found", userId)));
+                () -> new ResourceNotFoundException(String.format("User id=%d not found", userId)));
     }
 
     /**
@@ -213,7 +210,7 @@ public class UserService extends BaseService {
      * @throws BusinessRuleViolationException if ID is null or less than one
      * @throws ResourceNotFoundException if ID does not exist in database
      * @throws BusinessRuleViolationException if password does not meet the
-     *         requirements
+     * requirements
      * @throws DomainValidationException if password BCrypt hash invalid
      * @see UserUpdatePasswordRequest - password update request
      * @see User - user entity

@@ -4,16 +4,15 @@ package com.ska.util;
 /**
  * Util class for logging messages.
  * 
- * Provides methods to avoid duplication (DRY principle).
- * Centralized log message management with private constructor.
+ * Provides methods to avoid duplication (DRY principle). Centralized log
+ * message management with private constructor.
  */
 public final class LogTemplates {
 
     private static final String START_PART = " - start";
-    
 
-    private LogTemplates() {}
-
+    private LogTemplates() {
+    }
 
     public static String startLog(final String operationName) {
         return operationName + START_PART;

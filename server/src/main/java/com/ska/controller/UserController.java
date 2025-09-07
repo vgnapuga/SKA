@@ -1,5 +1,6 @@
 package com.ska.controller;
 
+
 import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
@@ -13,21 +14,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ska.dto.user.UserCreateRequest;
+import com.ska.dto.user.UserUpdateEmailRequest;
+import com.ska.dto.user.UserUpdatePasswordRequest;
+import com.ska.exception.BusinessRuleViolationException;
+import com.ska.exception.DomainValidationException;
+import com.ska.exception.ResourceAlreadyExistsException;
+import com.ska.exception.ResourceNotFoundException;
+import com.ska.model.user.User;
+import com.ska.service.UserService;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import com.ska.dto.user.*;
-import com.ska.exception.*;
-import com.ska.model.user.User;
-import com.ska.service.UserService;
 
 
 /**
  * REST controller for user management operations.
  * 
- * Provides HTTP endpoints for creating, retrieving, updating, and deleting users.
- * Base path: /api/users
+ * Provides HTTP endpoints for creating, retrieving, updating, and deleting
+ * users. Base path: /api/users
  * 
  * @see UserService - service for managing system users
  * @see User - user entity
@@ -37,25 +43,27 @@ import com.ska.service.UserService;
  * @see BusinessRuleViolationException - thrown on business rules violation
  * @see ResourceAlreadyExistsException - thrown if resource already exists
  * @see ResourceNotFoundException - thrown if resource not found
- * @see DomainValidationException - thrown if email or password validation failure
+ * @see DomainValidationException - thrown if email or password validation
+ * failure
  */
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("api/users")
 public final class UserController {
-    
+
     private final UserService userService;
     private static final String MAIN_PATH = "api/users";
 
-
     /**
-     * Creates a new user in the system using {@link UserService#createUser(UserCreateRequest)}.
+     * Creates a new user in the system using
+     * {@link UserService#createUser(UserCreateRequest)}.
      * 
      * @param request data containing email and password
      * @return ResponseEntity with created user and HTTP 201 status
      * @throws ResourceAlreadyExistsException if user with this email already exists
-     * @throws BusinessRuleViolationException if password does not meet the requirements
+     * @throws BusinessRuleViolationException if password does not meet the
+     * requirements
      * @throws DomainValidationException if email invalid or too long
      * @throws DomainValidationException if password BCrypt hash invalid
      * @see UserCreateRequest - user creation request
@@ -79,7 +87,7 @@ public final class UserController {
      * @see UserService - service for managing system users
      * @see User - user entity
      */
-    @GetMapping({"/{id}"})
+    @GetMapping({ "/{id}" })
     public ResponseEntity<User> getUserById(@PathVariable final Long id) {
         log.info("GET {}/{}", MAIN_PATH, id);
 
@@ -88,7 +96,8 @@ public final class UserController {
     }
 
     /**
-     * Updates user email using {@link UserService#updateUserEmail(Long, UserUpdateEmailRequest)}.
+     * Updates user email using
+     * {@link UserService#updateUserEmail(Long, UserUpdateEmailRequest)}.
      * 
      * @param id the user identifier
      * @param request data containing new email
@@ -104,8 +113,7 @@ public final class UserController {
     @PutMapping("/{id}/email")
     public ResponseEntity<User> updateUserEmail(
             @PathVariable final Long id,
-            @Valid @RequestBody UserUpdateEmailRequest request
-    ) {
+            @Valid @RequestBody final UserUpdateEmailRequest request) {
         log.info("PUT {}/{}/email - new email: {}", MAIN_PATH, id, request.newEmail());
 
         User updatedUser = userService.updateUserEmail(id, request);
@@ -113,14 +121,16 @@ public final class UserController {
     }
 
     /**
-     * Updates user password using {@link UserService#updateUserPassword(Long, UserUpdatePasswordRequest)}.
+     * Updates user password using
+     * {@link UserService#updateUserPassword(Long, UserUpdatePasswordRequest)}.
      * 
      * @param id the user identifier
      * @param request data containing new password
      * @return ResponseEntity with updated user and HTTP 200 status
      * @throws BusinessRuleViolationException if ID is null or less than one
      * @throws ResourceNotFoundException if ID does not exist in database
-     * @throws BusinessRuleViolationException if password does not meet the requirements
+     * @throws BusinessRuleViolationException if password does not meet the
+     * requirements
      * @throws DomainValidationException if password BCrypt hash invalid
      * @see UserUpdatePasswordRequest - password update request
      * @see UserService - service for managing system users
@@ -129,8 +139,7 @@ public final class UserController {
     @PutMapping("/{id}/password")
     public ResponseEntity<User> updateUserPassword(
             @PathVariable final Long id,
-            @Valid @RequestBody UserUpdatePasswordRequest request
-    ) {
+            @Valid @RequestBody final UserUpdatePasswordRequest request) {
         log.info("PUT {}/{}/password - new password: ***", MAIN_PATH, id);
 
         User updatedUser = userService.updateUserPassword(id, request);

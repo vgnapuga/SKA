@@ -1,5 +1,6 @@
 package com.ska.model.syncable.note.converter;
 
+
 import com.ska.vo.encrypted.note.EncryptedNoteTitle;
 
 import jakarta.persistence.AttributeConverter;
@@ -18,5 +19,5 @@ public final class NoteTitleConverter implements AttributeConverter<EncryptedNot
     public EncryptedNoteTitle convertToEntityAttribute(byte[] dbData) {
         return dbData == null ? null : new EncryptedNoteTitle(dbData);
     }
-    
+
 }
