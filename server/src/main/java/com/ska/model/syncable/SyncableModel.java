@@ -22,7 +22,7 @@ import jakarta.persistence.PrePersist;
 public abstract class SyncableModel extends BaseModel {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id", nullable = false, foreignKey = @ForeignKey(name = "fk_note_owner"))
+    @JoinColumn(name = "owner_id", nullable = false, foreignKey = @ForeignKey(name = "fk_entity_owner"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     protected User user;
 
