@@ -87,7 +87,7 @@ public class UserService extends BaseService {
 
         User user = new User(email, password);
 
-        log.debug(LogTemplates.startDatabaseQuery());
+        log.debug(LogTemplates.dataBaseQueryStartLog());
         User savedUser = userRepository.save(user);
 
         log.info("User created successfully with ID: {}, email: {}", savedUser.getId(), email.getValue());
@@ -123,10 +123,10 @@ public class UserService extends BaseService {
     public final Optional<User> getUserById(final Long id) {
         log.info("Getting user with ID: {}", id);
 
-        log.debug(LogTemplates.validationStartLog("ID"));
+        log.debug(LogTemplates.userIdValidationStartLog());
         validateId(id);
 
-        log.debug(LogTemplates.startDatabaseQuery());
+        log.debug(LogTemplates.dataBaseQueryStartLog());
         Optional<User> retrievedUser = userRepository.findById(id);
 
         if (retrievedUser.isPresent())
@@ -150,7 +150,7 @@ public class UserService extends BaseService {
     public final List<User> getAllUsers() {
         log.info("Getting all users");
 
-        log.debug(LogTemplates.startDatabaseQuery());
+        log.debug(LogTemplates.dataBaseQueryStartLog());
         List<User> users = userRepository.findAll();
 
         log.info("Retrieved {} users", users.size());
@@ -175,11 +175,11 @@ public class UserService extends BaseService {
     public final User updateUserEmail(final Long id, final UserUpdateEmailRequest request) {
         log.info("Updating user email for ID: {}", id);
 
-        log.debug(LogTemplates.validationStartLog("ID"));
+        log.debug(LogTemplates.userIdValidationStartLog());
         validateId(id);
 
-        log.debug(LogTemplates.checkStartLog("ID existing"));
-        User user = checkIdExistence(id);
+        log.debug(LogTemplates.checkUserExistenceStartLog());
+        User user = checkUserExistence(id);
 
         log.debug(LogTemplates.validationStartLog("Email"));
         Email newEmail = new Email(request.newEmail());
@@ -189,7 +189,7 @@ public class UserService extends BaseService {
 
         user.changeEmail(newEmail);
 
-        log.debug(LogTemplates.startDatabaseQuery());
+        log.debug(LogTemplates.dataBaseQueryStartLog());
         User updatedUser = userRepository.save(user);
 
         log.info("User email updated successfully for ID: {}, new email: {}", id, newEmail);
@@ -197,7 +197,7 @@ public class UserService extends BaseService {
         return updatedUser;
     }
 
-    private final User checkIdExistence(final Long userId) {
+    public final User checkUserExistence(final Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("User id=%d not found", userId)));
     }
@@ -220,11 +220,11 @@ public class UserService extends BaseService {
     public final User updateUserPassword(final Long id, final UserUpdatePasswordRequest request) {
         log.info("Updating user password for ID: {}", id);
 
-        log.debug(LogTemplates.validationStartLog("ID"));
+        log.debug(LogTemplates.userIdValidationStartLog());
         validateId(id);
 
-        log.debug(LogTemplates.checkStartLog("ID existing"));
-        User user = checkIdExistence(id);
+        log.debug(LogTemplates.checkUserExistenceStartLog());
+        User user = checkUserExistence(id);
 
         log.debug(LogTemplates.validationStartLog("Raw password"));
         String rawPassword = request.newPassword();
@@ -235,7 +235,7 @@ public class UserService extends BaseService {
 
         user.changePassword(newPassword);
 
-        log.debug(LogTemplates.startDatabaseQuery());
+        log.debug(LogTemplates.dataBaseQueryStartLog());
         User updatedUser = userRepository.save(user);
 
         log.info("User password for ID: {} updated successfully", id);
@@ -254,13 +254,13 @@ public class UserService extends BaseService {
     public final void deleteUserById(final Long id) {
         log.info("Deleting user with ID: {}", id);
 
-        log.debug(LogTemplates.validationStartLog("ID"));
+        log.debug(LogTemplates.userIdValidationStartLog());
         validateId(id);
 
-        log.debug(LogTemplates.checkStartLog("ID existing"));
-        checkIdExistence(id);
+        log.debug(LogTemplates.checkUserExistenceStartLog());
+        checkUserExistence(id);
 
-        log.debug(LogTemplates.startDatabaseQuery());
+        log.debug(LogTemplates.dataBaseQueryStartLog());
         userRepository.deleteById(id);
 
         log.info("User with ID: {} deleted successfully", id);

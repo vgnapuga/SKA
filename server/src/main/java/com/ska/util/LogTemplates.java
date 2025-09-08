@@ -34,8 +34,16 @@ public final class LogTemplates {
         return startLog("UUID generation");
     }
 
-    public static String startDatabaseQuery() {
+    public static String dataBaseQueryStartLog() {
         return startLog("Database query");
+    }
+
+    public static String checkUserExistenceStartLog() {
+        return checkStartLog("User existence");
+    }
+
+    public static String userIdValidationStartLog() {
+        return validationStartLog("User ID");
     }
 
 }
