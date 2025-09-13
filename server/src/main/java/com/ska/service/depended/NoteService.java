@@ -12,6 +12,7 @@ import com.ska.dto.note.NoteCreateRequest;
 import com.ska.dto.note.NoteUpdateAllRequest;
 import com.ska.dto.note.NoteUpdateContentRequest;
 import com.ska.dto.note.NoteUpdateTitleRequest;
+import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.syncable.note.Note;
 import com.ska.model.user.User;
 import com.ska.repository.NoteRepository;
@@ -20,7 +21,6 @@ import com.ska.util.LogTemplates;
 import com.ska.vo.encrypted.note.EncryptedNoteContent;
 import com.ska.vo.encrypted.note.EncryptedNoteTitle;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -37,7 +37,7 @@ public class NoteService extends DependedService {
 
     @Transactional
     public final Note createNote(final Long userId, final NoteCreateRequest request) {
-        log.info("Creating note for user: {}; with title: {}", userId, request.encryptedTitle());
+        log.info("Creating note for user with ID: {}", userId);
 
         log.debug(LogTemplates.userIdValidationStartLog());
         validateId(userId);
@@ -63,11 +63,7 @@ public class NoteService extends DependedService {
         log.debug(LogTemplates.dataBaseQueryStartLog());
         Note savedNote = noteRepository.save(note);
 
-        log.info(
-                "Note created successfully for user: {}; with ID: {}, title: {}",
-                userId,
-                savedNote.getId(),
-                title.getValue());
+        log.info("Note created successfully for user with ID: {}", userId);
 
         return savedNote;
     }
@@ -140,7 +136,7 @@ public class NoteService extends DependedService {
             note.changeTitle(newTitle);
             note.changeContent(newContent);
         } else {
-            throw new EntityNotFoundException(
+            throw new ResourceNotFoundException(
                     "Note with uuid=" + noteUuid + " was not found to update title and content");
         }
 
@@ -172,21 +168,22 @@ public class NoteService extends DependedService {
         Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
 
         Note note;
-        if (retrievedNote.isPresent())
+        if (retrievedNote.isPresent()) {
             note = retrievedNote.get();
-        else
-            throw new EntityNotFoundException("Note with with uuid=" + noteUuid + " was not found to update title");
+            note.changeTitle(newTitle);
+        } else {
+            throw new ResourceNotFoundException("Note with with uuid=" + noteUuid + " was not found to update title");
+        }
 
         log.debug(LogTemplates.checkPermissionStartLog("Update note title"));
         checkPermissionToAccess(userId, note);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
-        Note updatedNote = new Note(note.getUser(), newTitle, note.getContent());
-        noteRepository.save(updatedNote);
+        noteRepository.save(note);
 
         log.info("Note title was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
 
-        return updatedNote;
+        return note;
     }
 
     @Transactional
@@ -213,7 +210,7 @@ public class NoteService extends DependedService {
             note = retrievedNote.get();
             note.changeContent(newContent);
         } else {
-            throw new EntityNotFoundException("Note with with uuid=" + noteUuid + " was not found to update content");
+            throw new ResourceNotFoundException("Note with with uuid=" + noteUuid + " was not found to update content");
         }
 
         log.debug(LogTemplates.checkPermissionStartLog("Update note content"));
@@ -243,7 +240,7 @@ public class NoteService extends DependedService {
 
             noteRepository.delete(retrievedNote.get());
         } else {
-            throw new EntityNotFoundException("Note with uuid=" + noteUuid + " was not found to delete");
+            throw new ResourceNotFoundException("Note with uuid=" + noteUuid + " was not found to delete");
         }
 
         log.info("Note was deleted successfully for user with ID: {} and note with UUID: {}", userId, noteUuid);
