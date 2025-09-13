@@ -46,4 +46,8 @@ public final class LogTemplates {
         return validationStartLog("User ID");
     }
 
+    public static String checkPermissionStartLog(final String operationName) {
+        return checkStartLog(operationName + " permission");
+    }
+
 }
