@@ -45,10 +45,6 @@ public class Note extends SyncableModel {
         this.encryptedContent = newEncryptedContent;
     }
 
-    public final User getUser() {
-        return this.user;
-    }
-
     public final EncryptedNoteTitle getTitle() {
         return this.title;
     }

@@ -35,6 +35,10 @@ public abstract class SyncableModel extends BaseModel {
             this.uuid = UUID.randomUUID();
     }
 
+    public final User getUser() {
+        return this.user;
+    }
+
     public final UUID getUuid() {
         return this.uuid;
     }
