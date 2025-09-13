@@ -87,7 +87,7 @@ public final class UserController {
      * @see UserService - service for managing system users
      * @see User - user entity
      */
-    @GetMapping({ "/{id}" })
+    @GetMapping("/{id}")
     public ResponseEntity<User> getUserById(@PathVariable final Long id) {
         log.info("GET {}/{}", MAIN_PATH, id);
 
