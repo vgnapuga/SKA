@@ -3,7 +3,9 @@ package com.ska.service.depended;
 
 import java.util.Base64;
 
+import com.ska.exception.AccessDeniedException;
 import com.ska.exception.BusinessRuleViolationException;
+import com.ska.model.syncable.SyncableModel;
 import com.ska.model.user.User;
 import com.ska.service.BaseService;
 import com.ska.service.UserService;
@@ -14,8 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class DependedService extends BaseService {
 
-    protected final UserService userService;
-
+    private final UserService userService;
     private final String INIT_MESSAGE = this.getClass().getSimpleName() + " initialization";
 
     private static final String DATA_NULL_MESSAGE = "Data is <null>";
@@ -42,6 +43,11 @@ public abstract class DependedService extends BaseService {
         } catch (IllegalArgumentException e) {
             throw new BusinessRuleViolationException(DATA_NOT_BASE64_MESSAGE);
         }
+    }
+
+    protected final void checkPermissionToAccess(final Long userId, final SyncableModel entity) {
+        if (!userId.equals(entity.getUser().getId()))
+            throw new AccessDeniedException("Permission denied for user with ID: " + userId);
     }
 
 }
