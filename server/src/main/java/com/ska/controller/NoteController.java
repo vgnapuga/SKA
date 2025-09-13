@@ -47,7 +47,7 @@ public final class NoteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
     }
 
-    @PostMapping("/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<List<Note>> getAllNotesForUser(@PathVariable final Long userId) {
         log.info("GET {}/{}", MAIN_PATH, userId);
 
@@ -59,8 +59,8 @@ public final class NoteController {
     public ResponseEntity<Note> getNote(@PathVariable final Long userId, @PathVariable final UUID noteUuid) {
         log.info("GET {}/{}/{}", MAIN_PATH, userId, noteUuid);
 
-        Optional<Note> retrivedNote = noteService.getNoteByUuid(userId, noteUuid);
-        return retrivedNote.map(u -> ResponseEntity.ok(u)).orElse(ResponseEntity.notFound().build());
+        Optional<Note> retrievedNote = noteService.getNoteByUuid(userId, noteUuid);
+        return retrievedNote.map(u -> ResponseEntity.ok(u)).orElse(ResponseEntity.notFound().build());
     }
 
     @PutMapping("/{userId}/{noteUuid}")
@@ -68,7 +68,7 @@ public final class NoteController {
             @PathVariable final Long userId,
             @PathVariable final UUID noteUuid,
             @Valid @RequestBody NoteUpdateAllRequest request) {
-        log.info("PUT {}/{}/{} - new title: ***, new content: ***", MAIN_PATH, userId, noteUuid);
+        log.info("PUT {}/{}/{}", MAIN_PATH, userId, noteUuid);
 
         Note updatedNote = noteService.updateNoteTitleAndContent(userId, noteUuid, request);
         return ResponseEntity.ok(updatedNote);
@@ -79,7 +79,7 @@ public final class NoteController {
             @PathVariable final Long userId,
             @PathVariable final UUID noteUuid,
             @Valid @RequestBody NoteUpdateTitleRequest request) {
-        log.info("PUT {}/{}/{}/title - new title: ***", MAIN_PATH, userId, noteUuid);
+        log.info("PUT {}/{}/{}/title", MAIN_PATH, userId, noteUuid);
 
         Note updatedNote = noteService.updateNoteTitle(userId, noteUuid, request);
         return ResponseEntity.ok(updatedNote);
@@ -90,7 +90,7 @@ public final class NoteController {
             @PathVariable final Long userId,
             @PathVariable final UUID noteUuid,
             @Valid @RequestBody NoteUpdateContentRequest request) {
-        log.info("PUT {}/{}/{}/content - new content: ***", MAIN_PATH, userId, noteUuid);
+        log.info("PUT {}/{}/{}/content", MAIN_PATH, userId, noteUuid);
 
         Note updatedNote = noteService.updateNoteContent(userId, noteUuid, request);
         return ResponseEntity.ok(updatedNote);
