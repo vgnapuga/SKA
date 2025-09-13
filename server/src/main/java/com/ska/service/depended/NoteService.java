@@ -73,6 +73,21 @@ public class NoteService extends DependedService {
     }
 
     @Transactional(readOnly = true)
+    public final List<Note> getAllNotesForUser(final Long userId) {
+        log.info("Getting all notes for user with ID: {}", userId);
+
+        log.debug(LogTemplates.userIdValidationStartLog());
+        validateId(userId);
+
+        log.debug(LogTemplates.dataBaseQueryStartLog());
+        List<Note> retrievedNotes = noteRepository.getAllByUserId(userId);
+
+        log.info("Retrieved {} notes for user with ID: {}", retrievedNotes.size(), userId);
+
+        return retrievedNotes;
+    }
+
+    @Transactional(readOnly = true)
     public final Optional<Note> getNoteByUuid(final Long userId, final UUID noteUuid) {
         log.info("Getting note with UUID: {} for user with ID: {}", noteUuid, userId);
 
@@ -94,19 +109,50 @@ public class NoteService extends DependedService {
         return retrievedNote;
     }
 
-    @Transactional(readOnly = true)
-    public final List<Note> getAllNotesForUser(final Long userId) {
-        log.info("Getting all notes for user with ID: {}", userId);
+    @Transactional
+    public final Note updateNoteTitleAndContent(
+            final Long userId,
+            final UUID noteUuid,
+            final NoteUpdateAllRequest request) {
+        log.info("Updating note title and content for user with ID: {} and note UUID: {}", userId, noteUuid);
 
         log.debug(LogTemplates.userIdValidationStartLog());
         validateId(userId);
 
+        log.debug(LogTemplates.checkBase64StartLog("New note title"));
+        byte[] decodedNewTitle = decodeBase64(request.encryptedNewTitle());
+
+        log.debug(LogTemplates.checkBase64StartLog("New note content"));
+        byte[] decodedNewContent = decodeBase64(request.encryptedNewContent());
+
+        log.debug(LogTemplates.validationStartLog("New note title"));
+        EncryptedNoteTitle newTitle = new EncryptedNoteTitle(decodedNewTitle);
+
+        log.debug(LogTemplates.validationStartLog("New note content"));
+        EncryptedNoteContent newContent = new EncryptedNoteContent(decodedNewContent);
+
         log.debug(LogTemplates.dataBaseQueryStartLog());
-        List<Note> retrievedNotes = noteRepository.getAllByUserId(userId);
+        Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
 
-        log.info("Retrieved {} notes for user with ID: {}", retrievedNotes.size(), userId);
+        Note note;
+        if (retrievedNote.isPresent()) {
+            note = retrievedNote.get();
+            note.changeTitle(newTitle);
+            note.changeContent(newContent);
+        } else {
+            throw new EntityNotFoundException(
+                    "Note with uuid=" + noteUuid + " was not found to update title and content");
+        }
 
-        return retrievedNotes;
+        log.debug(LogTemplates.checkPermissionStartLog("Update note title and content"));
+        checkPermissionToAccess(userId, note);
+
+        log.debug(LogTemplates.dataBaseQueryStartLog());
+        noteRepository.save(note);
+
+        log.info("Note title and content was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
+
+        return note;
     }
 
     @Transactional
@@ -177,52 +223,6 @@ public class NoteService extends DependedService {
         noteRepository.save(note);
 
         log.info("Note content was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
-
-        return note;
-    }
-
-    @Transactional
-    public final Note updateNoteTitleAndContent(
-            final Long userId,
-            final UUID noteUuid,
-            final NoteUpdateAllRequest request) {
-        log.info("Updating note title and content for user with ID: {} and note UUID: {}", userId, noteUuid);
-
-        log.debug(LogTemplates.userIdValidationStartLog());
-        validateId(userId);
-
-        log.debug(LogTemplates.checkBase64StartLog("New note title"));
-        byte[] decodedNewTitle = decodeBase64(request.encryptedNewTitle());
-
-        log.debug(LogTemplates.checkBase64StartLog("New note content"));
-        byte[] decodedNewContent = decodeBase64(request.encryptedNewContent());
-
-        log.debug(LogTemplates.validationStartLog("New note title"));
-        EncryptedNoteTitle newTitle = new EncryptedNoteTitle(decodedNewTitle);
-
-        log.debug(LogTemplates.validationStartLog("New note content"));
-        EncryptedNoteContent newContent = new EncryptedNoteContent(decodedNewContent);
-
-        log.debug(LogTemplates.dataBaseQueryStartLog());
-        Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
-
-        Note note;
-        if (retrievedNote.isPresent()) {
-            note = retrievedNote.get();
-            note.changeTitle(newTitle);
-            note.changeContent(newContent);
-        } else {
-            throw new EntityNotFoundException(
-                    "Note with uuid=" + noteUuid + " was not found to update title and content");
-        }
-
-        log.debug(LogTemplates.checkPermissionStartLog("Update note title and content"));
-        checkPermissionToAccess(userId, note);
-
-        log.debug(LogTemplates.dataBaseQueryStartLog());
-        noteRepository.save(note);
-
-        log.info("Note title and content was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
 
         return note;
     }

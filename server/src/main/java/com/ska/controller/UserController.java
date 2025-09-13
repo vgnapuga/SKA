@@ -88,7 +88,7 @@ public final class UserController {
      * @see User - user entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable final Long id) {
+    public ResponseEntity<User> getUser(@PathVariable final Long id) {
         log.info("GET {}/{}", MAIN_PATH, id);
 
         Optional<User> user = userService.getUserById(id);
@@ -156,7 +156,7 @@ public final class UserController {
      * @see UserService - service for managing system users
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUserById(@PathVariable final Long id) {
+    public ResponseEntity<Void> deleteUser(@PathVariable final Long id) {
         log.info("DELETE {}/{}", MAIN_PATH, id);
 
         userService.deleteUserById(id);
