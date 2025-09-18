@@ -19,7 +19,7 @@ public abstract class EncryptedValueObject extends BaseValueObject<byte[]> {
 
     private final void validateNotEmpty(final byte[] encryptedBytes) {
         if (encryptedBytes.length == 0)
-            throw new DomainValidationException(this.getClass().getSimpleName() + " data is empty");
+            throw new DomainValidationException(this.getClass().getSimpleName() + " data is <empty>");
     }
 
     protected abstract void validateReasonableSize(final byte[] encryptedBytes);

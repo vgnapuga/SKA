@@ -16,6 +16,9 @@ import com.ska.vo.ValueObjectBehaviorTest;
 
 class PasswordTest implements ValueObjectBehaviorTest<String> {
 
+    public static final String NULL_MESSAGE = "Password value is <null>";
+    public static final String BLANK_MESSAGE = "Password value is <blank>";
+
     @ParameterizedTest
     @ValueSource(strings = { "$2a$10$validBcryptHashWith60Characters1234567890123456781234",
             "$2b$12$anotherValidBcryptHashExample123456789012345678911234",
@@ -30,14 +33,14 @@ class PasswordTest implements ValueObjectBehaviorTest<String> {
     @Override
     public void shouldThrowDomainValidationException_whenNullValue() {
         DomainValidationException exception = assertThrows(DomainValidationException.class, () -> new Password(null));
-        assertEquals("Password value is <null>", exception.getMessage());
+        assertEquals(NULL_MESSAGE, exception.getMessage());
     }
 
     @Test
     @Override
     public void shouldThrowDomainValidationException_whenBlankValue() {
         DomainValidationException exception = assertThrows(DomainValidationException.class, () -> new Password(""));
-        assertEquals("Password value is <blank>", exception.getMessage());
+        assertEquals(BLANK_MESSAGE, exception.getMessage());
     }
 
     @ParameterizedTest

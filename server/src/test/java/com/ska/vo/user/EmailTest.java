@@ -16,6 +16,9 @@ import com.ska.vo.ValueObjectBehaviorTest;
 
 class EmailTest implements ValueObjectBehaviorTest<String> {
 
+    public static final String NULL_MESSAGE = "Email value is <null>";
+    public static final String BLANK_MESSAGE = "Email value is <blank>";
+
     @ParameterizedTest
     @ValueSource(strings = { "test@example.com", "user.name+tag@example-domain.co.ru", })
     @Override
@@ -28,14 +31,14 @@ class EmailTest implements ValueObjectBehaviorTest<String> {
     @Override
     public void shouldThrowDomainValidationException_whenNullValue() {
         DomainValidationException exception = assertThrows(DomainValidationException.class, () -> new Email(null));
-        assertEquals("Email value is <null>", exception.getMessage());
+        assertEquals(NULL_MESSAGE, exception.getMessage());
     }
 
     @Test
     @Override
     public void shouldThrowDomainValidationException_whenBlankValue() {
         DomainValidationException exception = assertThrows(DomainValidationException.class, () -> new Email(""));
-        assertEquals("Email value is <blank>", exception.getMessage());
+        assertEquals(BLANK_MESSAGE, exception.getMessage());
     }
 
     @Test
