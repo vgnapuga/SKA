@@ -24,4 +24,9 @@ public abstract class EncryptedValueObject extends BaseValueObject<byte[]> {
 
     protected abstract void validateReasonableSize(final byte[] encryptedBytes);
 
+    @Override
+    public final String toString() {
+        return String.format("%s{value=***}", this.getClass().getSimpleName());
+    }
+
 }
