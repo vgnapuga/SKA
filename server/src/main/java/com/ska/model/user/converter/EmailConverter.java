@@ -1,7 +1,7 @@
 package com.ska.model.user.converter;
 
 
-import com.ska.vo.user.Email;
+import com.ska.model.user.vo.Email;
 
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;

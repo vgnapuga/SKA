@@ -1,14 +1,14 @@
 package com.ska.model.user;
 
 
-import com.ska.constant.user.EmailConstants;
-import com.ska.constant.user.PasswordConstants;
 import com.ska.exception.DomainValidationException;
 import com.ska.model.BaseModel;
 import com.ska.model.user.converter.EmailConverter;
 import com.ska.model.user.converter.PasswordConverter;
-import com.ska.vo.user.Email;
-import com.ska.vo.user.Password;
+import com.ska.model.user.vo.Email;
+import com.ska.model.user.vo.Password;
+import com.ska.util.constant.user.EmailConstants;
+import com.ska.util.constant.user.PasswordConstants;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

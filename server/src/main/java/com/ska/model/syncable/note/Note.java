@@ -1,14 +1,14 @@
 package com.ska.model.syncable.note;
 
 
-import com.ska.constant.note.NoteContentConstants;
-import com.ska.constant.note.NoteTitleConstants;
 import com.ska.model.syncable.SyncableModel;
 import com.ska.model.syncable.note.converter.NoteContentConverter;
 import com.ska.model.syncable.note.converter.NoteTitleConverter;
+import com.ska.model.syncable.note.vo.EncryptedNoteContent;
+import com.ska.model.syncable.note.vo.EncryptedNoteTitle;
 import com.ska.model.user.User;
-import com.ska.vo.encrypted.note.EncryptedNoteContent;
-import com.ska.vo.encrypted.note.EncryptedNoteTitle;
+import com.ska.util.constant.note.NoteContentConstants;
+import com.ska.util.constant.note.NoteTitleConstants;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;

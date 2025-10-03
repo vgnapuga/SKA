@@ -8,18 +8,18 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ska.dto.note.NoteCreateRequest;
-import com.ska.dto.note.NoteUpdateAllRequest;
-import com.ska.dto.note.NoteUpdateContentRequest;
-import com.ska.dto.note.NoteUpdateTitleRequest;
+import com.ska.dto.note.request.NoteCreateRequest;
+import com.ska.dto.note.request.NoteUpdateAllRequest;
+import com.ska.dto.note.request.NoteUpdateContentRequest;
+import com.ska.dto.note.request.NoteUpdateTitleRequest;
 import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.syncable.note.Note;
+import com.ska.model.syncable.note.vo.EncryptedNoteContent;
+import com.ska.model.syncable.note.vo.EncryptedNoteTitle;
 import com.ska.model.user.User;
 import com.ska.repository.NoteRepository;
 import com.ska.service.UserService;
 import com.ska.util.LogTemplates;
-import com.ska.vo.encrypted.note.EncryptedNoteContent;
-import com.ska.vo.encrypted.note.EncryptedNoteTitle;
 
 import lombok.extern.slf4j.Slf4j;
 

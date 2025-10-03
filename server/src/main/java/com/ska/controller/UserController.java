@@ -14,9 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ska.dto.user.UserCreateRequest;
-import com.ska.dto.user.UserUpdateEmailRequest;
-import com.ska.dto.user.UserUpdatePasswordRequest;
+import com.ska.dto.user.request.UserCreateRequest;
+import com.ska.dto.user.request.UserUpdateEmailRequest;
+import com.ska.dto.user.request.UserUpdatePasswordRequest;
 import com.ska.exception.BusinessRuleViolationException;
 import com.ska.exception.DomainValidationException;
 import com.ska.exception.ResourceAlreadyExistsException;

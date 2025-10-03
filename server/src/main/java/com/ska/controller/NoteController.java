@@ -16,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ska.dto.note.NoteCreateRequest;
-import com.ska.dto.note.NoteUpdateAllRequest;
-import com.ska.dto.note.NoteUpdateContentRequest;
-import com.ska.dto.note.NoteUpdateTitleRequest;
+import com.ska.dto.note.request.NoteCreateRequest;
+import com.ska.dto.note.request.NoteUpdateAllRequest;
+import com.ska.dto.note.request.NoteUpdateContentRequest;
+import com.ska.dto.note.request.NoteUpdateTitleRequest;
 import com.ska.model.syncable.note.Note;
 import com.ska.service.depended.NoteService;
 

@@ -8,19 +8,19 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.ska.constant.user.PasswordConstants;
-import com.ska.dto.user.UserCreateRequest;
-import com.ska.dto.user.UserUpdateEmailRequest;
-import com.ska.dto.user.UserUpdatePasswordRequest;
+import com.ska.dto.user.request.UserCreateRequest;
+import com.ska.dto.user.request.UserUpdateEmailRequest;
+import com.ska.dto.user.request.UserUpdatePasswordRequest;
 import com.ska.exception.BusinessRuleViolationException;
 import com.ska.exception.DomainValidationException;
 import com.ska.exception.ResourceAlreadyExistsException;
 import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.user.User;
+import com.ska.model.user.vo.Email;
+import com.ska.model.user.vo.Password;
 import com.ska.repository.UserRepository;
 import com.ska.util.LogTemplates;
-import com.ska.vo.user.Email;
-import com.ska.vo.user.Password;
+import com.ska.util.constant.user.PasswordConstants;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
