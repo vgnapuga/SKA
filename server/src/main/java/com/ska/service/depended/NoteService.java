@@ -14,8 +14,8 @@ import com.ska.dto.note.request.NoteUpdateContentRequest;
 import com.ska.dto.note.request.NoteUpdateTitleRequest;
 import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.syncable.note.Note;
-import com.ska.model.syncable.note.vo.EncryptedNoteContent;
-import com.ska.model.syncable.note.vo.EncryptedNoteTitle;
+import com.ska.model.syncable.note.vo.NoteContent;
+import com.ska.model.syncable.note.vo.NoteTitle;
 import com.ska.model.user.User;
 import com.ska.repository.NoteRepository;
 import com.ska.service.UserService;
@@ -26,17 +26,17 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Service
-public class NoteService extends DependedService {
+public final class NoteService extends BaseDependedService {
 
     private final NoteRepository noteRepository;
 
-    public NoteService(final UserService userService, final NoteRepository noteRepository) {
+    public NoteService(UserService userService, NoteRepository noteRepository) {
         super(userService);
         this.noteRepository = noteRepository;
     }
 
     @Transactional
-    public final Note createNote(final Long userId, final NoteCreateRequest request) {
+    public Note createNote(Long userId, NoteCreateRequest request) {
         log.info("Creating note for user with ID: {}", userId);
 
         log.debug(LogTemplates.userIdValidationStartLog());
@@ -52,10 +52,10 @@ public class NoteService extends DependedService {
         byte[] decodedContent = decodeBase64(request.encryptedContent());
 
         log.debug(LogTemplates.validationStartLog("Note title"));
-        EncryptedNoteTitle title = new EncryptedNoteTitle(decodedTitle);
+        NoteTitle title = new NoteTitle(decodedTitle);
 
         log.debug(LogTemplates.validationStartLog("Note content"));
-        EncryptedNoteContent content = new EncryptedNoteContent(decodedContent);
+        NoteContent content = new NoteContent(decodedContent);
 
         log.debug(LogTemplates.generateUuidStartLog());
         Note note = new Note(user, title, content);
@@ -64,12 +64,11 @@ public class NoteService extends DependedService {
         Note savedNote = noteRepository.save(note);
 
         log.info("Note created successfully for user with ID: {}", userId);
-
         return savedNote;
     }
 
     @Transactional(readOnly = true)
-    public final List<Note> getAllNotesForUser(final Long userId) {
+    public List<Note> getAllNotesForUser(Long userId) {
         log.info("Getting all notes for user with ID: {}", userId);
 
         log.debug(LogTemplates.userIdValidationStartLog());
@@ -79,12 +78,11 @@ public class NoteService extends DependedService {
         List<Note> retrievedNotes = noteRepository.getAllByUserId(userId);
 
         log.info("Retrieved {} notes for user with ID: {}", retrievedNotes.size(), userId);
-
         return retrievedNotes;
     }
 
     @Transactional(readOnly = true)
-    public final Optional<Note> getNoteByUuid(final Long userId, final UUID noteUuid) {
+    public Optional<Note> getNoteByUuid(Long userId, UUID noteUuid) {
         log.info("Getting note with UUID: {} for user with ID: {}", noteUuid, userId);
 
         log.debug(LogTemplates.userIdValidationStartLog());
@@ -101,15 +99,11 @@ public class NoteService extends DependedService {
         } else {
             log.info("Note with UUID: {} not found", noteUuid);
         }
-
         return retrievedNote;
     }
 
     @Transactional
-    public final Note updateNoteTitleAndContent(
-            final Long userId,
-            final UUID noteUuid,
-            final NoteUpdateAllRequest request) {
+    public Note updateNoteTitleAndContent(Long userId, UUID noteUuid, NoteUpdateAllRequest request) {
         log.info("Updating note title and content for user with ID: {} and note UUID: {}", userId, noteUuid);
 
         log.debug(LogTemplates.userIdValidationStartLog());
@@ -122,10 +116,10 @@ public class NoteService extends DependedService {
         byte[] decodedNewContent = decodeBase64(request.encryptedNewContent());
 
         log.debug(LogTemplates.validationStartLog("New note title"));
-        EncryptedNoteTitle newTitle = new EncryptedNoteTitle(decodedNewTitle);
+        NoteTitle newTitle = new NoteTitle(decodedNewTitle);
 
         log.debug(LogTemplates.validationStartLog("New note content"));
-        EncryptedNoteContent newContent = new EncryptedNoteContent(decodedNewContent);
+        NoteContent newContent = new NoteContent(decodedNewContent);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
         Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
@@ -147,12 +141,11 @@ public class NoteService extends DependedService {
         noteRepository.save(note);
 
         log.info("Note title and content was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
-
         return note;
     }
 
     @Transactional
-    public final Note updateNoteTitle(final Long userId, final UUID noteUuid, final NoteUpdateTitleRequest request) {
+    public Note updateNoteTitle(Long userId, UUID noteUuid, NoteUpdateTitleRequest request) {
         log.info("Updating note title for user with ID: {} and note UUID: {}", userId, noteUuid);
 
         log.debug(LogTemplates.userIdValidationStartLog());
@@ -162,7 +155,7 @@ public class NoteService extends DependedService {
         byte[] decodedNewTitle = decodeBase64(request.encryptedNewTitle());
 
         log.debug(LogTemplates.validationStartLog("New note title"));
-        EncryptedNoteTitle newTitle = new EncryptedNoteTitle(decodedNewTitle);
+        NoteTitle newTitle = new NoteTitle(decodedNewTitle);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
         Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
@@ -182,15 +175,11 @@ public class NoteService extends DependedService {
         noteRepository.save(note);
 
         log.info("Note title was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
-
         return note;
     }
 
     @Transactional
-    public final Note updateNoteContent(
-            final Long userId,
-            final UUID noteUuid,
-            final NoteUpdateContentRequest request) {
+    public Note updateNoteContent(Long userId, UUID noteUuid, NoteUpdateContentRequest request) {
         log.info("Updating note content for user with ID: {} and note UUID: {}", userId, noteUuid);
 
         log.debug(LogTemplates.userIdValidationStartLog());
@@ -200,7 +189,7 @@ public class NoteService extends DependedService {
         byte[] decodedNewContent = decodeBase64(request.encryptedNewContent());
 
         log.debug(LogTemplates.validationStartLog("New note content"));
-        EncryptedNoteContent newContent = new EncryptedNoteContent(decodedNewContent);
+        NoteContent newContent = new NoteContent(decodedNewContent);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
         Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
@@ -220,12 +209,11 @@ public class NoteService extends DependedService {
         noteRepository.save(note);
 
         log.info("Note content was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
-
         return note;
     }
 
     @Transactional
-    public final void deleteNote(final Long userId, final UUID noteUuid) {
+    public void deleteNote(Long userId, UUID noteUuid) {
         log.info("Deleting note for user with ID: {} and note UUID: {}", userId, noteUuid);
 
         log.debug(LogTemplates.userIdValidationStartLog());

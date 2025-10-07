@@ -4,7 +4,7 @@ package com.ska.model.user.vo;
 import com.ska.exception.DomainValidationException;
 import com.ska.model.BaseValueObject;
 import com.ska.model.user.converter.EmailConverter;
-import com.ska.util.constant.user.EmailConstants;
+import com.ska.util.constant.UserConstants;
 
 
 /**
@@ -19,7 +19,7 @@ import com.ska.util.constant.user.EmailConstants;
  */
 public final class Email extends BaseValueObject<String> {
 
-    public Email(final String value) {
+    public Email(String value) {
         super(value);
     }
 
@@ -31,14 +31,14 @@ public final class Email extends BaseValueObject<String> {
      * or has invalid format
      */
     @Override
-    protected void checkValidation(final String value) {
+    protected void checkValidation(String value) {
         validateNotBlank(value);
 
-        if (value.length() > EmailConstants.Format.MAX_LENGTH)
-            throw new DomainValidationException(EmailConstants.Messages.INVALID_LENGTH_MESSAGE);
+        if (value.length() > UserConstants.Email.MAX_LENGTH)
+            throw new DomainValidationException(UserConstants.Email.getDomainInvalidLengthMessage(value.length()));
 
-        if (!value.matches(EmailConstants.Format.REGEX))
-            throw new DomainValidationException(EmailConstants.Messages.INVALID_FORMAT_MESSAGE);
+        if (!value.matches(UserConstants.Email.REGEX))
+            throw new DomainValidationException(UserConstants.Email.DOMAIN_INVALID_FORMAT_MESSAGE);
     }
 
 }

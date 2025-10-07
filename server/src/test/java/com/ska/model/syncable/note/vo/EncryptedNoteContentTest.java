@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import com.ska.exception.DomainValidationException;
 import com.ska.model.syncable.EncryptedValueObjectBehaviorTest;
-import com.ska.util.constant.note.NoteContentConstants;
+import com.ska.util.constant.NoteConstants;
 
 
 public class EncryptedNoteContentTest implements EncryptedValueObjectBehaviorTest {
@@ -20,8 +20,7 @@ public class EncryptedNoteContentTest implements EncryptedValueObjectBehaviorTes
     @Test
     @Override
     public void shouldCreate_whenValidValue() {
-        EncryptedNoteContent noteTitle = assertDoesNotThrow(
-                () -> new EncryptedNoteContent(EncryptedValueObjectBehaviorTest.validValue));
+        NoteContent noteTitle = assertDoesNotThrow(() -> new NoteContent(EncryptedValueObjectBehaviorTest.validValue));
         assertEquals(EncryptedValueObjectBehaviorTest.validValue, noteTitle.getValue());
     }
 
@@ -30,7 +29,7 @@ public class EncryptedNoteContentTest implements EncryptedValueObjectBehaviorTes
     public void shouldThrowDomainValidationException_whenNullValue() {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class,
-                () -> new EncryptedNoteContent(null));
+                () -> new NoteContent(null));
         assertEquals(NULL_MESSAGE, exception.getMessage());
     }
 
@@ -39,19 +38,20 @@ public class EncryptedNoteContentTest implements EncryptedValueObjectBehaviorTes
     public void shouldThrowDomainValidationException_whenEmptyValue() {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class,
-                () -> new EncryptedNoteContent(new byte[] {}));
+                () -> new NoteContent(new byte[] {}));
         assertEquals(EMPTY_MESSAGE, exception.getMessage());
     }
 
     @Test
     @Override
     public void shouldThrowDomainValidationException_whenValueLengthInvalid() {
-        byte[] tooLongValue = new byte[NoteContentConstants.Format.MAX_ENCRYPTED_DATA_SIZE + 1];
+        int invalidSize = NoteConstants.Content.MAX_ENCRYPTED_DATA_SIZE + 1;
+        byte[] tooLongValue = new byte[invalidSize];
 
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class,
-                () -> new EncryptedNoteContent(tooLongValue));
-        assertEquals(NoteContentConstants.Messages.INVALID_ENCRYPTED_DATA_SIZE, exception.getMessage());
+                () -> new NoteContent(tooLongValue));
+        assertEquals(NoteConstants.Content.getDomainInvalidDataSizeMessage(invalidSize), exception.getMessage());
     }
 
 }

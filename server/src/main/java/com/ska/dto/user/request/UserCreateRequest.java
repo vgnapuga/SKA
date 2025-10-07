@@ -1,15 +1,9 @@
 package com.ska.dto.user.request;
 
 
-import com.ska.util.constant.user.EmailConstants;
-import com.ska.util.constant.user.PasswordConstants;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.ska.dto.validation.user.ValidEmail;
+import com.ska.dto.validation.user.ValidPassword;
 
 
-public record UserCreateRequest(
-        @NotBlank(message = EmailConstants.Messages.REQUIRED_MESSAGE) @Size(max = EmailConstants.Format.MAX_LENGTH, message = EmailConstants.Messages.INVALID_LENGTH_MESSAGE) @Email(message = EmailConstants.Messages.INVALID_FORMAT_MESSAGE) String email,
-        @NotBlank(message = PasswordConstants.Messages.REQUIRED_MESSAGE) @Size(min = PasswordConstants.Format.MIN_LENGTH, message = PasswordConstants.Messages.INVALID_LENGTH_MESSAGE) String password) {
+public final record UserCreateRequest(@ValidEmail String email, @ValidPassword String password) {
 }

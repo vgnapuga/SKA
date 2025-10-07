@@ -5,9 +5,9 @@ import com.ska.exception.DomainValidationException;
 import com.ska.model.BaseValueObject;
 
 
-public abstract class EncryptedValueObject extends BaseValueObject<byte[]> {
+public abstract class BaseEncryptedValueObject extends BaseValueObject<byte[]> {
 
-    protected EncryptedValueObject(final byte[] encryptedBytes) {
+    protected BaseEncryptedValueObject(final byte[] encryptedBytes) {
         super(encryptedBytes);
     }
 

@@ -8,7 +8,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 
-public record ValidationErrorResponse(
+public final record ValidationErrorResponse(
         String error,
         String message,
         String path,
@@ -17,17 +17,14 @@ public record ValidationErrorResponse(
         Map<String, List<String>> errorFields) {
 
     public static ValidationErrorResponse of(
-            final String message,
-            final String path,
-            final int status,
-            final Map<String, List<String>> errorFields) {
+            String message,
+            String path,
+            int status,
+            Map<String, List<String>> errorFields) {
         return new ValidationErrorResponse("VALIDATION_ERROR", message, path, LocalDateTime.now(), status, errorFields);
     }
 
-    public static ValidationErrorResponse of(
-            final String message,
-            final int status,
-            final Map<String, List<String>> errorFields) {
+    public static ValidationErrorResponse of(String message, int status, Map<String, List<String>> errorFields) {
         return new ValidationErrorResponse("VALIDATION_ERROR", message, null, LocalDateTime.now(), status, errorFields);
     }
 

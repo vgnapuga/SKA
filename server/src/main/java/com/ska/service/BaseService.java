@@ -21,7 +21,7 @@ public abstract class BaseService {
      * @param id the entity identifier
      * @throws BusinessRuleViolationException if ID is null or less than 1
      */
-    protected static void validateId(final Long id) {
+    protected static void validateId(Long id) {
         if (id == null)
             throw new DomainValidationException(NULL_MESSAGE);
         if (id <= 0)

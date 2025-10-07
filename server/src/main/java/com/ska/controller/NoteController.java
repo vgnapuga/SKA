@@ -30,34 +30,32 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("api/notes")
+@RequiredArgsConstructor
 public final class NoteController {
 
     private final NoteService noteService;
-    private static final String MAIN_PATH = "api/notes";
+    private static final String ROOT = "api/notes";
 
     @PostMapping("/{userId}")
-    public ResponseEntity<Note> createNote(
-            @PathVariable final Long userId,
-            @Valid @RequestBody final NoteCreateRequest request) {
-        log.info("POST {}/{}", MAIN_PATH, userId);
+    public ResponseEntity<Note> createNote(@PathVariable Long userId, @Valid @RequestBody NoteCreateRequest request) {
+        log.info("POST - {}/{}", ROOT, userId);
 
         Note createdNote = noteService.createNote(userId, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Note>> getAllNotesForUser(@PathVariable final Long userId) {
-        log.info("GET {}/{}", MAIN_PATH, userId);
+    public ResponseEntity<List<Note>> getAllNotesForUser(@PathVariable Long userId) {
+        log.info("GET - {}/{}", ROOT, userId);
 
         List<Note> notes = noteService.getAllNotesForUser(userId);
         return ResponseEntity.ok(notes);
     }
 
     @GetMapping("/{userId}/{noteUuid}")
-    public ResponseEntity<Note> getNote(@PathVariable final Long userId, @PathVariable final UUID noteUuid) {
-        log.info("GET {}/{}/{}", MAIN_PATH, userId, noteUuid);
+    public ResponseEntity<Note> getNote(@PathVariable Long userId, @PathVariable UUID noteUuid) {
+        log.info("GET - {}/{}/{}", ROOT, userId, noteUuid);
 
         Optional<Note> retrievedNote = noteService.getNoteByUuid(userId, noteUuid);
         return retrievedNote.map(u -> ResponseEntity.ok(u)).orElse(ResponseEntity.notFound().build());
@@ -65,10 +63,10 @@ public final class NoteController {
 
     @PutMapping("/{userId}/{noteUuid}")
     public ResponseEntity<Note> updateNoteTitleAndContent(
-            @PathVariable final Long userId,
-            @PathVariable final UUID noteUuid,
+            @PathVariable Long userId,
+            @PathVariable UUID noteUuid,
             @Valid @RequestBody NoteUpdateAllRequest request) {
-        log.info("PUT {}/{}/{}", MAIN_PATH, userId, noteUuid);
+        log.info("PUT - {}/{}/{}", ROOT, userId, noteUuid);
 
         Note updatedNote = noteService.updateNoteTitleAndContent(userId, noteUuid, request);
         return ResponseEntity.ok(updatedNote);
@@ -76,10 +74,10 @@ public final class NoteController {
 
     @PutMapping("/{userId}/{noteUuid}/title")
     public ResponseEntity<Note> updateNoteTitle(
-            @PathVariable final Long userId,
-            @PathVariable final UUID noteUuid,
+            @PathVariable Long userId,
+            @PathVariable UUID noteUuid,
             @Valid @RequestBody NoteUpdateTitleRequest request) {
-        log.info("PUT {}/{}/{}/title", MAIN_PATH, userId, noteUuid);
+        log.info("PUT - {}/{}/{}/title", ROOT, userId, noteUuid);
 
         Note updatedNote = noteService.updateNoteTitle(userId, noteUuid, request);
         return ResponseEntity.ok(updatedNote);
@@ -87,10 +85,10 @@ public final class NoteController {
 
     @PutMapping("/{userId}/{noteUuid}/content")
     public ResponseEntity<Note> updateNoteContent(
-            @PathVariable final Long userId,
-            @PathVariable final UUID noteUuid,
+            @PathVariable Long userId,
+            @PathVariable UUID noteUuid,
             @Valid @RequestBody NoteUpdateContentRequest request) {
-        log.info("PUT {}/{}/{}/content", MAIN_PATH, userId, noteUuid);
+        log.info("PUT - {}/{}/{}/content", ROOT, userId, noteUuid);
 
         Note updatedNote = noteService.updateNoteContent(userId, noteUuid, request);
         return ResponseEntity.ok(updatedNote);
@@ -98,7 +96,7 @@ public final class NoteController {
 
     @DeleteMapping("/{userId}/{noteUuid}")
     public ResponseEntity<Void> deleteNoteByUuid(@PathVariable final Long userId, @PathVariable final UUID noteUuid) {
-        log.info("DELETE {}/{}/{}", MAIN_PATH, userId, noteUuid);
+        log.info("DELETE - {}/{}/{}", ROOT, userId, noteUuid);
 
         noteService.deleteNote(userId, noteUuid);
         return ResponseEntity.noContent().build();

@@ -4,7 +4,7 @@ package com.ska.model.user.vo;
 import com.ska.exception.DomainValidationException;
 import com.ska.model.BaseValueObject;
 import com.ska.model.user.converter.PasswordConverter;
-import com.ska.util.constant.user.PasswordConstants;
+import com.ska.util.constant.UserConstants;
 
 
 /**
@@ -20,7 +20,7 @@ import com.ska.util.constant.user.PasswordConstants;
  */
 public final class Password extends BaseValueObject<String> {
 
-    public Password(final String value) {
+    public Password(String value) {
         super(value);
     }
 
@@ -32,22 +32,22 @@ public final class Password extends BaseValueObject<String> {
      * characters, or has invalid BCrypt prefixes
      */
     @Override
-    protected void checkValidation(final String value) {
+    protected void checkValidation(String value) {
         validateNotBlank(value);
 
-        if (value.length() != PasswordConstants.Format.BCRYPT_HASHED_SIZE) {
-            throw new DomainValidationException(PasswordConstants.Messages.INVALID_BCRYPT_FORMAT_MESSAGE);
+        if (value.length() != UserConstants.Password.BCRYPT_HASHED_SIZE) {
+            throw new DomainValidationException(UserConstants.Password.DOMAIN_INVALID_FORMAT_MESSAGE);
         }
 
-        for (String str : PasswordConstants.Format.BCRYPT_PREFIXES) {
+        for (String str : UserConstants.Password.BCRYPT_PREFIXES) {
             if (value.startsWith(str))
                 return;
         }
-        throw new DomainValidationException(PasswordConstants.Messages.INVALID_BCRYPT_FORMAT_MESSAGE);
+        throw new DomainValidationException(UserConstants.Password.DOMAIN_INVALID_FORMAT_MESSAGE);
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return "Password{value=***}";
     }
 

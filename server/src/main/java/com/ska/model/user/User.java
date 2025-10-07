@@ -7,8 +7,7 @@ import com.ska.model.user.converter.EmailConverter;
 import com.ska.model.user.converter.PasswordConverter;
 import com.ska.model.user.vo.Email;
 import com.ska.model.user.vo.Password;
-import com.ska.util.constant.user.EmailConstants;
-import com.ska.util.constant.user.PasswordConstants;
+import com.ska.util.constant.UserConstants;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -30,15 +29,15 @@ import jakarta.persistence.Table;
 @Table(name = "users")
 public class User extends BaseModel {
 
-    @Column(name = "email", nullable = false, unique = true, length = EmailConstants.Format.MAX_LENGTH)
+    @Column(name = "email", nullable = false, unique = true, length = UserConstants.Email.MAX_LENGTH)
     @Convert(converter = EmailConverter.class)
     private Email email;
 
-    @Column(name = "password", nullable = false, length = PasswordConstants.Format.BCRYPT_HASHED_SIZE)
+    @Column(name = "password", nullable = false, length = UserConstants.Password.BCRYPT_HASHED_SIZE)
     @Convert(converter = PasswordConverter.class)
     private Password password;
 
-    public User() {
+    protected User() {
     }
 
     /**
@@ -50,9 +49,9 @@ public class User extends BaseModel {
      * @see Email - email value object
      * @see Password - password value object
      */
-    public User(final Email email, final Password password) {
-        this.email = email;
-        this.password = password;
+    public User(Email email, Password password) {
+        this.email = java.util.Objects.requireNonNull(email, UserConstants.Email.NULL_MESSAGE);
+        this.password = java.util.Objects.requireNonNull(password, UserConstants.Password.NULL_MESSAGE);
     }
 
     /**
@@ -61,8 +60,8 @@ public class User extends BaseModel {
      * @param newEmail the new email to set
      * @see Email - email value object
      */
-    public final void changeEmail(final Email newEmail) {
-        this.email = newEmail;
+    public final void changeEmail(Email newEmail) {
+        this.email = java.util.Objects.requireNonNull(newEmail, UserConstants.Email.NULL_MESSAGE);
     }
 
     /**
@@ -71,21 +70,21 @@ public class User extends BaseModel {
      * @param newPassword the new password to set
      * @see Password - password value object
      */
-    public final void changePassword(final Password newPassword) {
-        this.password = newPassword;
+    public final void changePassword(Password newPassword) {
+        this.password = java.util.Objects.requireNonNull(newPassword, UserConstants.Password.NULL_MESSAGE);
     }
 
-    public final Email getEmail() {
+    public Email getEmail() {
         return this.email;
     }
 
-    public final Password getPassword() {
+    public Password getPassword() {
         return this.password;
     }
 
     @Override
     public final String toString() {
-        return String.format("User{id=%d, email=%s, password=***}", this.id, this.email.toString());
+        return String.format("User{id=%s, email=%s, password=***}", this.id, this.email.toString());
     }
 
 }

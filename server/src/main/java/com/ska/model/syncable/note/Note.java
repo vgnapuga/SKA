@@ -1,14 +1,14 @@
 package com.ska.model.syncable.note;
 
 
-import com.ska.model.syncable.SyncableModel;
+import com.ska.model.syncable.BaseSyncableModel;
 import com.ska.model.syncable.note.converter.NoteContentConverter;
 import com.ska.model.syncable.note.converter.NoteTitleConverter;
-import com.ska.model.syncable.note.vo.EncryptedNoteContent;
-import com.ska.model.syncable.note.vo.EncryptedNoteTitle;
+import com.ska.model.syncable.note.vo.NoteContent;
+import com.ska.model.syncable.note.vo.NoteTitle;
 import com.ska.model.user.User;
-import com.ska.util.constant.note.NoteContentConstants;
-import com.ska.util.constant.note.NoteTitleConstants;
+import com.ska.util.constant.NoteConstants;
+import com.ska.util.constant.UserConstants;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Convert;
@@ -18,45 +18,47 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "notes")
-public class Note extends SyncableModel {
+public class Note extends BaseSyncableModel {
 
-    @Column(name = "title", nullable = false, length = NoteTitleConstants.Format.MAX_ENCRYPTED_DATA_SIZE)
+    @Column(name = "title", nullable = false, length = NoteConstants.Title.MAX_ENCRYPTED_DATA_SIZE)
     @Convert(converter = NoteTitleConverter.class)
-    private EncryptedNoteTitle title;
+    private NoteTitle title;
 
-    @Column(name = "encrypted_content", nullable = false, length = NoteContentConstants.Format.MAX_ENCRYPTED_DATA_SIZE)
+    @Column(name = "encrypted_content", nullable = false, length = NoteConstants.Content.MAX_ENCRYPTED_DATA_SIZE)
     @Convert(converter = NoteContentConverter.class)
-    private EncryptedNoteContent encryptedContent;
+    private NoteContent encryptedContent;
 
-    public Note() {
+    protected Note() {
     }
 
-    public Note(final User user, final EncryptedNoteTitle title, final EncryptedNoteContent encryptedContent) {
-        this.user = user;
-        this.title = title;
-        this.encryptedContent = encryptedContent;
+    public Note(final User user, NoteTitle encryptedTitle, NoteContent encryptedContent) {
+        this.user = java.util.Objects.requireNonNull(user, UserConstants.NULL_MESSAGE);
+        this.title = java.util.Objects.requireNonNull(encryptedTitle, NoteConstants.Title.NULL_MESSAGE);
+        this.encryptedContent = java.util.Objects.requireNonNull(encryptedContent, NoteConstants.Content.NULL_MESSAGE);
     }
 
-    public final void changeTitle(final EncryptedNoteTitle newTitle) {
-        this.title = newTitle;
+    public final void changeTitle(NoteTitle newEncryptedTitle) {
+        this.title = java.util.Objects.requireNonNull(newEncryptedTitle, NoteConstants.Title.NULL_MESSAGE);
     }
 
-    public final void changeContent(final EncryptedNoteContent newEncryptedContent) {
-        this.encryptedContent = newEncryptedContent;
+    public final void changeContent(NoteContent newEncryptedContent) {
+        this.encryptedContent = java.util.Objects.requireNonNull(
+                newEncryptedContent,
+                NoteConstants.Content.NULL_MESSAGE);
     }
 
-    public final EncryptedNoteTitle getTitle() {
+    public NoteTitle getTitle() {
         return this.title;
     }
 
-    public final EncryptedNoteContent getContent() {
+    public NoteContent getContent() {
         return this.encryptedContent;
     }
 
     @Override
     public final String toString() {
         return String.format(
-                "Note{id=%d, authorId=%d, title=%s, content=***}",
+                "Note{id=%s, authorId=%d, title=%s, content=***}",
                 this.id,
                 this.user.getId(),
                 this.title.toString());

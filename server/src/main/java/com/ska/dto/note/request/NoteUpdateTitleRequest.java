@@ -1,11 +1,8 @@
 package com.ska.dto.note.request;
 
 
-import com.ska.util.constant.note.NoteTitleConstants;
-
-import jakarta.validation.constraints.NotBlank;
+import com.ska.dto.validation.note.ValidNoteTitle;
 
 
-public record NoteUpdateTitleRequest(
-        @NotBlank(message = NoteTitleConstants.Messages.REQUIRED_MESSAGE) String encryptedNewTitle) {
+public final record NoteUpdateTitleRequest(@ValidNoteTitle String encryptedNewTitle) {
 }

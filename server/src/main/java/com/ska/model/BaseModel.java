@@ -25,10 +25,10 @@ public abstract class BaseModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
 
-    @Column(name = "created_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = false)
+    @Column(name = "created_at", columnDefinition = "TIMESTAMP WITHOUT TIMEZONE", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP", nullable = false, updatable = true)
+    @Column(name = "updated_at", columnDefinition = "TIMESTAMP WITHOUT TIMEZONE", nullable = false, updatable = true)
     private LocalDateTime updatedAt;
 
     @PrePersist
@@ -42,26 +42,31 @@ public abstract class BaseModel {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public final Long getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public final LocalDateTime getCreationTime() {
+    public LocalDateTime getCreationTime() {
         return this.createdAt;
     }
 
-    public final LocalDateTime getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return this.updatedAt;
     }
 
     @Override
-    public final boolean equals(Object obj) {
+    public final boolean equals(final Object obj) {
         if (obj == this)
             return true;
         if (obj == null || obj.getClass() != this.getClass())
             return false;
 
-        return java.util.Objects.equals(this.id, ((BaseModel) obj).id);
+        BaseModel other = (BaseModel) obj;
+
+        if (this.id == null || other.id == null)
+            return false;
+
+        return java.util.Objects.equals(this.id, other.id);
 
     }
 

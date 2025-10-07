@@ -14,19 +14,19 @@ public final class LogTemplates {
     private LogTemplates() {
     }
 
-    public static String startLog(final String operationName) {
+    public static String startLog(String operationName) {
         return operationName + START_PART;
     }
 
-    public static String validationStartLog(final String operationName) {
+    public static String validationStartLog(String operationName) {
         return operationName + " validation" + START_PART;
     }
 
-    public static String checkStartLog(final String operationName) {
+    public static String checkStartLog(String operationName) {
         return operationName + " check" + START_PART;
     }
 
-    public static String checkBase64StartLog(final String encryptedName) {
+    public static String checkBase64StartLog(String encryptedName) {
         return checkStartLog(encryptedName + " Base64");
     }
 
@@ -46,7 +46,7 @@ public final class LogTemplates {
         return validationStartLog("User ID");
     }
 
-    public static String checkPermissionStartLog(final String operationName) {
+    public static String checkPermissionStartLog(String operationName) {
         return checkStartLog(operationName + " permission");
     }
 

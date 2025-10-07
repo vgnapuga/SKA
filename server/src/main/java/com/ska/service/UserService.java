@@ -20,7 +20,6 @@ import com.ska.model.user.vo.Email;
 import com.ska.model.user.vo.Password;
 import com.ska.repository.UserRepository;
 import com.ska.util.LogTemplates;
-import com.ska.util.constant.user.PasswordConstants;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,8 +49,24 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UserService extends BaseService {
 
-    private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private UserRepository userRepository;
+    private BCryptPasswordEncoder passwordEncoder;
+
+    private final void checkEmailUniqueness(Email email) {
+        if (userRepository.existsByEmail(email))
+            throw new ResourceAlreadyExistsException(
+                    String.format("User with email=%s already exists", email.toString()));
+    }
+
+    private final Password encodePassword(String rawPassword) {
+        String hashed = passwordEncoder.encode(rawPassword);
+        return new Password(hashed);
+    }
+
+    public final User checkUserExistence(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("User id=%d not found", userId)));
+    }
 
     /**
      * Creates a new system user.
@@ -69,7 +84,7 @@ public class UserService extends BaseService {
      * @see Password - password value object
      */
     @Transactional()
-    public final User createUser(final UserCreateRequest request) {
+    public User createUser(UserCreateRequest request) {
         log.info("Creating user with email: {}", request.email());
 
         log.debug(LogTemplates.validationStartLog("Email"));
@@ -78,10 +93,7 @@ public class UserService extends BaseService {
         log.debug(LogTemplates.checkStartLog("Email uniqueness"));
         checkEmailUniqueness(email);
 
-        log.debug(LogTemplates.validationStartLog("Raw password"));
         String rawPassword = request.password();
-        validateRawPassword(rawPassword);
-
         log.debug(LogTemplates.startLog("Password encoding"));
         Password password = encodePassword(rawPassword);
 
@@ -95,22 +107,6 @@ public class UserService extends BaseService {
         return savedUser;
     }
 
-    private final void checkEmailUniqueness(final Email email) {
-        if (userRepository.existsByEmail(email))
-            throw new ResourceAlreadyExistsException(
-                    String.format("User with email=%s already exists", email.toString()));
-    }
-
-    private static void validateRawPassword(final String rawPassword) {
-        if (rawPassword.length() < PasswordConstants.Format.MIN_LENGTH)
-            throw new BusinessRuleViolationException(PasswordConstants.Messages.INVALID_LENGTH_MESSAGE);
-    }
-
-    private final Password encodePassword(final String rawPassword) {
-        String hashed = passwordEncoder.encode(rawPassword);
-        return new Password(hashed);
-    }
-
     /**
      * (Read only) retrieves user by ID.
      * 
@@ -120,7 +116,7 @@ public class UserService extends BaseService {
      * @see User - user entity
      */
     @Transactional(readOnly = true)
-    public final Optional<User> getUserById(final Long id) {
+    public Optional<User> getUserById(Long id) {
         log.info("Getting user with ID: {}", id);
 
         log.debug(LogTemplates.userIdValidationStartLog());
@@ -147,14 +143,13 @@ public class UserService extends BaseService {
      * @see User - user entity
      */
     @Transactional(readOnly = true)
-    public final List<User> getAllUsers() {
+    public List<User> getAllUsers() {
         log.info("Getting all users");
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
         List<User> users = userRepository.findAll();
 
         log.info("Retrieved {} users", users.size());
-
         return users;
     }
 
@@ -172,7 +167,7 @@ public class UserService extends BaseService {
      * @see Email - email value object
      */
     @Transactional
-    public final User updateUserEmail(final Long id, final UserUpdateEmailRequest request) {
+    public User updateUserEmail(Long id, UserUpdateEmailRequest request) {
         log.info("Updating user email for ID: {}", id);
 
         log.debug(LogTemplates.userIdValidationStartLog());
@@ -188,18 +183,11 @@ public class UserService extends BaseService {
         checkEmailUniqueness(newEmail);
 
         user.changeEmail(newEmail);
-
         log.debug(LogTemplates.dataBaseQueryStartLog());
         User updatedUser = userRepository.save(user);
 
         log.info("User email updated successfully for ID: {}, new email: {}", id, newEmail);
-
         return updatedUser;
-    }
-
-    public final User checkUserExistence(final Long userId) {
-        return userRepository.findById(userId).orElseThrow(
-                () -> new ResourceNotFoundException(String.format("User id=%d not found", userId)));
     }
 
     /**
@@ -217,7 +205,7 @@ public class UserService extends BaseService {
      * @see Password - password value object
      */
     @Transactional
-    public final User updateUserPassword(final Long id, final UserUpdatePasswordRequest request) {
+    public User updateUserPassword(Long id, UserUpdatePasswordRequest request) {
         log.info("Updating user password for ID: {}", id);
 
         log.debug(LogTemplates.userIdValidationStartLog());
@@ -226,20 +214,15 @@ public class UserService extends BaseService {
         log.debug(LogTemplates.checkUserExistenceStartLog());
         User user = checkUserExistence(id);
 
-        log.debug(LogTemplates.validationStartLog("Raw password"));
         String rawPassword = request.newPassword();
-        validateRawPassword(rawPassword);
-
         log.debug(LogTemplates.startLog("Password encoding"));
         Password newPassword = encodePassword(rawPassword);
 
         user.changePassword(newPassword);
-
         log.debug(LogTemplates.dataBaseQueryStartLog());
         User updatedUser = userRepository.save(user);
 
         log.info("User password for ID: {} updated successfully", id);
-
         return updatedUser;
     }
 
@@ -251,7 +234,7 @@ public class UserService extends BaseService {
      * @throws ResourceNotFoundException if ID does not exist in database
      */
     @Transactional
-    public final void deleteUserById(final Long id) {
+    public void deleteUserById(Long id) {
         log.info("Deleting user with ID: {}", id);
 
         log.debug(LogTemplates.userIdValidationStartLog());

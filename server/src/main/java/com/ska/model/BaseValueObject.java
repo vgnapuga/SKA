@@ -46,7 +46,7 @@ public abstract class BaseValueObject<T> {
      * @param value the string value to validate
      * @throws DomainValidationException if value is blank
      */
-    protected final void validateNotBlank(final String value) {
+    protected final void validateNotBlank(String value) {
         if (value.isBlank())
             throw new DomainValidationException(this.getClass().getSimpleName() + " value is <blank>");
     }

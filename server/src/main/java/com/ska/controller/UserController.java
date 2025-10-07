@@ -53,7 +53,7 @@ import lombok.extern.slf4j.Slf4j;
 public final class UserController {
 
     private final UserService userService;
-    private static final String MAIN_PATH = "api/users";
+    private static final String ROOT = "api/users";
 
     /**
      * Creates a new user in the system using
@@ -71,8 +71,8 @@ public final class UserController {
      * @see User - user entity
      */
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody final UserCreateRequest request) {
-        log.info("POST {} - email: {}", MAIN_PATH, request.email());
+    public ResponseEntity<User> createUser(@Valid @RequestBody UserCreateRequest request) {
+        log.info("POST {} - email: {}", ROOT, request.email());
 
         User createdUser = userService.createUser(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
@@ -88,8 +88,8 @@ public final class UserController {
      * @see User - user entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable final Long id) {
-        log.info("GET {}/{}", MAIN_PATH, id);
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        log.info("GET {}/{}", ROOT, id);
 
         Optional<User> user = userService.getUserById(id);
         return user.map(u -> ResponseEntity.ok(u)).orElse(ResponseEntity.notFound().build());
@@ -112,9 +112,9 @@ public final class UserController {
      */
     @PutMapping("/{id}/email")
     public ResponseEntity<User> updateUserEmail(
-            @PathVariable final Long id,
-            @Valid @RequestBody final UserUpdateEmailRequest request) {
-        log.info("PUT {}/{}/email - new email: {}", MAIN_PATH, id, request.newEmail());
+            @PathVariable Long id,
+            @Valid @RequestBody UserUpdateEmailRequest request) {
+        log.info("PUT {}/{}/email - new email: {}", ROOT, id, request.newEmail());
 
         User updatedUser = userService.updateUserEmail(id, request);
         return ResponseEntity.ok(updatedUser);
@@ -138,9 +138,9 @@ public final class UserController {
      */
     @PutMapping("/{id}/password")
     public ResponseEntity<User> updateUserPassword(
-            @PathVariable final Long id,
-            @Valid @RequestBody final UserUpdatePasswordRequest request) {
-        log.info("PUT {}/{}/password - new password: ***", MAIN_PATH, id);
+            @PathVariable Long id,
+            @Valid @RequestBody UserUpdatePasswordRequest request) {
+        log.info("PUT {}/{}/password - new password: ***", ROOT, id);
 
         User updatedUser = userService.updateUserPassword(id, request);
         return ResponseEntity.ok(updatedUser);
@@ -157,7 +157,7 @@ public final class UserController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable final Long id) {
-        log.info("DELETE {}/{}", MAIN_PATH, id);
+        log.info("DELETE {}/{}", ROOT, id);
 
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();

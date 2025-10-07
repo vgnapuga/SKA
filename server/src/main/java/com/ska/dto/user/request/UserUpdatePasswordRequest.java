@@ -1,12 +1,8 @@
 package com.ska.dto.user.request;
 
 
-import com.ska.util.constant.user.PasswordConstants;
-
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import com.ska.dto.validation.user.ValidPassword;
 
 
-public record UserUpdatePasswordRequest(
-        @NotBlank(message = PasswordConstants.Messages.REQUIRED_MESSAGE) @Size(min = PasswordConstants.Format.MIN_LENGTH, message = PasswordConstants.Messages.INVALID_LENGTH_MESSAGE) String newPassword) {
+public final record UserUpdatePasswordRequest(@ValidPassword String newPassword) {
 }

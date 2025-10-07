@@ -19,27 +19,27 @@ import jakarta.persistence.PrePersist;
 
 
 @MappedSuperclass
-public abstract class SyncableModel extends BaseModel {
+public abstract class BaseSyncableModel extends BaseModel {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false, foreignKey = @ForeignKey(name = "fk_entity_owner"))
     @OnDelete(action = OnDeleteAction.CASCADE)
     protected User user;
 
-    @Column(name = "uuid", columnDefinition = "BINARY(16)", nullable = false, unique = true)
+    @Column(name = "uuid", columnDefinition = "UUID", nullable = false, unique = true)
     protected UUID uuid;
 
     @PrePersist
-    private void generateUuid() {
+    protected void generateUuid() {
         if (this.uuid == null)
             this.uuid = UUID.randomUUID();
     }
 
-    public final User getUser() {
+    public User getUser() {
         return this.user;
     }
 
-    public final UUID getUuid() {
+    public UUID getUuid() {
         return this.uuid;
     }
 
