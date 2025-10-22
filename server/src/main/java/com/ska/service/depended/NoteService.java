@@ -1,7 +1,6 @@
 package com.ska.service.depended;
 
 
-import java.util.Base64.Decoder;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,8 +29,8 @@ public final class NoteService extends BaseDependedService {
 
     private final NoteRepository noteRepository;
 
-    public NoteService(UserService userService, Decoder base64Decoder, NoteRepository noteRepository) {
-        super(userService, base64Decoder);
+    public NoteService(UserService userService, NoteRepository noteRepository) {
+        super(userService);
         this.noteRepository = noteRepository;
     }
 
