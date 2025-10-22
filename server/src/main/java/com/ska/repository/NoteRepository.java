@@ -14,7 +14,7 @@ import com.ska.model.syncable.note.Note;
 @Repository
 public interface NoteRepository extends JpaRepository<Note, Long> {
 
-    Optional<Note> getByUuid(UUID uuid);
+    Optional<Note> findByUuid(UUID uuid);
 
     List<Note> getAllByUserId(Long userId);
 

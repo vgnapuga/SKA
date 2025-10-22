@@ -119,10 +119,10 @@ public class UserService extends BaseService {
     public User getUserById(Long id) {
         log.info("Getting user with ID: {}", id);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(id);
 
-        log.debug(LogTemplates.checkUserExistenceStartLog());
+        log.debug(LogTemplates.UserService.checkUserExistenceStartLog());
         User retrievedUser = checkUserExistenceAndGet(id);
 
         log.info("User with ID: {} retrieved successfully, email: {}", id, retrievedUser.getEmail().getValue());
@@ -146,10 +146,10 @@ public class UserService extends BaseService {
     public User updateUserEmail(Long id, UserUpdateEmailRequest request) {
         log.info("Updating user email for ID: {}", id);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(id);
 
-        log.debug(LogTemplates.checkUserExistenceStartLog());
+        log.debug(LogTemplates.UserService.checkUserExistenceStartLog());
         User user = checkUserExistenceAndGet(id);
 
         log.debug(LogTemplates.validationStartLog("Email"));
@@ -184,10 +184,10 @@ public class UserService extends BaseService {
     public User updateUserPassword(Long id, UserUpdatePasswordRequest request) {
         log.info("Updating user password for ID: {}", id);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(id);
 
-        log.debug(LogTemplates.checkUserExistenceStartLog());
+        log.debug(LogTemplates.UserService.checkUserExistenceStartLog());
         User user = checkUserExistenceAndGet(id);
 
         String rawPassword = request.newPassword();
@@ -213,10 +213,10 @@ public class UserService extends BaseService {
     public void deleteUserById(Long id) {
         log.info("Deleting user with ID: {}", id);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(id);
 
-        log.debug(LogTemplates.checkUserExistenceStartLog());
+        log.debug(LogTemplates.UserService.checkUserExistenceStartLog());
         checkUserExistenceAndGet(id);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());

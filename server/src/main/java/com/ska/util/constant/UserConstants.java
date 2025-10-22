@@ -13,6 +13,10 @@ public final class UserConstants {
 
     public static class Email {
 
+        private Email() {
+            throw new UnsupportedOperationException("UserConstants.Email.java - <util> class");
+        }
+
         public static final int MAX_LENGTH = 254;
         public static final String REGEX = "^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
 
@@ -30,6 +34,10 @@ public final class UserConstants {
     }
 
     public static class Password {
+
+        private Password() {
+            throw new UnsupportedOperationException("UserConstants.Password.java - <util> class");
+        }
 
         public static final int RAW_MIN_LENGTH = 6;
         public static final int BCRYPT_HASHED_SIZE = 60;

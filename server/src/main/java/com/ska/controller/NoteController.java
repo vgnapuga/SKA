@@ -2,7 +2,6 @@ package com.ska.controller;
 
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -20,6 +19,7 @@ import com.ska.dto.note.request.NoteCreateRequest;
 import com.ska.dto.note.request.NoteUpdateAllRequest;
 import com.ska.dto.note.request.NoteUpdateContentRequest;
 import com.ska.dto.note.request.NoteUpdateTitleRequest;
+import com.ska.dto.note.response.NoteResponse;
 import com.ska.model.syncable.note.Note;
 import com.ska.service.depended.NoteService;
 
@@ -38,11 +38,11 @@ public final class NoteController {
     private static final String ROOT = "api/notes";
 
     @PostMapping("/{userId}")
-    public ResponseEntity<Note> createNote(@PathVariable Long userId, @Valid @RequestBody NoteCreateRequest request) {
+    public ResponseEntity<NoteResponse> createNote(
+            @PathVariable Long userId,
+            @Valid @RequestBody NoteCreateRequest request) {
         log.info("POST - {}/{}", ROOT, userId);
-
-        Note createdNote = noteService.createNote(userId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdNote);
+        return ResponseEntity.status(HttpStatus.CREATED).body(NoteResponse.of(noteService.createNote(userId, request)));
     }
 
     @GetMapping("/{userId}")
@@ -54,44 +54,36 @@ public final class NoteController {
     }
 
     @GetMapping("/{userId}/{noteUuid}")
-    public ResponseEntity<Note> getNote(@PathVariable Long userId, @PathVariable UUID noteUuid) {
+    public ResponseEntity<NoteResponse> getNote(@PathVariable Long userId, @PathVariable UUID noteUuid) {
         log.info("GET - {}/{}/{}", ROOT, userId, noteUuid);
-
-        Optional<Note> retrievedNote = noteService.getNoteByUuid(userId, noteUuid);
-        return retrievedNote.map(u -> ResponseEntity.ok(u)).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(NoteResponse.of(noteService.getNoteByUuid(userId, noteUuid)));
     }
 
     @PutMapping("/{userId}/{noteUuid}")
-    public ResponseEntity<Note> updateNoteTitleAndContent(
+    public ResponseEntity<NoteResponse> updateNoteTitleAndContent(
             @PathVariable Long userId,
             @PathVariable UUID noteUuid,
             @Valid @RequestBody NoteUpdateAllRequest request) {
         log.info("PUT - {}/{}/{}", ROOT, userId, noteUuid);
-
-        Note updatedNote = noteService.updateNoteTitleAndContent(userId, noteUuid, request);
-        return ResponseEntity.ok(updatedNote);
+        return ResponseEntity.ok(NoteResponse.of(noteService.updateNoteTitleAndContent(userId, noteUuid, request)));
     }
 
     @PutMapping("/{userId}/{noteUuid}/title")
-    public ResponseEntity<Note> updateNoteTitle(
+    public ResponseEntity<NoteResponse> updateNoteTitle(
             @PathVariable Long userId,
             @PathVariable UUID noteUuid,
             @Valid @RequestBody NoteUpdateTitleRequest request) {
         log.info("PUT - {}/{}/{}/title", ROOT, userId, noteUuid);
-
-        Note updatedNote = noteService.updateNoteTitle(userId, noteUuid, request);
-        return ResponseEntity.ok(updatedNote);
+        return ResponseEntity.ok(NoteResponse.of(noteService.updateNoteTitle(userId, noteUuid, request)));
     }
 
     @PutMapping("/{userId}/{noteUuid}/content")
-    public ResponseEntity<Note> updateNoteContent(
+    public ResponseEntity<NoteResponse> updateNoteContent(
             @PathVariable Long userId,
             @PathVariable UUID noteUuid,
             @Valid @RequestBody NoteUpdateContentRequest request) {
         log.info("PUT - {}/{}/{}/content", ROOT, userId, noteUuid);
-
-        Note updatedNote = noteService.updateNoteContent(userId, noteUuid, request);
-        return ResponseEntity.ok(updatedNote);
+        return ResponseEntity.ok(NoteResponse.of(noteService.updateNoteContent(userId, noteUuid, request)));
     }
 
     @DeleteMapping("/{userId}/{noteUuid}")

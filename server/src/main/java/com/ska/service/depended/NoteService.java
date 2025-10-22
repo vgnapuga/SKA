@@ -3,7 +3,6 @@ package com.ska.service.depended;
 
 import java.util.Base64.Decoder;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -36,20 +35,25 @@ public final class NoteService extends BaseDependedService {
         this.noteRepository = noteRepository;
     }
 
+    private final Note checkNoteExistenceAndGet(UUID uuid) {
+        return noteRepository.findByUuid(uuid).orElseThrow(
+                () -> new ResourceNotFoundException(String.format("Note with uuid=%s not found", uuid)));
+    }
+
     @Transactional
     public Note createNote(Long userId, NoteCreateRequest request) {
         log.info("Creating note for user with ID: {}", userId);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(userId);
 
-        log.debug(LogTemplates.checkUserExistenceStartLog());
+        log.debug(LogTemplates.UserService.checkUserExistenceStartLog());
         User user = checkUserExistenceAndGet(userId);
 
-        log.debug(LogTemplates.checkBase64StartLog("Note title"));
+        log.debug(LogTemplates.DependedService.checkBase64StartLog("Note title"));
         byte[] decodedTitle = decodeBase64(request.encryptedTitle());
 
-        log.debug(LogTemplates.checkBase64StartLog("Note content"));
+        log.debug(LogTemplates.DependedService.checkBase64StartLog("Note content"));
         byte[] decodedContent = decodeBase64(request.encryptedContent());
 
         log.debug(LogTemplates.validationStartLog("Note title"));
@@ -58,7 +62,7 @@ public final class NoteService extends BaseDependedService {
         log.debug(LogTemplates.validationStartLog("Note content"));
         NoteContent content = new NoteContent(decodedContent);
 
-        log.debug(LogTemplates.generateUuidStartLog());
+        log.debug(LogTemplates.DependedService.generateUuidStartLog());
         Note note = new Note(user, title, content);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
@@ -72,7 +76,7 @@ public final class NoteService extends BaseDependedService {
     public List<Note> getAllNotesForUser(Long userId) {
         log.info("Getting all notes for user with ID: {}", userId);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(userId);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
@@ -83,23 +87,19 @@ public final class NoteService extends BaseDependedService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<Note> getNoteByUuid(Long userId, UUID noteUuid) {
+    public Note getNoteByUuid(Long userId, UUID noteUuid) {
         log.info("Getting note with UUID: {} for user with ID: {}", noteUuid, userId);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(userId);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
-        Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
+        Note retrievedNote = checkNoteExistenceAndGet(noteUuid);
 
-        if (retrievedNote.isPresent()) {
-            log.debug(LogTemplates.checkPermissionStartLog("Get"));
-            checkPermissionToAccess(userId, retrievedNote.get());
+        log.debug(LogTemplates.DependedService.checkPermissionStartLog("Get"));
+        checkPermissionToAccess(userId, retrievedNote);
 
-            log.info("Note with UUID: {} for user with ID: {} retrieved successfully", noteUuid, userId);
-        } else {
-            log.info("Note with UUID: {} not found", noteUuid);
-        }
+        log.info("Note with UUID: {} for user with ID: {} retrieved successfully", noteUuid, userId);
         return retrievedNote;
     }
 
@@ -107,13 +107,13 @@ public final class NoteService extends BaseDependedService {
     public Note updateNoteTitleAndContent(Long userId, UUID noteUuid, NoteUpdateAllRequest request) {
         log.info("Updating note title and content for user with ID: {} and note UUID: {}", userId, noteUuid);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(userId);
 
-        log.debug(LogTemplates.checkBase64StartLog("New note title"));
+        log.debug(LogTemplates.DependedService.checkBase64StartLog("New note title"));
         byte[] decodedNewTitle = decodeBase64(request.encryptedNewTitle());
 
-        log.debug(LogTemplates.checkBase64StartLog("New note content"));
+        log.debug(LogTemplates.DependedService.checkBase64StartLog("New note content"));
         byte[] decodedNewContent = decodeBase64(request.encryptedNewContent());
 
         log.debug(LogTemplates.validationStartLog("New note title"));
@@ -122,116 +122,92 @@ public final class NoteService extends BaseDependedService {
         log.debug(LogTemplates.validationStartLog("New note content"));
         NoteContent newContent = new NoteContent(decodedNewContent);
 
-        log.debug(LogTemplates.dataBaseQueryStartLog());
-        Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
+        log.debug(LogTemplates.checkStartLog("Note existence"));
+        Note retrievedNote = checkNoteExistenceAndGet(noteUuid);
 
-        Note note;
-        if (retrievedNote.isPresent()) {
-            note = retrievedNote.get();
-            note.changeTitle(newTitle);
-            note.changeContent(newContent);
-        } else {
-            throw new ResourceNotFoundException(
-                    "Note with uuid=" + noteUuid + " was not found to update title and content");
-        }
+        retrievedNote.changeTitle(newTitle);
+        retrievedNote.changeContent(newContent);
 
-        log.debug(LogTemplates.checkPermissionStartLog("Update note title and content"));
-        checkPermissionToAccess(userId, note);
+        log.debug(LogTemplates.DependedService.checkPermissionStartLog("Update note title and content"));
+        checkPermissionToAccess(userId, retrievedNote);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
-        noteRepository.save(note);
+        noteRepository.save(retrievedNote);
 
         log.info("Note title and content was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
-        return note;
+        return retrievedNote;
     }
 
     @Transactional
     public Note updateNoteTitle(Long userId, UUID noteUuid, NoteUpdateTitleRequest request) {
         log.info("Updating note title for user with ID: {} and note UUID: {}", userId, noteUuid);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(userId);
 
-        log.debug(LogTemplates.checkBase64StartLog("New note title"));
+        log.debug(LogTemplates.DependedService.checkBase64StartLog("New note title"));
         byte[] decodedNewTitle = decodeBase64(request.encryptedNewTitle());
 
         log.debug(LogTemplates.validationStartLog("New note title"));
         NoteTitle newTitle = new NoteTitle(decodedNewTitle);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
-        Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
+        Note retrievedNote = checkNoteExistenceAndGet(noteUuid);
 
-        Note note;
-        if (retrievedNote.isPresent()) {
-            note = retrievedNote.get();
-            note.changeTitle(newTitle);
-        } else {
-            throw new ResourceNotFoundException("Note with with uuid=" + noteUuid + " was not found to update title");
-        }
+        retrievedNote.changeTitle(newTitle);
 
-        log.debug(LogTemplates.checkPermissionStartLog("Update note title"));
-        checkPermissionToAccess(userId, note);
+        log.debug(LogTemplates.DependedService.checkPermissionStartLog("Update note title"));
+        checkPermissionToAccess(userId, retrievedNote);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
-        noteRepository.save(note);
+        noteRepository.save(retrievedNote);
 
         log.info("Note title was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
-        return note;
+        return retrievedNote;
     }
 
     @Transactional
     public Note updateNoteContent(Long userId, UUID noteUuid, NoteUpdateContentRequest request) {
         log.info("Updating note content for user with ID: {} and note UUID: {}", userId, noteUuid);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(userId);
 
-        log.debug(LogTemplates.checkBase64StartLog("New note content"));
+        log.debug(LogTemplates.DependedService.checkBase64StartLog("New note content"));
         byte[] decodedNewContent = decodeBase64(request.encryptedNewContent());
 
         log.debug(LogTemplates.validationStartLog("New note content"));
         NoteContent newContent = new NoteContent(decodedNewContent);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
-        Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
+        Note retrievedNote = checkNoteExistenceAndGet(noteUuid);
 
-        Note note;
-        if (retrievedNote.isPresent()) {
-            note = retrievedNote.get();
-            note.changeContent(newContent);
-        } else {
-            throw new ResourceNotFoundException("Note with with uuid=" + noteUuid + " was not found to update content");
-        }
+        retrievedNote.changeContent(newContent);
 
-        log.debug(LogTemplates.checkPermissionStartLog("Update note content"));
-        checkPermissionToAccess(userId, note);
+        log.debug(LogTemplates.DependedService.checkPermissionStartLog("Update note content"));
+        checkPermissionToAccess(userId, retrievedNote);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
-        noteRepository.save(note);
+        noteRepository.save(retrievedNote);
 
         log.info("Note content was updated for user with ID: {} and note UUID: {}", userId, noteUuid);
-        return note;
+        return retrievedNote;
     }
 
     @Transactional
     public void deleteNote(Long userId, UUID noteUuid) {
         log.info("Deleting note for user with ID: {} and note UUID: {}", userId, noteUuid);
 
-        log.debug(LogTemplates.userIdValidationStartLog());
+        log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(userId);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
-        Optional<Note> retrievedNote = noteRepository.getByUuid(noteUuid);
+        Note retrievedNote = checkNoteExistenceAndGet(noteUuid);
 
-        if (retrievedNote.isPresent()) {
-            log.debug(LogTemplates.checkPermissionStartLog("Delete note"));
-            checkPermissionToAccess(userId, retrievedNote.get());
+        log.debug(LogTemplates.DependedService.checkPermissionStartLog("Delete note"));
+        checkPermissionToAccess(userId, retrievedNote);
 
-            noteRepository.delete(retrievedNote.get());
-        } else {
-            throw new ResourceNotFoundException("Note with uuid=" + noteUuid + " was not found to delete");
-        }
-
+        noteRepository.delete(retrievedNote);
         log.info("Note was deleted successfully for user with ID: {} and note with UUID: {}", userId, noteUuid);
     }
 
