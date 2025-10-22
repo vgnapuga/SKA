@@ -23,8 +23,8 @@ public abstract class BaseDependedService extends BaseService {
     private static final String DATA_BLANK_MESSAGE = "Data is <blank>";
     private static final String DATA_NOT_BASE64_MESSAGE = "Data is not <Base64>";
 
-    protected final User checkUserExistence(Long userId) {
-        return userService.checkUserExistence(userId);
+    protected final User checkUserExistenceAndGet(Long userId) {
+        return userService.checkUserExistenceAndGet(userId);
     }
 
     protected final byte[] decodeBase64(String coded) {

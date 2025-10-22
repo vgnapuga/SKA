@@ -1,9 +1,6 @@
 package com.ska.service;
 
 
-import java.util.List;
-import java.util.Optional;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +49,8 @@ public class UserService extends BaseService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    // ===== Helper methods ===== //
+
     private final void checkEmailUniqueness(Email email) {
         if (userRepository.existsByEmail(email))
             throw new ResourceAlreadyExistsException(
@@ -63,10 +62,12 @@ public class UserService extends BaseService {
         return new Password(hashed);
     }
 
-    public final User checkUserExistence(Long userId) {
+    public final User checkUserExistenceAndGet(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("User id=%d not found", userId)));
     }
+
+    // ========================== //
 
     /**
      * Creates a new system user.
@@ -103,7 +104,6 @@ public class UserService extends BaseService {
         User savedUser = userRepository.save(user);
 
         log.info("User created successfully with ID: {}, email: {}", savedUser.getId(), email.getValue());
-
         return savedUser;
     }
 
@@ -116,41 +116,17 @@ public class UserService extends BaseService {
      * @see User - user entity
      */
     @Transactional(readOnly = true)
-    public Optional<User> getUserById(Long id) {
+    public User getUserById(Long id) {
         log.info("Getting user with ID: {}", id);
 
         log.debug(LogTemplates.userIdValidationStartLog());
         validateId(id);
 
-        log.debug(LogTemplates.dataBaseQueryStartLog());
-        Optional<User> retrievedUser = userRepository.findById(id);
+        log.debug(LogTemplates.checkUserExistenceStartLog());
+        User retrievedUser = checkUserExistenceAndGet(id);
 
-        if (retrievedUser.isPresent())
-            log.info(
-                    "User with ID: {} retrieved successfully, email: {}",
-                    id,
-                    retrievedUser.get().getEmail().getValue());
-        else
-            log.info("User with ID: {} not found", id);
-
+        log.info("User with ID: {} retrieved successfully, email: {}", id, retrievedUser.getEmail().getValue());
         return retrievedUser;
-    }
-
-    /**
-     * (Read only) retrieves all database users.
-     * 
-     * @return List of database users
-     * @see User - user entity
-     */
-    @Transactional(readOnly = true)
-    public List<User> getAllUsers() {
-        log.info("Getting all users");
-
-        log.debug(LogTemplates.dataBaseQueryStartLog());
-        List<User> users = userRepository.findAll();
-
-        log.info("Retrieved {} users", users.size());
-        return users;
     }
 
     /**
@@ -174,7 +150,7 @@ public class UserService extends BaseService {
         validateId(id);
 
         log.debug(LogTemplates.checkUserExistenceStartLog());
-        User user = checkUserExistence(id);
+        User user = checkUserExistenceAndGet(id);
 
         log.debug(LogTemplates.validationStartLog("Email"));
         Email newEmail = new Email(request.newEmail());
@@ -212,7 +188,7 @@ public class UserService extends BaseService {
         validateId(id);
 
         log.debug(LogTemplates.checkUserExistenceStartLog());
-        User user = checkUserExistence(id);
+        User user = checkUserExistenceAndGet(id);
 
         String rawPassword = request.newPassword();
         log.debug(LogTemplates.startLog("Password encoding"));
@@ -241,7 +217,7 @@ public class UserService extends BaseService {
         validateId(id);
 
         log.debug(LogTemplates.checkUserExistenceStartLog());
-        checkUserExistence(id);
+        checkUserExistenceAndGet(id);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
         userRepository.deleteById(id);

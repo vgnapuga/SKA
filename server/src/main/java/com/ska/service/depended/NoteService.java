@@ -44,7 +44,7 @@ public final class NoteService extends BaseDependedService {
         validateId(userId);
 
         log.debug(LogTemplates.checkUserExistenceStartLog());
-        User user = checkUserExistence(userId);
+        User user = checkUserExistenceAndGet(userId);
 
         log.debug(LogTemplates.checkBase64StartLog("Note title"));
         byte[] decodedTitle = decodeBase64(request.encryptedTitle());

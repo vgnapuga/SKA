@@ -1,8 +1,6 @@
 package com.ska.controller;
 
 
-import java.util.Optional;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ska.dto.user.request.UserCreateRequest;
 import com.ska.dto.user.request.UserUpdateEmailRequest;
 import com.ska.dto.user.request.UserUpdatePasswordRequest;
+import com.ska.dto.user.response.UserResponse;
 import com.ska.exception.BusinessRuleViolationException;
 import com.ska.exception.DomainValidationException;
 import com.ska.exception.ResourceAlreadyExistsException;
@@ -71,11 +70,9 @@ public final class UserController {
      * @see User - user entity
      */
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody UserCreateRequest request) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserCreateRequest request) {
         log.info("POST {} - email: {}", ROOT, request.email());
-
-        User createdUser = userService.createUser(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponse.of(userService.createUser(request)));
     }
 
     /**
@@ -88,11 +85,9 @@ public final class UserController {
      * @see User - user entity
      */
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserResponse> getUser(@PathVariable Long id) {
         log.info("GET {}/{}", ROOT, id);
-
-        Optional<User> user = userService.getUserById(id);
-        return user.map(u -> ResponseEntity.ok(u)).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(UserResponse.of(userService.getUserById(id)));
     }
 
     /**
@@ -111,13 +106,11 @@ public final class UserController {
      * @see User - user entity
      */
     @PutMapping("/{id}/email")
-    public ResponseEntity<User> updateUserEmail(
+    public ResponseEntity<UserResponse> updateUserEmail(
             @PathVariable Long id,
             @Valid @RequestBody UserUpdateEmailRequest request) {
         log.info("PUT {}/{}/email - new email: {}", ROOT, id, request.newEmail());
-
-        User updatedUser = userService.updateUserEmail(id, request);
-        return ResponseEntity.ok(updatedUser);
+        return ResponseEntity.ok(UserResponse.of(userService.updateUserEmail(id, request)));
     }
 
     /**
@@ -137,13 +130,11 @@ public final class UserController {
      * @see User - user entity
      */
     @PutMapping("/{id}/password")
-    public ResponseEntity<User> updateUserPassword(
+    public ResponseEntity<UserResponse> updateUserPassword(
             @PathVariable Long id,
             @Valid @RequestBody UserUpdatePasswordRequest request) {
         log.info("PUT {}/{}/password - new password: ***", ROOT, id);
-
-        User updatedUser = userService.updateUserPassword(id, request);
-        return ResponseEntity.ok(updatedUser);
+        return ResponseEntity.ok(UserResponse.of(userService.updateUserPassword(id, request)));
     }
 
     /**

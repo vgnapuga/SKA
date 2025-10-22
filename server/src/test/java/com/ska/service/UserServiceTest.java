@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.times;
@@ -15,7 +14,6 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Nested;
@@ -132,22 +130,22 @@ class UserServiceTest {
 
             whenFindById(Optional.of(expectedUser));
 
-            Optional<User> result = userService.getUserById(TEST_USER_ID);
+            User result = userService.getUserById(TEST_USER_ID);
 
-            assertTrue(result.isPresent());
-            assertEquals(TEST_EMAIL, result.get().getEmail().getValue());
+            assertEquals(TEST_EMAIL, result.getEmail().getValue());
 
             verify(userRepository, times(1)).findById(TEST_USER_ID);
             verifyNoMoreInteractions(userRepository);
         }
 
         @Test
-        void shouldReturnEmpty_whenNotFoundId() {
+        void shouldThrowException_whenNotFoundId() {
             whenFindById(Optional.empty());
 
-            Optional<User> result = userService.getUserById(TEST_USER_ID);
-
-            assertTrue(result.isEmpty());
+            ResourceNotFoundException exception = assertThrows(
+                    ResourceNotFoundException.class,
+                    () -> userService.getUserById(TEST_USER_ID));
+            assertEquals("User id=" + TEST_USER_ID + " not found", exception.getMessage());
 
             verify(userRepository, times(1)).findById(TEST_USER_ID);
             verifyNoMoreInteractions(userRepository);
@@ -178,16 +176,6 @@ class UserServiceTest {
             verifyNoInteractions(userRepository);
         }
 
-    }
-
-    @Test
-    void shouldReturnListOfEntities() {
-        when(userRepository.findAll()).thenReturn(new ArrayList<User>());
-
-        assertNotNull(userService.getAllUsers());
-
-        verify(userRepository, times(1)).findAll();
-        verifyNoMoreInteractions(userRepository);
     }
 
     @Nested
