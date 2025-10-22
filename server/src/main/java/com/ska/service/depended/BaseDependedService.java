@@ -1,7 +1,7 @@
 package com.ska.service.depended;
 
 
-import java.util.Base64;
+import java.util.Base64.Decoder;
 
 import com.ska.exception.AccessDeniedException;
 import com.ska.exception.BusinessRuleViolationException;
@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 public abstract class BaseDependedService extends BaseService {
 
     private final UserService userService;
+    private final Decoder base64Decoder;
 
     private static final String DATA_NULL_MESSAGE = "Data is <null>";
     private static final String DATA_BLANK_MESSAGE = "Data is <blank>";
@@ -33,7 +34,7 @@ public abstract class BaseDependedService extends BaseService {
             throw new BusinessRuleViolationException(DATA_BLANK_MESSAGE);
 
         try {
-            return Base64.getDecoder().decode(coded);
+            return base64Decoder.decode(coded);
         } catch (IllegalArgumentException e) {
             throw new BusinessRuleViolationException(DATA_NOT_BASE64_MESSAGE);
         }

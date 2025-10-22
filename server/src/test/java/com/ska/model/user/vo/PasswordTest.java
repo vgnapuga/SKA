@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.ska.exception.DomainValidationException;
 import com.ska.model.ValueObjectBehaviorTest;
-import com.ska.util.constant.user.PasswordConstants;
+import com.ska.util.constant.UserConstants;
 
 
 class PasswordTest implements ValueObjectBehaviorTest<String> {
@@ -55,7 +55,7 @@ class PasswordTest implements ValueObjectBehaviorTest<String> {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class,
                 () -> new Password(invalidHash));
-        assertEquals(PasswordConstants.Messages.INVALID_BCRYPT_FORMAT_MESSAGE, exception.getMessage());
+        assertEquals(UserConstants.Password.DOMAIN_INVALID_FORMAT_MESSAGE, exception.getMessage());
     }
 
 }

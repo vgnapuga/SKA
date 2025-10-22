@@ -11,7 +11,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import com.ska.exception.DomainValidationException;
 import com.ska.model.ValueObjectBehaviorTest;
-import com.ska.util.constant.user.EmailConstants;
+import com.ska.util.constant.UserConstants;
 
 
 class EmailTest implements ValueObjectBehaviorTest<String> {
@@ -48,7 +48,7 @@ class EmailTest implements ValueObjectBehaviorTest<String> {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class,
                 () -> new Email(tooLongEmail));
-        assertEquals(EmailConstants.Messages.INVALID_LENGTH_MESSAGE, exception.getMessage());
+        assertEquals(UserConstants.Email.getDomainInvalidLengthMessage(tooLongEmail.length()), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -58,7 +58,7 @@ class EmailTest implements ValueObjectBehaviorTest<String> {
         DomainValidationException exception = assertThrows(
                 DomainValidationException.class,
                 () -> new Email(invalidEmail));
-        assertEquals(EmailConstants.Messages.INVALID_FORMAT_MESSAGE, exception.getMessage());
+        assertEquals(UserConstants.Email.DOMAIN_INVALID_FORMAT_MESSAGE, exception.getMessage());
     }
 
 }

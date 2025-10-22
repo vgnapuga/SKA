@@ -49,8 +49,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class UserService extends BaseService {
 
-    private UserRepository userRepository;
-    private BCryptPasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     private final void checkEmailUniqueness(Email email) {
         if (userRepository.existsByEmail(email))

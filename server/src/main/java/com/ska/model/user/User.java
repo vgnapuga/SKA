@@ -50,8 +50,8 @@ public class User extends BaseModel {
      * @see Password - password value object
      */
     public User(Email email, Password password) {
-        this.email = java.util.Objects.requireNonNull(email, UserConstants.Email.NULL_MESSAGE);
-        this.password = java.util.Objects.requireNonNull(password, UserConstants.Password.NULL_MESSAGE);
+        this.email = java.util.Objects.requireNonNull(email, UserConstants.EMAIL_NULL_MESSAGE);
+        this.password = java.util.Objects.requireNonNull(password, UserConstants.PASSWORD_NULL_MESSAGE);
     }
 
     /**
@@ -61,7 +61,7 @@ public class User extends BaseModel {
      * @see Email - email value object
      */
     public final void changeEmail(Email newEmail) {
-        this.email = java.util.Objects.requireNonNull(newEmail, UserConstants.Email.NULL_MESSAGE);
+        this.email = java.util.Objects.requireNonNull(newEmail, UserConstants.EMAIL_NULL_MESSAGE);
     }
 
     /**
@@ -71,7 +71,7 @@ public class User extends BaseModel {
      * @see Password - password value object
      */
     public final void changePassword(Password newPassword) {
-        this.password = java.util.Objects.requireNonNull(newPassword, UserConstants.Password.NULL_MESSAGE);
+        this.password = java.util.Objects.requireNonNull(newPassword, UserConstants.PASSWORD_NULL_MESSAGE);
     }
 
     public Email getEmail() {

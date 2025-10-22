@@ -2,7 +2,6 @@ package com.ska.service;
 
 
 import com.ska.exception.BusinessRuleViolationException;
-import com.ska.exception.DomainValidationException;
 
 
 /**
@@ -23,7 +22,7 @@ public abstract class BaseService {
      */
     protected static void validateId(Long id) {
         if (id == null)
-            throw new DomainValidationException(NULL_MESSAGE);
+            throw new BusinessRuleViolationException(NULL_MESSAGE);
         if (id <= 0)
             throw new BusinessRuleViolationException(LESS_THAN_ONE_MESSAGE);
     }

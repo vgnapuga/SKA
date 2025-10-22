@@ -3,6 +3,8 @@ package com.ska.util.constant;
 
 public final class NoteConstants {
 
+    public static final String NULL_MESSAGE = "Note is <null>";
+
     private NoteConstants() {
         throw new UnsupportedOperationException("NoteConstants.java - <util> class");
     }
