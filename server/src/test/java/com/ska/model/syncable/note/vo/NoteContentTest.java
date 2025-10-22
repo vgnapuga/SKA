@@ -12,10 +12,10 @@ import com.ska.model.syncable.EncryptedValueObjectBehaviorTest;
 import com.ska.util.constant.NoteConstants;
 
 
-public class EncryptedNoteContentTest implements EncryptedValueObjectBehaviorTest {
+public class NoteContentTest implements EncryptedValueObjectBehaviorTest {
 
-    private static final String NULL_MESSAGE = "EncryptedNoteContent value is <null>";
-    private static final String EMPTY_MESSAGE = "EncryptedNoteContent data is <empty>";
+    private static final String NULL_MESSAGE = "NoteContent value is <null>";
+    private static final String EMPTY_MESSAGE = "NoteContent data is <empty>";
 
     @Test
     @Override
