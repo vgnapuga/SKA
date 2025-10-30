@@ -40,7 +40,7 @@ public abstract class BaseDependedService extends BaseService {
     }
 
     protected final void checkPermissionToAccess(Long userId, final BaseSyncableModel entity) {
-        if (!userId.equals(entity.getUser().getId()))
+        if (!userId.equals(entity.getOwner().getId()))
             throw new AccessDeniedException("Permission denied for user with id=" + userId);
     }
 

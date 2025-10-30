@@ -24,7 +24,7 @@ public abstract class BaseSyncableModel extends BaseModel {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false, foreignKey = @ForeignKey(name = "fk_entity_owner"))
     @OnDelete(action = OnDeleteAction.CASCADE)
-    protected User user;
+    protected User owner;
 
     @Column(name = "uuid", columnDefinition = "UUID", nullable = false, unique = true)
     protected UUID uuid;
@@ -35,8 +35,8 @@ public abstract class BaseSyncableModel extends BaseModel {
             this.uuid = UUID.randomUUID();
     }
 
-    public User getUser() {
-        return this.user;
+    public User getOwner() {
+        return this.owner;
     }
 
     public UUID getUuid() {

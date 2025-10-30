@@ -71,6 +71,7 @@ public final class NoteService extends BaseDependedService {
         return savedNote;
     }
 
+    // TODO: добавить пагинацию
     @Transactional(readOnly = true)
     public List<Note> getAllNotesForUser(Long userId) {
         log.info("Getting all notes for user with ID: {}", userId);

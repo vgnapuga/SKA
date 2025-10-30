@@ -25,7 +25,7 @@
 // import org.springframework.transaction.annotation.Transactional;
 
 // import com.fasterxml.jackson.databind.ObjectMapper;
-// import com.ska.dto.user.UserCreateRequest;
+// import com.ska.dto.user.request.UserCreateRequest;
 // import com.ska.repository.UserRepository;
 
 // @SpringBootTest

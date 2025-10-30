@@ -31,8 +31,8 @@ public class Note extends BaseSyncableModel {
     protected Note() {
     }
 
-    public Note(final User user, NoteTitle encryptedTitle, NoteContent encryptedContent) {
-        this.user = java.util.Objects.requireNonNull(user, UserConstants.NULL_MESSAGE);
+    public Note(final User owner, NoteTitle encryptedTitle, NoteContent encryptedContent) {
+        this.owner = java.util.Objects.requireNonNull(owner, UserConstants.NULL_MESSAGE);
         this.title = java.util.Objects.requireNonNull(encryptedTitle, NoteConstants.Title.NULL_MESSAGE);
         this.encryptedContent = java.util.Objects.requireNonNull(encryptedContent, NoteConstants.Content.NULL_MESSAGE);
     }
@@ -57,11 +57,7 @@ public class Note extends BaseSyncableModel {
 
     @Override
     public final String toString() {
-        return String.format(
-                "Note{id=%s, authorId=%d, title=%s, content=***}",
-                this.id,
-                this.user.getId(),
-                this.title.toString());
+        return String.format("Note{id=%s, ownerId=%d, title=***, content=***}", this.id, this.owner.getId());
     }
 
 }
