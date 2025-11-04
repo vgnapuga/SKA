@@ -91,7 +91,7 @@ public class User extends BaseModel {
                 "User{id=%s, email=%s, password=***, created_at=%s}",
                 this.id,
                 this.email.toString(),
-                this.createdAt.toString());
+                this.createdAt == null ? "null" : this.createdAt.toString());
     }
 
 }

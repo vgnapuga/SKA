@@ -101,8 +101,8 @@ public class Syncable extends BaseModel {
                 this.id,
                 this.owner.getId(),
                 this.uuid.toString(),
-                this.createdAt.toString(),
-                this.updatedAt.toString());
+                this.createdAt == null ? "<null>" : this.createdAt.toString(),
+                this.updatedAt == null ? "<null>" : this.updatedAt.toString());
     }
 
 }
