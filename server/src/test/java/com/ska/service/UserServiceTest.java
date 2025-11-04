@@ -48,7 +48,7 @@ class UserServiceTest {
     private BCryptPasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private UserService userService;
+    private UserServiceImpl userService;
 
     private static final Long TEST_USER_ID = 1L;
     private static final String TEST_EMAIL = "test@example.com";

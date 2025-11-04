@@ -21,7 +21,7 @@ import com.ska.dto.entity.request.EntityUpdateContentRequest;
 import com.ska.dto.entity.request.EntityUpdateTitleRequest;
 import com.ska.dto.entity.response.EntityResponse;
 import com.ska.model.syncable.Syncable;
-import com.ska.service.EntityService;
+import com.ska.service.contract.EntityService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

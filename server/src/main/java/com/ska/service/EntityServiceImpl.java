@@ -20,6 +20,8 @@ import com.ska.model.syncable.vo.EncryptedContent;
 import com.ska.model.syncable.vo.EncryptedTitle;
 import com.ska.model.user.User;
 import com.ska.repository.EntityRepository;
+import com.ska.service.contract.EntityService;
+import com.ska.service.contract.UserService;
 import com.ska.util.LogTemplates;
 
 import lombok.RequiredArgsConstructor;
@@ -29,7 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public final class EntityService extends BaseService {
+public final class EntityServiceImpl extends BaseService implements EntityService {
 
     private final EntityRepository entityRepository;
     private final UserService userService;
@@ -70,6 +72,7 @@ public final class EntityService extends BaseService {
     // ===================================== //
 
     @Transactional
+    @Override
     public Syncable create(Long userId, UUID uuid, EntityCreateRequest request) {
         log.info("Creating entity for user with ID: {}", userId);
 
@@ -102,6 +105,7 @@ public final class EntityService extends BaseService {
 
     // TODO: добавить пагинацию
     @Transactional(readOnly = true)
+    @Override
     public List<Syncable> getAll(Long userId) {
         log.info("Getting all entities for user with ID: {}", userId);
 
@@ -116,6 +120,7 @@ public final class EntityService extends BaseService {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public Syncable getByUuid(Long userId, UUID entityUuid) {
         log.info("Getting entity with UUID: {} for user with ID: {}", entityUuid, userId);
 
@@ -133,6 +138,7 @@ public final class EntityService extends BaseService {
     }
 
     @Transactional
+    @Override
     public Syncable updateTitleAndContent(Long userId, UUID entityUuid, EntityUpdateAllRequest request) {
         log.info("Updating entity title and content for user with ID: {} and entity UUID: {}", userId, entityUuid);
 
@@ -168,6 +174,7 @@ public final class EntityService extends BaseService {
     }
 
     @Transactional
+    @Override
     public Syncable updateTitle(Long userId, UUID entityUuid, EntityUpdateTitleRequest request) {
         log.info("Updating entity title for user with ID: {} and entity UUID: {}", userId, entityUuid);
 
@@ -196,6 +203,7 @@ public final class EntityService extends BaseService {
     }
 
     @Transactional
+    @Override
     public Syncable updateContent(Long userId, UUID entityUuid, EntityUpdateContentRequest request) {
         log.info("Updating entity content for user with ID: {} and entity UUID: {}", userId, entityUuid);
 
@@ -224,6 +232,7 @@ public final class EntityService extends BaseService {
     }
 
     @Transactional
+    @Override
     public void delete(Long userId, UUID entityUuid) {
         log.info("Deleting entity for user with ID: {} and entity UUID: {}", userId, entityUuid);
 

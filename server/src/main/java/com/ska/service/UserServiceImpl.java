@@ -14,6 +14,7 @@ import com.ska.model.user.User;
 import com.ska.model.user.vo.Email;
 import com.ska.model.user.vo.Password;
 import com.ska.repository.UserRepository;
+import com.ska.service.contract.UserService;
 import com.ska.util.LogTemplates;
 
 import lombok.RequiredArgsConstructor;
@@ -40,7 +41,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService extends BaseService {
+public class UserServiceImpl extends BaseService implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
@@ -58,6 +59,7 @@ public class UserService extends BaseService {
         return new Password(hashed);
     }
 
+    @Override
     public final User checkUserExistenceAndGet(Long userId) {
         return userRepository.findById(userId).orElseThrow(
                 () -> new ResourceNotFoundException(String.format("User id=%d not found", userId)));
@@ -81,6 +83,7 @@ public class UserService extends BaseService {
      * @see Password - password value object
      */
     @Transactional()
+    @Override
     public User create(UserCreateRequest request) {
         log.info("Creating user with email: {}", request.email());
 
@@ -112,6 +115,7 @@ public class UserService extends BaseService {
      * @see User - user entity
      */
     @Transactional(readOnly = true)
+    @Override
     public User getById(Long id) {
         log.info("Getting user with ID: {}", id);
 
@@ -133,6 +137,7 @@ public class UserService extends BaseService {
      * @throws ResourceNotFoundException if ID does not exist in database
      */
     @Transactional
+    @Override
     public void delete(Long id) {
         log.info("Deleting user with ID: {}", id);
 

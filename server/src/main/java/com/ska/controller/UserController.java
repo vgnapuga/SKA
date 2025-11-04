@@ -18,7 +18,8 @@ import com.ska.exception.DomainValidationException;
 import com.ska.exception.ResourceAlreadyExistsException;
 import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.user.User;
-import com.ska.service.UserService;
+import com.ska.service.UserServiceImpl;
+import com.ska.service.contract.UserService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,11 +32,9 @@ import lombok.extern.slf4j.Slf4j;
  * Provides HTTP endpoints for creating, retrieving and deleting users. Base
  * path: /api/users
  * 
- * @see UserService - service for managing system users
+ * @see UserServiceImpl - service for managing system users
  * @see User - user entity
  * @see UserCreateRequest - user creation request
- * @see UserUpdateEmailRequest - email update request
- * @see UserUpdatePasswordRequest - password update request
  * @see BusinessRuleViolationException - thrown on business rules violation
  * @see ResourceAlreadyExistsException - thrown if resource already exists
  * @see ResourceNotFoundException - thrown if resource not found
@@ -53,7 +52,7 @@ public final class UserController {
 
     /**
      * Creates a new user in the system using
-     * {@link UserService#createUser(UserCreateRequest)}.
+     * {@link UserServiceImpl#createUser(UserCreateRequest)}.
      * 
      * @param request data containing email and password
      * @return ResponseEntity with created user and HTTP 201 status
@@ -63,7 +62,7 @@ public final class UserController {
      * @throws DomainValidationException if email invalid or too long
      * @throws DomainValidationException if password BCrypt hash invalid
      * @see UserCreateRequest - user creation request
-     * @see UserService - service for managing system users
+     * @see UserServiceImpl - service for managing system users
      * @see User - user entity
      */
     @PostMapping
@@ -73,12 +72,12 @@ public final class UserController {
     }
 
     /**
-     * Retrieves user by ID using {@link UserService#getUserById(Long)}.
+     * Retrieves user by ID using {@link UserServiceImpl#getUserById(Long)}.
      * 
      * @param id the user identifier
      * @return ResponseEntity with user if found (HTTP 200) or HTTP 404 if not found
      * @throws BusinessRuleViolationException if ID is null or less than one
-     * @see UserService - service for managing system users
+     * @see UserServiceImpl - service for managing system users
      * @see User - user entity
      */
     @GetMapping("/{id}")
@@ -88,13 +87,14 @@ public final class UserController {
     }
 
     /**
-     * Deletes user from database using {@link UserService#deleteUserById(Long)}.
+     * Deletes user from database using
+     * {@link UserServiceImpl#deleteUserById(Long)}.
      * 
      * @param id the user identifier
      * @return ResponseEntity with HTTP 204 status
      * @throws BusinessRuleViolationException if ID is null or less than one
      * @throws ResourceNotFoundException if ID does not exist in database
-     * @see UserService - service for managing system users
+     * @see UserServiceImpl - service for managing system users
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable final Long id) {
