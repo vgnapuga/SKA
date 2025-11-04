@@ -1,4 +1,4 @@
-package com.ska.model.syncable;
+package com.ska.model.syncable.vo;
 
 
 import com.ska.exception.DomainValidationException;

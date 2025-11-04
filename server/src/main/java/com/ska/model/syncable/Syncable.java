@@ -40,11 +40,11 @@ public class Syncable extends BaseModel {
     @Column(name = "uuid", columnDefinition = "UUID", nullable = false, unique = true)
     private UUID uuid;
 
-    @Column(name = "encrypted_title", nullable = false, length = EntityConstants.Title.MAX_ENCRYPTED_DATA_SIZE)
+    @Column(name = "encrypted_title", nullable = false, length = EntityConstants.Title.ENCRYPTED_DATA_SIZE_MAX)
     @Convert(converter = EncryptedTitleConverter.class)
     private EncryptedTitle encryptedTitle;
 
-    @Column(name = "encrypted_content", nullable = false, length = EntityConstants.Content.MAX_ENCRYPTED_DATA_SIZE)
+    @Column(name = "encrypted_content", nullable = false, length = EntityConstants.Content.ENCRYPTED_DATA_SIZE_MAX)
     @Convert(converter = EncryptedContentConverter.class)
     private EncryptedContent encryptedContent;
 

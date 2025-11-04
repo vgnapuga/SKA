@@ -15,6 +15,6 @@ import jakarta.validation.constraints.Size;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @NotBlank(message = EntityConstants.Content.DTO_REQUIRED_MESSAGE)
-@Size(max = EntityConstants.Content.MAX_BASE64_SIZE, message = EntityConstants.Content.DTO_INVALID_BASE64_LENGTH_MESSAGE)
+@Size(max = EntityConstants.Content.BASE64_SIZE_MAX, message = EntityConstants.Content.DTO_INVALID_BASE64_LENGTH_MESSAGE)
 public @interface ValidEntityContent {
 }

@@ -7,4 +7,6 @@ public interface GetCrudBehaviorTest extends CreateCrudBehaviorTest {
 
     void shouldThrowException_whenLessThanOneId(Long id);
 
+    void shouldThrowException_whenNotFoundId();
+
 }

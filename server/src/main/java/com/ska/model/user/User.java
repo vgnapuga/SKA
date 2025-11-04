@@ -31,11 +31,11 @@ import jakarta.persistence.Table;
 @Table(name = "users")
 public class User extends BaseModel {
 
-    @Column(name = "email", nullable = false, unique = true, length = UserConstants.Email.MAX_LENGTH)
+    @Column(name = "email", nullable = false, unique = true, length = UserConstants.Email.LENGTH_MAX)
     @Convert(converter = EmailConverter.class)
     private Email email;
 
-    @Column(name = "password", nullable = false, length = UserConstants.Password.BCRYPT_HASHED_SIZE)
+    @Column(name = "password", nullable = false, length = UserConstants.Password.BCRYPT_HASH_SIZE)
     @Convert(converter = PasswordConverter.class)
     private Password password;
 
@@ -91,7 +91,7 @@ public class User extends BaseModel {
                 "User{id=%s, email=%s, password=***, created_at=%s}",
                 this.id,
                 this.email.toString(),
-                this.createdAt == null ? "null" : this.createdAt.toString());
+                this.createdAt == null ? "<null>" : this.createdAt.toString());
     }
 
 }

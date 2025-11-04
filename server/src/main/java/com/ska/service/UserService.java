@@ -6,8 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ska.dto.user.request.UserCreateRequest;
-import com.ska.dto.user.request.UserUpdateEmailRequest;
-import com.ska.dto.user.request.UserUpdatePasswordRequest;
 import com.ska.exception.BusinessRuleViolationException;
 import com.ska.exception.DomainValidationException;
 import com.ska.exception.ResourceAlreadyExistsException;
@@ -25,16 +23,14 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * Service for managing system users.
  * 
- * Extends {@link BaseService}. Provides operations for creating, updating,
- * retrieving and deleting users with business rule validation.
+ * Extends {@link BaseService}. Provides operations for creating, retrieving and
+ * deleting users with business rule validation.
  * 
  * @see User - user entity
  * @see Email - email value object
  * @see Password - password value object
  * @see UserRepository - JPA repository
  * @see UserCreateRequest - user creation request
- * @see UserUpdateEmailRequest - email update request
- * @see UserUpdatePasswordRequest - password update request
  * @see BusinessRuleViolationException - thrown on business rules violation
  * @see ResourceAlreadyExistsException - thrown if resource already exists
  * @see ResourceNotFoundException - thrown if resource not found
@@ -57,8 +53,8 @@ public class UserService extends BaseService {
                     String.format("User with email=%s already exists", email.toString()));
     }
 
-    private final Password encodePassword(String rawPassword) {
-        String hashed = passwordEncoder.encode(rawPassword);
+    private final Password encodePassword(String argon2PHC) {
+        String hashed = passwordEncoder.encode(argon2PHC);
         return new Password(hashed);
     }
 
@@ -85,7 +81,7 @@ public class UserService extends BaseService {
      * @see Password - password value object
      */
     @Transactional()
-    public User createUser(UserCreateRequest request) {
+    public User create(UserCreateRequest request) {
         log.info("Creating user with email: {}", request.email());
 
         log.debug(LogTemplates.validationStartLog("Email"));
@@ -94,9 +90,9 @@ public class UserService extends BaseService {
         log.debug(LogTemplates.checkStartLog("Email uniqueness"));
         checkEmailUniqueness(email);
 
-        String rawPassword = request.password();
+        String argon2PHC = request.password();
         log.debug(LogTemplates.startLog("Password encoding"));
-        Password password = encodePassword(rawPassword);
+        Password password = encodePassword(argon2PHC);
 
         User user = new User(email, password);
 
@@ -116,7 +112,7 @@ public class UserService extends BaseService {
      * @see User - user entity
      */
     @Transactional(readOnly = true)
-    public User getUserById(Long id) {
+    public User getById(Long id) {
         log.info("Getting user with ID: {}", id);
 
         log.debug(LogTemplates.UserService.userIdValidationStartLog());
@@ -130,79 +126,6 @@ public class UserService extends BaseService {
     }
 
     /**
-     * Updates user email by ID using {@link User#changeEmail(Email)}.
-     * 
-     * @param request data containing new email
-     * @return User with updated email
-     * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException if ID does not exist in database
-     * @throws DomainValidationException if email invalid
-     * @throws ResourceAlreadyExistsException if email already exists in database
-     * @see UserUpdateEmailRequest - email update request
-     * @see User - user entity
-     * @see Email - email value object
-     */
-    @Transactional
-    public User updateUserEmail(Long id, UserUpdateEmailRequest request) {
-        log.info("Updating user email for ID: {}", id);
-
-        log.debug(LogTemplates.UserService.userIdValidationStartLog());
-        validateId(id);
-
-        log.debug(LogTemplates.UserService.checkUserExistenceStartLog());
-        User user = checkUserExistenceAndGet(id);
-
-        log.debug(LogTemplates.validationStartLog("Email"));
-        Email newEmail = new Email(request.newEmail());
-
-        log.debug(LogTemplates.checkStartLog("Email uniqueness"));
-        checkEmailUniqueness(newEmail);
-
-        user.changeEmail(newEmail);
-        log.debug(LogTemplates.dataBaseQueryStartLog());
-        User updatedUser = userRepository.save(user);
-
-        log.info("User email updated successfully for ID: {}, new email: {}", id, newEmail);
-        return updatedUser;
-    }
-
-    /**
-     * Updates user password by ID using {@link User#changePassword(Password)}.
-     * 
-     * @param request data containing new password
-     * @return User with updated password
-     * @throws BusinessRuleViolationException if ID is null or less than one
-     * @throws ResourceNotFoundException if ID does not exist in database
-     * @throws BusinessRuleViolationException if password does not meet the
-     * requirements
-     * @throws DomainValidationException if password BCrypt hash invalid
-     * @see UserUpdatePasswordRequest - password update request
-     * @see User - user entity
-     * @see Password - password value object
-     */
-    @Transactional
-    public User updateUserPassword(Long id, UserUpdatePasswordRequest request) {
-        log.info("Updating user password for ID: {}", id);
-
-        log.debug(LogTemplates.UserService.userIdValidationStartLog());
-        validateId(id);
-
-        log.debug(LogTemplates.UserService.checkUserExistenceStartLog());
-        User user = checkUserExistenceAndGet(id);
-
-        String rawPassword = request.newPassword();
-        log.debug(LogTemplates.startLog("Password encoding"));
-        Password newPassword = encodePassword(rawPassword);
-
-        user.changePassword(newPassword);
-        log.debug(LogTemplates.dataBaseQueryStartLog());
-        User updatedUser = userRepository.save(user);
-
-        log.info("User password for ID: {} updated successfully", id);
-        return updatedUser;
-    }
-
-    /**
      * Deletes user by ID.
      * 
      * @param id the user identifier
@@ -210,7 +133,7 @@ public class UserService extends BaseService {
      * @throws ResourceNotFoundException if ID does not exist in database
      */
     @Transactional
-    public void deleteUserById(Long id) {
+    public void delete(Long id) {
         log.info("Deleting user with ID: {}", id);
 
         log.debug(LogTemplates.UserService.userIdValidationStartLog());

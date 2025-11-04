@@ -46,7 +46,7 @@ public class EncryptedTitleTest implements EncryptedValueObjectBehaviorTest {
     @Test
     @Override
     public void shouldThrowDomainValidationException_whenValueLengthInvalid() {
-        int invalidSize = EntityConstants.Title.MAX_ENCRYPTED_DATA_SIZE + 1;
+        int invalidSize = EntityConstants.Title.ENCRYPTED_DATA_SIZE_MAX + 1;
         byte[] tooLongValue = new byte[invalidSize];
 
         DomainValidationException exception = assertThrows(

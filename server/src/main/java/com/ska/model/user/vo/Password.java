@@ -35,7 +35,7 @@ public final class Password extends BaseValueObject<String> {
     protected void checkValidation(String value) {
         validateNotBlank(value);
 
-        if (value.length() != UserConstants.Password.BCRYPT_HASHED_SIZE) {
+        if (value.length() != UserConstants.Password.BCRYPT_HASH_SIZE) {
             throw new DomainValidationException(UserConstants.Password.DOMAIN_INVALID_FORMAT_MESSAGE);
         }
 

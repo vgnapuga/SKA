@@ -34,7 +34,7 @@ public final class Email extends BaseValueObject<String> {
     protected void checkValidation(String value) {
         validateNotBlank(value);
 
-        if (value.length() > UserConstants.Email.MAX_LENGTH)
+        if (value.length() > UserConstants.Email.LENGTH_MAX)
             throw new DomainValidationException(UserConstants.Email.getDomainInvalidLengthMessage(value.length()));
 
         if (!value.matches(UserConstants.Email.REGEX))
