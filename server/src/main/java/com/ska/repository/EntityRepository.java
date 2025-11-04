@@ -8,14 +8,14 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ska.model.syncable.note.Note;
+import com.ska.model.syncable.Syncable;
 
 
 @Repository
-public interface NoteRepository extends JpaRepository<Note, Long> {
+public interface EntityRepository extends JpaRepository<Syncable, Long> {
 
-    Optional<Note> findByUuid(UUID uuid);
+    Optional<Syncable> findByUuid(UUID uuid);
 
-    List<Note> getAllByUserId(Long userId);
+    List<Syncable> getAllByUserId(Long userId);
 
 }

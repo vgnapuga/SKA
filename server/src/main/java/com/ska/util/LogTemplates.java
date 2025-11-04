@@ -47,18 +47,14 @@ public final class LogTemplates {
 
     }
 
-    public static class DependedService {
+    public static class EntityService {
 
-        private DependedService() {
-            throw new UnsupportedOperationException("LogTemplates.DependedService.java - <util> class");
+        private EntityService() {
+            throw new UnsupportedOperationException("LogTemplates.EntityService.java - <util> class");
         }
 
         public static String checkBase64StartLog(String encryptedName) {
             return checkStartLog(encryptedName + " Base64");
-        }
-
-        public static String generateUuidStartLog() {
-            return startLog("UUID generation");
         }
 
         public static String checkPermissionStartLog(String operationName) {

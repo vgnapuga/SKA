@@ -1,6 +1,8 @@
 package com.ska.model;
 
 
+import java.util.Objects;
+
 import com.ska.exception.DomainValidationException;
 
 
@@ -62,12 +64,12 @@ public abstract class BaseValueObject<T> {
         if (obj == null || obj.getClass() != this.getClass())
             return false;
 
-        return java.util.Objects.equals(this.value, ((BaseValueObject<?>) obj).value);
+        return Objects.equals(this.value, ((BaseValueObject<?>) obj).value);
     }
 
     @Override
     public final int hashCode() {
-        return java.util.Objects.hash(this.value);
+        return Objects.hash(this.value);
     }
 
     @Override

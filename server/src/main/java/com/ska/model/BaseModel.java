@@ -2,6 +2,7 @@ package com.ska.model;
 
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.GeneratedValue;
@@ -9,13 +10,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 
 
 /**
  * Base abstract class for all database entities.
  * 
- * Automatically manages creation and update timestamps.
+ * Automatically manages creation timestamp.
  */
 @MappedSuperclass
 public abstract class BaseModel {
@@ -26,20 +26,11 @@ public abstract class BaseModel {
     protected Long id;
 
     @Column(name = "created_at", columnDefinition = "TIMESTAMP WITHOUT TIMEZONE", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP WITHOUT TIMEZONE", nullable = false, updatable = true)
-    private LocalDateTime updatedAt;
+    protected LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
-        this.updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -48,10 +39,6 @@ public abstract class BaseModel {
 
     public LocalDateTime getCreationTime() {
         return this.createdAt;
-    }
-
-    public LocalDateTime getUpdateTime() {
-        return this.updatedAt;
     }
 
     @Override
@@ -66,13 +53,12 @@ public abstract class BaseModel {
         if (this.id == null || other.id == null)
             return false;
 
-        return java.util.Objects.equals(this.id, other.id);
-
+        return Objects.equals(this.id, other.id);
     }
 
     @Override
     public final int hashCode() {
-        return java.util.Objects.hash(this.id);
+        return Objects.hash(this.id);
     }
 
     @Override
