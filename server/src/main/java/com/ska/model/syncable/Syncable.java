@@ -29,7 +29,7 @@ import jakarta.persistence.Table;
 
 
 @Entity
-@Table(name = "syncable")
+@Table(name = "entities")
 public class Syncable extends BaseModel {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
