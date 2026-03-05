@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+    show-sql: true
+
+logging:
+  level:
+    com.ska: DEBUG
+    org.springframework: DEBUG
+    org.hibernate.SQL: DEBUG
