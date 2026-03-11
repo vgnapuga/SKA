@@ -16,6 +16,6 @@ public interface EntityRepository extends JpaRepository<Syncable, Long> {
 
     Optional<Syncable> findByUuid(UUID uuid);
 
-    List<Syncable> getAllByUserId(Long userId);
+    List<Syncable> getAllByOwnerId(Long ownerId);
 
 }
