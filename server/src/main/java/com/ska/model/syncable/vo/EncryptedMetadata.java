@@ -5,16 +5,16 @@ import com.ska.exception.DomainValidationException;
 import com.ska.util.constant.EntityConstants;
 
 
-public final class EncryptedTitle extends BaseEncryptedValueObject {
+public final class EncryptedMetadata extends BaseEncryptedValueObject {
 
-    public EncryptedTitle(final byte[] value) {
+    public EncryptedMetadata(final byte[] value) {
         super(value);
     }
 
     @Override
     protected void validateReasonableSize(final byte[] encryptedValue) {
-        if (encryptedValue.length > EntityConstants.Title.ENCRYPTED_DATA_SIZE_MAX)
+        if (encryptedValue.length > EntityConstants.Metadata.ENCRYPTED_DATA_SIZE_MAX)
             throw new DomainValidationException(
-                    EntityConstants.Title.getDomainInvalidDataSizeMessage(encryptedValue.length));
+                    EntityConstants.Metadata.getDomainInvalidDataSizeMessage(encryptedValue.length));
     }
 }

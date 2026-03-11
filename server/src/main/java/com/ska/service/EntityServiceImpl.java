@@ -11,13 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ska.dto.entity.request.EntityCreateRequest;
 import com.ska.dto.entity.request.EntityUpdateAllRequest;
 import com.ska.dto.entity.request.EntityUpdateContentRequest;
-import com.ska.dto.entity.request.EntityUpdateTitleRequest;
+import com.ska.dto.entity.request.EntityUpdateMetadataRequest;
 import com.ska.exception.AccessDeniedException;
 import com.ska.exception.BusinessRuleViolationException;
 import com.ska.exception.ResourceNotFoundException;
 import com.ska.model.syncable.Syncable;
 import com.ska.model.syncable.vo.EncryptedContent;
-import com.ska.model.syncable.vo.EncryptedTitle;
+import com.ska.model.syncable.vo.EncryptedMetadata;
 import com.ska.model.user.User;
 import com.ska.repository.EntityRepository;
 import com.ska.service.contract.EntityService;
@@ -82,19 +82,19 @@ public final class EntityServiceImpl extends BaseService implements EntityServic
         log.debug(LogTemplates.UserService.checkUserExistenceStartLog());
         User user = checkUserExistenceAndGet(userId);
 
-        log.debug(LogTemplates.EntityService.checkBase64StartLog("Syncable title"));
-        byte[] decodedTitle = decodeBase64(request.encryptedTitle());
+        log.debug(LogTemplates.EntityService.checkBase64StartLog("Syncable metadata"));
+        byte[] decodedMetadata = decodeBase64(request.encryptedMetadata());
 
         log.debug(LogTemplates.EntityService.checkBase64StartLog("Syncable content"));
         byte[] decodedContent = decodeBase64(request.encryptedContent());
 
-        log.debug(LogTemplates.validationStartLog("Syncable title"));
-        EncryptedTitle title = new EncryptedTitle(decodedTitle);
+        log.debug(LogTemplates.validationStartLog("Syncable metadata"));
+        EncryptedMetadata metadata = new EncryptedMetadata(decodedMetadata);
 
         log.debug(LogTemplates.validationStartLog("Syncable content"));
         EncryptedContent content = new EncryptedContent(decodedContent);
 
-        Syncable entity = new Syncable(user, uuid, title, content);
+        Syncable entity = new Syncable(user, uuid, metadata, content);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
         Syncable savedSyncable = entityRepository.save(entity);
@@ -139,20 +139,20 @@ public final class EntityServiceImpl extends BaseService implements EntityServic
 
     @Transactional
     @Override
-    public Syncable updateTitleAndContent(Long userId, UUID entityUuid, EntityUpdateAllRequest request) {
-        log.info("Updating entity title and content for user with ID: {} and entity UUID: {}", userId, entityUuid);
+    public Syncable updateMetadataAndContent(Long userId, UUID entityUuid, EntityUpdateAllRequest request) {
+        log.info("Updating entity metadata and content for user with ID: {} and entity UUID: {}", userId, entityUuid);
 
         log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(userId);
 
-        log.debug(LogTemplates.EntityService.checkBase64StartLog("New entity title"));
-        byte[] decodedNewTitle = decodeBase64(request.encryptedNewTitle());
+        log.debug(LogTemplates.EntityService.checkBase64StartLog("New entity metadata"));
+        byte[] decodedNewMetadata = decodeBase64(request.encryptedNewMetadata());
 
         log.debug(LogTemplates.EntityService.checkBase64StartLog("New entity content"));
         byte[] decodedNewContent = decodeBase64(request.encryptedNewContent());
 
-        log.debug(LogTemplates.validationStartLog("New entity title"));
-        EncryptedTitle newTitle = new EncryptedTitle(decodedNewTitle);
+        log.debug(LogTemplates.validationStartLog("New entity metadata"));
+        EncryptedMetadata newMetadata = new EncryptedMetadata(decodedNewMetadata);
 
         log.debug(LogTemplates.validationStartLog("New entity content"));
         EncryptedContent newContent = new EncryptedContent(decodedNewContent);
@@ -160,45 +160,48 @@ public final class EntityServiceImpl extends BaseService implements EntityServic
         log.debug(LogTemplates.checkStartLog("Entity existence"));
         Syncable retrievedEntity = checkEntityExistenceAndGet(entityUuid);
 
-        retrievedEntity.changeTitle(newTitle);
+        retrievedEntity.changeMetadata(newMetadata);
         retrievedEntity.changeContent(newContent);
 
-        log.debug(LogTemplates.EntityService.checkPermissionStartLog("Update entity title and content"));
+        log.debug(LogTemplates.EntityService.checkPermissionStartLog("Update entity metadata and content"));
         checkPermissionToAccess(userId, retrievedEntity);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
         entityRepository.save(retrievedEntity);
 
-        log.info("Syncable title and content was updated for user with ID: {} and entity UUID: {}", userId, entityUuid);
+        log.info(
+                "Syncable metadata and content was updated for user with ID: {} and entity UUID: {}",
+                userId,
+                entityUuid);
         return retrievedEntity;
     }
 
     @Transactional
     @Override
-    public Syncable updateTitle(Long userId, UUID entityUuid, EntityUpdateTitleRequest request) {
-        log.info("Updating entity title for user with ID: {} and entity UUID: {}", userId, entityUuid);
+    public Syncable updateMetadata(Long userId, UUID entityUuid, EntityUpdateMetadataRequest request) {
+        log.info("Updating entity metadata for user with ID: {} and entity UUID: {}", userId, entityUuid);
 
         log.debug(LogTemplates.UserService.userIdValidationStartLog());
         validateId(userId);
 
-        log.debug(LogTemplates.EntityService.checkBase64StartLog("New entity title"));
-        byte[] decodedNewTitle = decodeBase64(request.encryptedNewTitle());
+        log.debug(LogTemplates.EntityService.checkBase64StartLog("New entity metadata"));
+        byte[] decodedNewMetadata = decodeBase64(request.encryptedNewMetadata());
 
-        log.debug(LogTemplates.validationStartLog("New entity title"));
-        EncryptedTitle newTitle = new EncryptedTitle(decodedNewTitle);
+        log.debug(LogTemplates.validationStartLog("New entity metadata"));
+        EncryptedMetadata newMetadata = new EncryptedMetadata(decodedNewMetadata);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
         Syncable retrievedEntity = checkEntityExistenceAndGet(entityUuid);
 
-        retrievedEntity.changeTitle(newTitle);
+        retrievedEntity.changeMetadata(newMetadata);
 
-        log.debug(LogTemplates.EntityService.checkPermissionStartLog("Update entity title"));
+        log.debug(LogTemplates.EntityService.checkPermissionStartLog("Update entity metadata"));
         checkPermissionToAccess(userId, retrievedEntity);
 
         log.debug(LogTemplates.dataBaseQueryStartLog());
         entityRepository.save(retrievedEntity);
 
-        log.info("Syncable title was updated for user with ID: {} and entity UUID: {}", userId, entityUuid);
+        log.info("Syncable metadata was updated for user with ID: {} and entity UUID: {}", userId, entityUuid);
         return retrievedEntity;
     }
 

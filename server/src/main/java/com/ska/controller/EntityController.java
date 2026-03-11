@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ska.dto.entity.request.EntityCreateRequest;
 import com.ska.dto.entity.request.EntityUpdateAllRequest;
 import com.ska.dto.entity.request.EntityUpdateContentRequest;
-import com.ska.dto.entity.request.EntityUpdateTitleRequest;
+import com.ska.dto.entity.request.EntityUpdateMetadataRequest;
 import com.ska.dto.entity.response.EntityResponse;
 import com.ska.model.syncable.Syncable;
 import com.ska.service.contract.EntityService;
@@ -62,21 +62,21 @@ public final class EntityController {
     }
 
     @PutMapping("/{userId}/{uuid}")
-    public ResponseEntity<EntityResponse> updateEntityTitleAndContent(
+    public ResponseEntity<EntityResponse> updateEntityMetadataAndContent(
             @PathVariable Long userId,
             @PathVariable UUID noteUuid,
             @Valid @RequestBody EntityUpdateAllRequest request) {
         log.info("PUT - {}/{}/{}", ROOT, userId, noteUuid);
-        return ResponseEntity.ok(EntityResponse.of(entityService.updateTitleAndContent(userId, noteUuid, request)));
+        return ResponseEntity.ok(EntityResponse.of(entityService.updateMetadataAndContent(userId, noteUuid, request)));
     }
 
-    @PutMapping("/{userId}/{uuid}/title")
-    public ResponseEntity<EntityResponse> updateEntityTitle(
+    @PutMapping("/{userId}/{uuid}/metadata")
+    public ResponseEntity<EntityResponse> updateEntityMetadata(
             @PathVariable Long userId,
             @PathVariable UUID noteUuid,
-            @Valid @RequestBody EntityUpdateTitleRequest request) {
-        log.info("PUT - {}/{}/{}/title", ROOT, userId, noteUuid);
-        return ResponseEntity.ok(EntityResponse.of(entityService.updateTitle(userId, noteUuid, request)));
+            @Valid @RequestBody EntityUpdateMetadataRequest request) {
+        log.info("PUT - {}/{}/{}/metadata", ROOT, userId, noteUuid);
+        return ResponseEntity.ok(EntityResponse.of(entityService.updateMetadata(userId, noteUuid, request)));
     }
 
     @PutMapping("/{userId}/{uuid}/content")

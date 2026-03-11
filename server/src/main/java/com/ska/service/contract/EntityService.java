@@ -7,7 +7,7 @@ import java.util.UUID;
 import com.ska.dto.entity.request.EntityCreateRequest;
 import com.ska.dto.entity.request.EntityUpdateAllRequest;
 import com.ska.dto.entity.request.EntityUpdateContentRequest;
-import com.ska.dto.entity.request.EntityUpdateTitleRequest;
+import com.ska.dto.entity.request.EntityUpdateMetadataRequest;
 import com.ska.model.syncable.Syncable;
 
 
@@ -19,9 +19,9 @@ public interface EntityService {
 
     public Syncable getByUuid(Long userId, UUID entityUuid);
 
-    public Syncable updateTitleAndContent(Long userId, UUID entityUuid, EntityUpdateAllRequest request);
+    public Syncable updateMetadataAndContent(Long userId, UUID entityUuid, EntityUpdateAllRequest request);
 
-    public Syncable updateTitle(Long userId, UUID entityUuid, EntityUpdateTitleRequest request);
+    public Syncable updateMetadata(Long userId, UUID entityUuid, EntityUpdateMetadataRequest request);
 
     public Syncable updateContent(Long userId, UUID entityUuid, EntityUpdateContentRequest request);
 

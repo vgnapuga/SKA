@@ -1,7 +1,6 @@
 package com.ska.model.syncable;
 
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -10,9 +9,9 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import com.ska.model.BaseModel;
 import com.ska.model.syncable.converter.EncryptedContentConverter;
-import com.ska.model.syncable.converter.EncryptedTitleConverter;
+import com.ska.model.syncable.converter.EncryptedMetadataConverter;
 import com.ska.model.syncable.vo.EncryptedContent;
-import com.ska.model.syncable.vo.EncryptedTitle;
+import com.ska.model.syncable.vo.EncryptedMetadata;
 import com.ska.model.user.User;
 import com.ska.util.constant.EntityConstants;
 import com.ska.util.constant.UserConstants;
@@ -24,7 +23,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.ForeignKey;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 
 
@@ -40,9 +38,9 @@ public class Syncable extends BaseModel {
     @Column(name = "uuid", columnDefinition = "UUID", nullable = false, unique = true)
     private UUID uuid;
 
-    @Column(name = "encrypted_title", nullable = false, length = EntityConstants.Title.ENCRYPTED_DATA_SIZE_MAX)
-    @Convert(converter = EncryptedTitleConverter.class)
-    private EncryptedTitle encryptedTitle;
+    @Column(name = "encrypted_metadata", nullable = false, length = EntityConstants.Metadata.ENCRYPTED_DATA_SIZE_MAX)
+    @Convert(converter = EncryptedMetadataConverter.class)
+    private EncryptedMetadata encryptedMetadata;
 
     @Column(name = "encrypted_content", nullable = false, length = EntityConstants.Content.ENCRYPTED_DATA_SIZE_MAX)
     @Convert(converter = EncryptedContentConverter.class)
@@ -51,15 +49,19 @@ public class Syncable extends BaseModel {
     protected Syncable() {
     }
 
-    public Syncable(final User owner, UUID uuid, EncryptedTitle encryptedTitle, EncryptedContent encryptedContent) {
+    public Syncable(
+            final User owner,
+            UUID uuid,
+            EncryptedMetadata encryptedMetadata,
+            EncryptedContent encryptedContent) {
         this.owner = Objects.requireNonNull(owner, UserConstants.NULL_MESSAGE);
         this.uuid = Objects.requireNonNull(uuid, EntityConstants.UUID_NULL_MESSAGE);
-        this.encryptedTitle = Objects.requireNonNull(encryptedTitle, EntityConstants.Title.NULL_MESSAGE);
+        this.encryptedMetadata = Objects.requireNonNull(encryptedMetadata, EntityConstants.Metadata.NULL_MESSAGE);
         this.encryptedContent = Objects.requireNonNull(encryptedContent, EntityConstants.Content.NULL_MESSAGE);
     }
 
-    public final void changeTitle(EncryptedTitle newEncryptedTitle) {
-        this.encryptedTitle = Objects.requireNonNull(newEncryptedTitle, EntityConstants.Title.NULL_MESSAGE);
+    public final void changeMetadata(EncryptedMetadata newEncryptedMetadata) {
+        this.encryptedMetadata = Objects.requireNonNull(newEncryptedMetadata, EntityConstants.Metadata.NULL_MESSAGE);
     }
 
     public final void changeContent(EncryptedContent newEncryptedContent) {
@@ -74,8 +76,8 @@ public class Syncable extends BaseModel {
         return this.uuid;
     }
 
-    public EncryptedTitle getTitleBytes() {
-        return this.encryptedTitle;
+    public EncryptedMetadata getMetadataBytes() {
+        return this.encryptedMetadata;
     }
 
     public EncryptedContent getContentBytes() {
@@ -85,7 +87,7 @@ public class Syncable extends BaseModel {
     @Override
     public final String toString() {
         return String.format(
-                "Syncable{id=%d, owner_id=%d, uuid=%s, title=***, content=***}",
+                "Syncable{id=%d, owner_id=%d, uuid=%s, metadata=***, content=***}",
                 this.id,
                 this.owner.getId(),
                 this.uuid.toString());
