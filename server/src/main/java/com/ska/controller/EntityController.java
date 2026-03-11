@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ska.dto.entity.request.EntityCreateRequest;
 import com.ska.dto.entity.request.EntityUpdateAllRequest;
-import com.ska.dto.entity.request.EntityUpdateContentRequest;
 import com.ska.dto.entity.request.EntityUpdateMetadataRequest;
 import com.ska.dto.entity.response.EntityResponse;
 import com.ska.model.syncable.Syncable;
@@ -77,15 +76,6 @@ public final class EntityController {
             @Valid @RequestBody EntityUpdateMetadataRequest request) {
         log.info("PUT - {}/{}/{}/metadata", ROOT, userId, noteUuid);
         return ResponseEntity.ok(EntityResponse.of(entityService.updateMetadata(userId, noteUuid, request)));
-    }
-
-    @PutMapping("/{userId}/{uuid}/content")
-    public ResponseEntity<EntityResponse> updateEntityContent(
-            @PathVariable Long userId,
-            @PathVariable UUID noteUuid,
-            @Valid @RequestBody EntityUpdateContentRequest request) {
-        log.info("PUT - {}/{}/{}/content", ROOT, userId, noteUuid);
-        return ResponseEntity.ok(EntityResponse.of(entityService.updateContent(userId, noteUuid, request)));
     }
 
     @DeleteMapping("/{userId}/{uuid}")

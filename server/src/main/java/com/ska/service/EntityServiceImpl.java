@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ska.dto.entity.request.EntityCreateRequest;
 import com.ska.dto.entity.request.EntityUpdateAllRequest;
-import com.ska.dto.entity.request.EntityUpdateContentRequest;
 import com.ska.dto.entity.request.EntityUpdateMetadataRequest;
 import com.ska.exception.AccessDeniedException;
 import com.ska.exception.BusinessRuleViolationException;
@@ -202,35 +201,6 @@ public final class EntityServiceImpl extends BaseService implements EntityServic
         entityRepository.save(retrievedEntity);
 
         log.info("Syncable metadata was updated for user with ID: {} and entity UUID: {}", userId, entityUuid);
-        return retrievedEntity;
-    }
-
-    @Transactional
-    @Override
-    public Syncable updateContent(Long userId, UUID entityUuid, EntityUpdateContentRequest request) {
-        log.info("Updating entity content for user with ID: {} and entity UUID: {}", userId, entityUuid);
-
-        log.debug(LogTemplates.UserService.userIdValidationStartLog());
-        validateId(userId);
-
-        log.debug(LogTemplates.EntityService.checkBase64StartLog("New entity content"));
-        byte[] decodedNewContent = decodeBase64(request.encryptedNewContent());
-
-        log.debug(LogTemplates.validationStartLog("New entity content"));
-        EncryptedContent newContent = new EncryptedContent(decodedNewContent);
-
-        log.debug(LogTemplates.dataBaseQueryStartLog());
-        Syncable retrievedEntity = checkEntityExistenceAndGet(entityUuid);
-
-        retrievedEntity.changeContent(newContent);
-
-        log.debug(LogTemplates.EntityService.checkPermissionStartLog("Update entity content"));
-        checkPermissionToAccess(userId, retrievedEntity);
-
-        log.debug(LogTemplates.dataBaseQueryStartLog());
-        entityRepository.save(retrievedEntity);
-
-        log.info("Syncable content was updated for user with ID: {} and entity UUID: {}", userId, entityUuid);
         return retrievedEntity;
     }
 
