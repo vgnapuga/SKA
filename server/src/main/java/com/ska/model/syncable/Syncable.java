@@ -48,9 +48,6 @@ public class Syncable extends BaseModel {
     @Convert(converter = EncryptedContentConverter.class)
     private EncryptedContent encryptedContent;
 
-    @Column(name = "updated_at", columnDefinition = "TIMESTAMP WITHOUT TIMEZONE", nullable = true, updatable = true)
-    private LocalDateTime updatedAt = null;
-
     protected Syncable() {
     }
 
@@ -59,11 +56,6 @@ public class Syncable extends BaseModel {
         this.uuid = Objects.requireNonNull(uuid, EntityConstants.UUID_NULL_MESSAGE);
         this.encryptedTitle = Objects.requireNonNull(encryptedTitle, EntityConstants.Title.NULL_MESSAGE);
         this.encryptedContent = Objects.requireNonNull(encryptedContent, EntityConstants.Content.NULL_MESSAGE);
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        this.updatedAt = LocalDateTime.now();
     }
 
     public final void changeTitle(EncryptedTitle newEncryptedTitle) {
@@ -90,19 +82,13 @@ public class Syncable extends BaseModel {
         return this.encryptedContent;
     }
 
-    public LocalDateTime getUpdateTime() {
-        return this.updatedAt;
-    }
-
     @Override
     public final String toString() {
         return String.format(
-                "Syncable{id=%d, owner_id=%d, uuid=%s, title=***, content=***, created_at=%s, updated_at=%s}",
+                "Syncable{id=%d, owner_id=%d, uuid=%s, title=***, content=***}",
                 this.id,
                 this.owner.getId(),
-                this.uuid.toString(),
-                this.createdAt == null ? "<null>" : this.createdAt.toString(),
-                this.updatedAt == null ? "<null>" : this.updatedAt.toString());
+                this.uuid.toString());
     }
 
 }

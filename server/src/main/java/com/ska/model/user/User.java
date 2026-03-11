@@ -19,9 +19,9 @@ import jakarta.persistence.Table;
 
 /**
  * User domain entity representing system user.
- * 
+ *
  * Extends {@link BaseModel}. Provides email and password management.
- * 
+ *
  * @see Email - email value object
  * @see Password - password value object
  * @see DomainValidationException - thrown if email or password validation
@@ -44,7 +44,7 @@ public class User extends BaseModel {
 
     /**
      * Creates a new user with validated email and password.
-     * 
+     *
      * @param email the email to set
      * @param password the password to set
      * @throws DomainValidationException if email or password validation failure
@@ -57,9 +57,9 @@ public class User extends BaseModel {
     }
 
     /**
-     * 
+     *
      * Updates user email.
-     * 
+     *
      * @param newEmail the new email to set
      * @see Email - email value object
      */
@@ -69,7 +69,7 @@ public class User extends BaseModel {
 
     /**
      * Updates user password.
-     * 
+     *
      * @param newPassword the new password to set
      * @see Password - password value object
      */
@@ -87,11 +87,7 @@ public class User extends BaseModel {
 
     @Override
     public final String toString() {
-        return String.format(
-                "User{id=%s, email=%s, password=***, created_at=%s}",
-                this.id,
-                this.email.toString(),
-                this.createdAt == null ? "<null>" : this.createdAt.toString());
+        return String.format("User{id=%d, email=%s, password=***}", this.id, this.email.toString());
     }
 
 }
